@@ -34,7 +34,7 @@
                     @auth
                         @if (auth()->user()->isAdmin())
                             <a
-                                href="{{ route('dashboard') }}"
+                                href="{{ route('admin.dashboard') }}"
                                 class="inline-flex items-center border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
                             >
                                 Dashboard
@@ -87,7 +87,7 @@
                             @auth
                                 @if (auth()->user()->isAdmin())
                                     <a
-                                        href="{{ route('dashboard') }}"
+                                        href="{{ route('admin.dashboard') }}"
                                         class="inline-flex items-center justify-center bg-slate-950 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-800"
                                     >
                                         Buka Dashboard

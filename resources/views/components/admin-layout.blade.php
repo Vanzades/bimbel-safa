@@ -4,13 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <x-favicon />
 
-    <title>{{ config('app.name', 'Bimbel') }}{{ isset($title) ? ' — ' . $title : '' }}</title>
+    <title>{{ config('app.name', 'Bimbel') }}{{ isset($title) ? ' - ' . $title : '' }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="min-h-screen bg-slate-50 text-slate-950 antialiased">
+<body class="min-h-screen bg-[#F6F6F6] text-slate-950 antialiased">
     <x-admin-sidebar />
 
     <div class="lg:pl-64">

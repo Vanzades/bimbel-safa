@@ -1,371 +1,575 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
+<html lang="{{ str_replace('\_', '-', app()->getLocale()) }}">
+
 <head>
+
     <meta charset="utf-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Bimbel') }} — Riwayat Absensi</title>
 
+    {{-- Favicon Responsif --}}
+
+    <link rel="icon" type="image/x-icon" href="{{ asset('image/favicon.ico') }}">
+
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('image/favicon-16x16.png') }}">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('image/favicon-32x32.png') }}">
+
+    <link rel="icon" type="image/png" sizes="48x48" href="{{ asset('image/favicon-48x48.png') }}">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('image/favicon-180x180.png') }}">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+
+        .attendance-page {
+
+            min-height: 100vh;
+
+            background: var(--student-topbar, #F6F6F6);
+
+            color: var(--student-text, #1f2937);
+
+        }
+
+        .attendance-card {
+
+            border: 1px solid var(--student-border, #e5e7eb);
+
+            background: var(--student-surface, #fff);
+
+            box-shadow: 0 4px 20px var(--student-shadow, rgba(15, 23, 42, .08));
+
+        }
+
+        .attendance-field {
+
+            border: 1px solid var(--student-border, #e5e7eb);
+
+            background: var(--student-soft, #f6f7f9);
+
+            color: var(--student-text, #1f2937);
+
+        }
+
+        .attendance-muted {
+
+            color: var(--student-muted, #64748b);
+
+        }
+
+        .attendance-divider {
+
+            border-color: var(--student-border, #e5e7eb);
+
+        }
+
+        .attendance-table-head {
+
+            background: var(--student-soft, #f6f7f9);
+
+        }
+
+        .attendance-row:hover {
+
+            background: var(--student-hover, rgba(15, 23, 42, .055));
+
+        }
+
+        .attendance-badge-present {
+
+            background: #059669;
+
+            color: #fff;
+
+        }
+
+        .attendance-badge-permission {
+
+            background: #4f46e5;
+
+            color: #fff;
+
+        }
+
+        .attendance-badge-sick {
+
+            background: #d97706;
+
+            color: #fff;
+
+        }
+
+        .attendance-badge-absent {
+
+            background: #dc2626;
+
+            color: #fff;
+
+        }
+
+        html[data-student-theme="dark"] .attendance-badge-present {
+
+            background: rgba(16, 185, 129, .18);
+
+            color: #6ee7b7;
+
+        }
+
+        html[data-student-theme="dark"] .attendance-badge-permission {
+
+            background: rgba(99, 102, 241, .18);
+
+            color: #a5b4fc;
+
+        }
+
+        html[data-student-theme="dark"] .attendance-badge-sick {
+
+            background: rgba(245, 158, 11, .18);
+
+            color: #fcd34d;
+
+        }
+
+        html[data-student-theme="dark"] .attendance-badge-absent {
+
+            background: rgba(239, 68, 68, .18);
+
+            color: #fca5a5;
+
+        }
+
+    </style>
+
 </head>
 
-<body class="min-h-screen bg-slate-50 text-slate-950 antialiased">
-    <header class="sticky top-0 z-30 border-b border-slate-200 bg-white">
-        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-            <a href="{{ route('student.dashboard') }}" class="flex items-center gap-3">
-                <div class="flex h-8 w-8 items-center justify-center rounded-md bg-slate-950 text-sm font-bold text-white">
-                    B
-                </div>
+<body class="min-h-screen antialiased">
 
-                <div>
-                    <div class="text-sm font-semibold text-slate-950">
-                        Bimbel
-                    </div>
+    <x-student-sidebar />
 
-                    <div class="text-xs text-slate-500">
-                        Student Portal
-                    </div>
-                </div>
-            </a>
+    <div class="attendance-page lg:pl-64">
 
-            <div class="flex items-center gap-4">
-                <div class="hidden text-right sm:block">
-                    <div class="text-sm font-medium text-slate-900">
-                        {{ $student->name }}
-                    </div>
+        <x-student-topbar :student="$student" title="Riwayat Absensi" />
 
-                    <div class="text-xs text-slate-500">
-                        Siswa
-                    </div>
-                </div>
+        <main class="mx-auto w-full max-w-90rem space-y-5 px-4 py-4 pb-10 sm:px-6 lg:px-10 lg:py-6">
 
-                <div class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">
-                    {{ strtoupper(substr($student->name, 0, 1)) }}
-                </div>
+            {{-- Breadcrumb --}}
 
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
+            <nav
 
-                    <button
-                        type="submit"
-                        class="text-sm font-medium text-slate-500 transition hover:text-slate-950"
-                    >
-                        Keluar
-                    </button>
-                </form>
-            </div>
-        </div>
-    </header>
+                class="mb-3 flex items-center gap-1.5 text-[11px] font-medium sm:text-xs"
 
-    <main class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-        <div class="space-y-6">
-            <div>
-                <a
-                    href="{{ route('student.dashboard') }}"
-                    class="text-sm font-medium text-slate-500 transition hover:text-slate-950"
-                >
-                    ← Kembali ke Dashboard
+                style="color: var(--student-muted, #64748b);"
+
+                aria-label="Breadcrumb"
+
+            >
+
+                <a href="{{ route('student.dashboard') }}" class="transition hover:opacity-75">
+
+                    Dashboard
+
                 </a>
 
-                <div class="mt-5">
-                    <p class="text-sm font-medium text-slate-500">
-                        Student Portal
-                    </p>
+                <svg class="h-2.5 w-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
 
-                    <h1 class="mt-1 text-2xl font-semibold tracking-tight text-slate-950">
-                        Riwayat Absensi
-                    </h1>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
 
-                    <p class="mt-1 text-sm text-slate-500">
-                        Pantau riwayat kehadiran kamu selama mengikuti pembelajaran.
-                    </p>
-                </div>
+                </svg>
+
+                <span class="font-semibold" style="color: var(--student-text, #1f2937);">
+
+                    Riwayat Absensi
+
+                </span>
+
+            </nav>
+
+            {{-- Judul halaman --}}
+
+            <div class="mb-8 mt-8 sm:mb-12">
+
+                <h1 class="text-xl font-bold tracking-tight sm:text-2xl">
+
+                    Riwayat Absensi
+
+                </h1>
+
+                <p class="mt-1.5 text-xs sm:text-sm attendance-muted">
+
+                    Pantau riwayat kehadiran kamu.
+
+                </p>
+
             </div>
 
-            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-                <div class="border border-slate-200 bg-white p-5">
-                    <p class="text-sm font-medium text-slate-500">
-                        Total
-                    </p>
+            {{-- Ringkasan Stats dengan Desain Baru --}}
 
-                    <p class="mt-2 text-2xl font-semibold text-slate-950">
-                        {{ $attendanceStats['total'] }}
-                    </p>
-                </div>
+            <section class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
 
-                <div class="border border-emerald-200 bg-emerald-50 p-5">
-                    <p class="text-sm font-medium text-emerald-700">
-                        Hadir
-                    </p>
+                @php
 
-                    <p class="mt-2 text-2xl font-semibold text-emerald-800">
-                        {{ $attendanceStats['present'] }}
-                    </p>
-                </div>
+                    $stats = [
 
-                <div class="border border-blue-200 bg-blue-50 p-5">
-                    <p class="text-sm font-medium text-blue-700">
-                        Izin
-                    </p>
+                        [
 
-                    <p class="mt-2 text-2xl font-semibold text-blue-800">
-                        {{ $attendanceStats['permission'] }}
-                    </p>
-                </div>
+                            'label' => 'Total',
 
-                <div class="border border-amber-200 bg-amber-50 p-5">
-                    <p class="text-sm font-medium text-amber-700">
-                        Sakit
-                    </p>
+                            'value' => $attendanceStats['total'],
 
-                    <p class="mt-2 text-2xl font-semibold text-amber-800">
-                        {{ $attendanceStats['sick'] }}
-                    </p>
-                </div>
+                            'color' => 'text-slate-600 dark:text-slate-400',
 
-                <div class="border border-red-200 bg-red-50 p-5">
-                    <p class="text-sm font-medium text-red-700">
-                        Alpa
-                    </p>
+                            'bg' => 'bg-slate-500/10 dark:bg-slate-400/20',
 
-                    <p class="mt-2 text-2xl font-semibold text-red-800">
-                        {{ $attendanceStats['absent'] }}
-                    </p>
-                </div>
-            </div>
+                            'border' => 'border-slate-200 dark:border-slate-700/50',
 
-            <section class="border border-slate-200 bg-white">
-                <div class="border-b border-slate-200 px-5 py-4">
-                    <div>
-                        <h2 class="text-sm font-semibold text-slate-950">
-                            Filter Absensi
-                        </h2>
+                            'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>'
 
-                        <p class="mt-1 text-xs text-slate-500">
-                            Gunakan filter untuk menemukan riwayat tertentu.
-                        </p>
+                        ],
+
+                        [
+
+                            'label' => 'Hadir',
+
+                            'value' => $attendanceStats['present'],
+
+                            'color' => 'text-emerald-600 dark:text-emerald-400',
+
+                            'bg' => 'bg-emerald-500/10 dark:bg-emerald-500/20',
+
+                            'border' => 'border-emerald-200 dark:border-emerald-500/20',
+
+                            'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>'
+
+                        ],
+
+                        [
+
+                            'label' => 'Izin',
+
+                            'value' => $attendanceStats['permission'],
+
+                            'color' => 'text-indigo-600 dark:text-indigo-400',
+
+                            'bg' => 'bg-indigo-500/10 dark:bg-indigo-500/20',
+
+                            'border' => 'border-indigo-200 dark:border-indigo-500/20',
+
+                            'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>'
+
+                        ],
+
+                        [
+
+                            'label' => 'Sakit',
+
+                            'value' => $attendanceStats['sick'],
+
+                            'color' => 'text-amber-600 dark:text-amber-400',
+
+                            'bg' => 'bg-amber-500/10 dark:bg-amber-500/20',
+
+                            'border' => 'border-amber-200 dark:border-amber-500/20',
+
+                            'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>'
+
+                        ],
+
+                        [
+
+                            'label' => 'Alpa',
+
+                            'value' => $attendanceStats['absent'],
+
+                            'color' => 'text-rose-600 dark:text-rose-400',
+
+                            'bg' => 'bg-rose-500/10 dark:bg-rose-500/20',
+
+                            'border' => 'border-rose-200 dark:border-rose-500/20',
+
+                            'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>'
+
+                        ],
+
+                    ];
+
+                @endphp
+
+                @foreach ($stats as $stat)
+
+                    <div class="attendance-card group relative overflow-hidden rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+
+                        <div class="flex items-center justify-between gap-3">
+
+                            <div>
+
+                                <p class="text-xs sm:text-sm font-medium attendance-muted">
+
+                                    {{ $stat['label'] }}
+
+                                </p>
+
+                                <p class="mt-2 text-xs sm:text-sm font-bold tracking-tight">
+
+                                    {{ $stat['value'] }}
+
+                                </p>
+
+                            </div>
+
+                            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl {{ $stat['bg'] }} {{ $stat['color'] }} transition-transform duration-300 group-hover:scale-110">
+
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+
+                                    {!! $stat['icon'] !!}
+
+                                </svg>
+
+                            </div>
+
+                        </div>
+
                     </div>
+
+                @endforeach
+
+            </section>
+
+            {{-- Filter --}}
+
+            <section class="attendance-card overflow-hidden rounded-2xl">
+
+                <div class="border-b px-5 py-4 sm:px-6 attendance-divider">
+
+                    <h2 class="text-sm sm:text-base font-semibold">Filter Absensi</h2>
+
                 </div>
 
                 <form
+
                     method="GET"
+
                     action="{{ route('student.attendance') }}"
-                    class="grid gap-4 p-5 sm:grid-cols-3"
+
+                    class="grid gap-5 p-5 sm:grid-cols-3 sm:p-6"
+
                 >
+
                     <div>
-                        <label
-                            for="status"
-                            class="mb-2 block text-sm font-medium text-slate-700"
-                        >
+
+                        <label for="status" class="mb-2 block text-[13px] sm:text-sm font-semibold attendance-muted">
+
                             Status
+
                         </label>
 
                         <select
+
                             id="status"
+
                             name="status"
-                            class="block w-full border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-slate-950 focus:ring-1 focus:ring-slate-950"
+
+                            class="attendance-field w-full rounded-xl px-4 py-2.5 text-xs sm:text-sm outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+
                         >
+
                             <option value="">Semua Status</option>
-                            <option value="present" @selected(request('status') === 'present')>
-                                Hadir
-                            </option>
-                            <option value="permission" @selected(request('status') === 'permission')>
-                                Izin
-                            </option>
-                            <option value="sick" @selected(request('status') === 'sick')>
-                                Sakit
-                            </option>
-                            <option value="absent" @selected(request('status') === 'absent')>
-                                Alpa
-                            </option>
+
+                            <option value="present" @selected(request('status') === 'present')>Hadir</option>
+
+                            <option value="permission" @selected(request('status') === 'permission')>Izin</option>
+
+                            <option value="sick" @selected(request('status') === 'sick')>Sakit</option>
+
+                            <option value="absent" @selected(request('status') === 'absent')>Alpa</option>
+
                         </select>
+
                     </div>
 
                     <div>
-                        <label
-                            for="month"
-                            class="mb-2 block text-sm font-medium text-slate-700"
-                        >
+
+                        <label for="month" class="mb-2 block text-[13px] sm:text-sm font-semibold attendance-muted">
+
                             Bulan
+
                         </label>
 
                         <select
+
                             id="month"
+
                             name="month"
-                            class="block w-full border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-slate-950 focus:ring-1 focus:ring-slate-950"
+
+                            class="attendance-field w-full rounded-xl px-4 py-2.5 text-xs sm:text-sm outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+
                         >
+
                             <option value="">Semua Bulan</option>
 
                             @foreach ([
-                                1 => 'Januari',
-                                2 => 'Februari',
-                                3 => 'Maret',
-                                4 => 'April',
-                                5 => 'Mei',
-                                6 => 'Juni',
-                                7 => 'Juli',
-                                8 => 'Agustus',
-                                9 => 'September',
-                                10 => 'Oktober',
-                                11 => 'November',
-                                12 => 'Desember',
+
+                                1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+
+                                5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+
+                                9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember',
+
                             ] as $number => $monthName)
+
                                 <option
+
                                     value="{{ $number }}"
+
                                     @selected((string) request('month') === (string) $number)
+
                                 >
+
                                     {{ $monthName }}
+
                                 </option>
+
                             @endforeach
+
                         </select>
+
                     </div>
 
                     <div>
-                        <label
-                            for="year"
-                            class="mb-2 block text-sm font-medium text-slate-700"
-                        >
+
+                        <label for="year" class="mb-2 block text-[13px] sm:text-sm font-semibold attendance-muted">
+
                             Tahun
+
                         </label>
 
                         <select
+
                             id="year"
+
                             name="year"
-                            class="block w-full border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-slate-950 focus:ring-1 focus:ring-slate-950"
+
+                            class="attendance-field w-full rounded-xl px-4 py-2.5 text-xs sm:text-sm outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+
                         >
+
                             <option value="">Semua Tahun</option>
 
                             @foreach (range(now()->year, now()->year - 5) as $year)
+
                                 <option
+
                                     value="{{ $year }}"
+
                                     @selected((string) request('year') === (string) $year)
+
                                 >
+
                                     {{ $year }}
+
                                 </option>
+
                             @endforeach
+
                         </select>
+
                     </div>
 
-                    <div class="flex items-end gap-2 sm:col-span-3">
+                    <div class="flex items-center gap-2 sm:col-span-3">
+
                         <button
+
                             type="submit"
-                            class="bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800"
+
+                            class="rounded-xl bg-blue-600 px-5 py-2.5 text-[13px] sm:text-sm font-semibold text-white transition hover:bg-blue-700"
+
                         >
+
                             Terapkan Filter
+
                         </button>
 
                         <a
+
                             href="{{ route('student.attendance') }}"
-                            class="border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+
+                            class="attendance-field rounded-xl px-5 py-2.5 text-[13px] sm:text-sm font-medium transition hover:opacity-80"
+
                         >
+
                             Reset
+
                         </a>
+
                     </div>
+
                 </form>
+
             </section>
 
-            <section class="border border-slate-200 bg-white">
-                <div class="border-b border-slate-200 px-5 py-4">
-                    <h2 class="text-sm font-semibold text-slate-950">
-                        Riwayat Kehadiran
-                    </h2>
+            {{-- Riwayat kehadiran --}}
 
-                    <p class="mt-1 text-xs text-slate-500">
-                        Daftar kehadiran berdasarkan data yang tercatat.
-                    </p>
+            <section class="attendance-card overflow-hidden rounded-2xl">
+
+                <div class="border-b px-5 py-4 sm:px-6 attendance-divider">
+
+                    <h2 class="text-sm sm:text-base font-semibold">Riwayat Kehadiran</h2>
+
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="border-b border-slate-200 bg-slate-50">
-                            <tr>
-                                <th class="whitespace-nowrap px-5 py-3 font-medium text-slate-500">
+
+                    <table class="w-full text-left text-xs sm:text-sm">
+
+                        <thead class="attendance-table-head">
+
+                            <tr class="border-b attendance-divider">
+
+                                <th class="whitespace-nowrap px-5 py-3.5 text-xs sm:text-sm font-semibold attendance-muted sm:px-6">
+
                                     Tanggal
-                                </th>
 
-                                <th class="whitespace-nowrap px-5 py-3 font-medium text-slate-500">
+                                </th >
+
+                                <th class="whitespace-nowrap px-5 py-3.5 text-xs sm:text-sm font-semibold attendance-muted sm:px-6">
+
                                     Mata Pelajaran
+
                                 </th>
 
-                                <th class="whitespace-nowrap px-5 py-3 font-medium text-slate-500">
-                                    Kelas
-                                </th>
+                                <th class="whitespace-nowrap px-5 py-3.5 text-xs sm:text-sm font-semibold attendance-muted sm:px-6">
 
-                                <th class="whitespace-nowrap px-5 py-3 font-medium text-slate-500">
                                     Status
+
                                 </th>
 
-                                <th class="whitespace-nowrap px-5 py-3 font-medium text-slate-500">
-                                    Catatan
-                                </th>
                             </tr>
+
                         </thead>
 
-                        <tbody class="divide-y divide-slate-100">
-                            @forelse ($attendances as $attendance)
-                                <tr class="transition hover:bg-slate-50">
-                                    <td class="whitespace-nowrap px-5 py-4 text-slate-700">
-                                        {{ $attendance->date->translatedFormat('d F Y') }}
-                                    </td>
+                        <tbody>
 
-                                    <td class="whitespace-nowrap px-5 py-4">
-                                        <span class="font-medium text-slate-900">
-                                            {{ $attendance->schedule->subject ?? '-' }}
-                                        </span>
-                                    </td>
+                            <!-- Baris tabel riwayat -->
 
-                                    <td class="whitespace-nowrap px-5 py-4 text-slate-600">
-                                        {{ $attendance->schedule->classRoom->name ?? '-' }}
-                                    </td>
-
-                                    <td class="whitespace-nowrap px-5 py-4">
-                                        <span class="{{ match ($attendance->status) {
-                                            'present' => 'bg-emerald-50 text-emerald-700',
-                                            'permission' => 'bg-blue-50 text-blue-700',
-                                            'sick' => 'bg-amber-50 text-amber-700',
-                                            default => 'bg-red-50 text-red-700',
-                                        } }} rounded-full px-2.5 py-1 text-xs font-medium">
-                                            {{ match ($attendance->status) {
-                                                'present' => 'Hadir',
-                                                'permission' => 'Izin',
-                                                'sick' => 'Sakit',
-                                                default => 'Alpa',
-                                            } }}
-                                        </span>
-                                    </td>
-
-                                    <td class="max-w-xs px-5 py-4 text-slate-500">
-                                        {{ $attendance->notes ?: '-' }}
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td
-                                        colspan="5"
-                                        class="px-5 py-12 text-center"
-                                    >
-                                        <p class="text-sm font-medium text-slate-700">
-                                            Belum ada data absensi
-                                        </p>
-
-                                        <p class="mt-1 text-sm text-slate-500">
-                                            Riwayat kehadiran akan muncul setelah data absensi dicatat.
-                                        </p>
-                                    </td>
-                                </tr>
-                            @endforelse
                         </tbody>
+
                     </table>
+
                 </div>
 
-                @if ($attendances->hasPages())
-                    <div class="border-t border-slate-200 px-5 py-4">
-                        {{ $attendances->links() }}
-                    </div>
-                @endif
             </section>
-        </div>
-    </main>
+
+        </main>
+
+    </div>
+
 </body>
+
 </html>

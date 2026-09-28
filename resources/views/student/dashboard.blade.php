@@ -1,3 +1,15 @@
+@php
+    $billTotal = max((int) $sppStats['total'], 1);
+    $paidPct = min(100, max(0, round($sppStats['paid'] / $billTotal * 100)));
+    $circ = 2 * M_PI * 52;
+    $cards = [
+        ['Total tagihan', $sppStats['total'], 'Tagihan SPP kamu', 'bg-slate-900 text-white', 'M3 4h18v16H3zM3 9h18M7 14h4'],
+        ['Lunas', $sppStats['paid'], 'Pembayaran berhasil', 'bg-emerald-600 text-white', 'm5 12 4 4L19 6'],
+        ['Belum lunas', $sppStats['unpaid'], 'Perlu dibayar', 'bg-amber-500 text-white', 'M12 8v4m0 4h.01M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.7 3.86a2 2 0 0 0-3.4 0'],
+        ['Menunggu', $sppStats['pending'], 'Sedang diproses', 'bg-sky-600 text-white', 'M12 8v4l3 2m6-2a9 9 0 1 1-18 0 9 9 0 0 1 18 0'],
+    ];
+@endphp
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -7,405 +19,154 @@
 
     <title>{{ config('app.name', 'Bimbel') }} — Dashboard Siswa</title>
 
+    {{-- Favicon Responsif --}}
+    <link rel="icon" type="image/x-icon" href="{{ asset('image/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('image/favicon-16x16.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('image/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="48x48" href="{{ asset('image/favicon-48x48.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('image/favicon-180x180.png') }}">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+<body
+    class="min-h-screen antialiased"
+    style="background-color: var(--student-topbar, #F6F6F6); color: var(--student-text, #1f2937);"
+>
+    <x-student-sidebar />
+    <div class="min-h-screen lg:pl-64">
+        <x-student-topbar :student="$student" title="Dashboard Siswa" />
 
-<body class="min-h-screen bg-slate-50 text-slate-950 antialiased">
-    <div class="min-h-screen">
-        <header class="sticky top-0 z-30 border-b border-slate-200 bg-white">
-            <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-                <a href="{{ route('student.dashboard') }}" class="flex items-center gap-3">
-                    <div class="flex h-8 w-8 items-center justify-center rounded-md bg-slate-950 text-sm font-bold text-white">
-                        B
-                    </div>
-
+        <main class="mx-auto w-full max-w-7xl space-y-4 px-4 py-5 pb-8 sm:px-6 lg:px-8">
+            <section class="relative overflow-hidden rounded-2xl bg-blue-950 p-4 text-white sm:p-5">
+                <div class="pointer-events-none absolute -bottom-32 left-1/3 h-64 w-64 rounded-full bg-blue-500/20 blur-3xl"></div>
+                <div class="relative grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center lg:gap-6">
                     <div>
-                        <div class="text-sm font-semibold text-slate-950">
-                            Bimbel
+                        <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11px] text-blue-200 sm:text-xs">
+                            <span id="live-date">{{ now()->translatedFormat('l, d F Y') }}</span>
+                            <span class="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 font-medium tabular-nums text-white ring-1 ring-inset ring-white/15">
+                                <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                                <span id="live-clock">{{ now()->format('H:i:s') }}</span>
+                            </span>
                         </div>
-
-                        <div class="text-xs text-slate-500">
-                            Student Portal
-                        </div>
-                    </div>
-                </a>
-
-                <div class="flex items-center gap-4">
-                    <div class="hidden text-right sm:block">
-                        <div class="text-sm font-medium text-slate-900">
-                            {{ $student->name }}
-                        </div>
-
-                        <div class="text-xs text-slate-500">
-                            Siswa
+                        <h1 class="mt-2 text-lg font-semibold tracking-tight sm:mt-2.5 sm:text-xl">
+                            Halo, {{ \Illuminate\Support\Str::of($student->name)->before(' ') }}
+                        </h1>
+                        <p class="mt-1.5 max-w-md text-[10px] leading-relaxed text-blue-200 sm:mt-2 sm:text-[11px]">
+    Ada {{ $sppStats['unpaid'] }} tagihan SPP belum lunas dan {{ $sppStats['pending'] }} pembayaran yang sedang diproses.
+</p>
+                        <div class="mt-3 flex flex-wrap gap-2 sm:mt-4">
+                            <a href="{{ route('student.spp') }}" class="rounded-lg bg-blue-600 px-2.5 py-1.5 text-[11px] font-semibold text-white transition hover:bg-blue-500">Lihat SPP</a>
+                            <a href="{{ route('student.attendance') }}" class="rounded-lg bg-white/10 px-2.5 py-1.5 text-[11px] font-semibold text-white ring-1 ring-inset ring-white/20 transition hover:bg-white/20">Lihat absensi</a>
                         </div>
                     </div>
-
-                    <div class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">
-                        {{ strtoupper(substr($student->name, 0, 1)) }}
+                    <div class="flex items-center gap-3 rounded-xl bg-white/5 p-3 ring-1 ring-inset ring-white/10 sm:gap-3.5">
+                        <div class="relative h-16 w-16 shrink-0 sm:h-20 sm:w-20">
+                            <svg viewBox="0 0 120 120" class="h-full w-full -rotate-90" role="img" aria-label="SPP lunas {{ $paidPct }} persen">
+                                <circle cx="60" cy="60" r="52" fill="none" stroke="rgb(255 255 255 / .12)" stroke-width="10"/>
+                                <circle cx="60" cy="60" r="52" fill="none" stroke="#34d399" stroke-width="10" stroke-linecap="round" stroke-dasharray="{{ $circ }}" stroke-dashoffset="{{ $circ * (1 - $paidPct / 100) }}"/>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span class="text-sm font-bold tabular-nums sm:text-base">{{ $paidPct }}%</span>
+                                <span class="text-[8px] text-blue-200 sm:text-[9px]">lunas</span>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-blue-200 sm:text-[11px]">SPP yang sudah dibayar</p>
+                            <p class="mt-0.5 text-xs font-bold tabular-nums sm:text-sm">Rp {{ number_format($sppStats['paidAmount'], 0, ',', '.') }}</p>
+                            <p class="mt-1 text-[10px] text-blue-200 sm:text-[11px]">{{ $sppStats['paid'] }} dari {{ $sppStats['total'] }} tagihan</p>
+                        </div>
                     </div>
-
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-
-                        <button
-                            type="submit"
-                            class="text-sm font-medium text-slate-500 transition hover:text-slate-950"
-                        >
-                            Keluar
-                        </button>
-                    </form>
                 </div>
-            </div>
-        </header>
+            </section>
 
-        <main class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-            <div class="space-y-8">
-                <section>
-                    <p class="text-sm font-medium text-slate-500">
-                        Student Portal
-                    </p>
-
-                    <h1 class="mt-1 text-2xl font-semibold tracking-tight text-slate-950">
-                        Selamat datang, {{ $student->name }}
-                    </h1>
-
-                    <p class="mt-1 text-sm text-slate-500">
-                        Pantau informasi kelas dan pembayaran SPP kamu di sini.
-                    </p>
-                </section>
-
-                <section class="border border-slate-200 bg-white p-5 sm:p-6">
-                    <div class="flex flex-col gap-5 sm:flex-row sm:items-center">
-                        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-slate-100 text-lg font-semibold text-slate-700">
-                            {{ strtoupper(substr($student->name, 0, 1)) }}
+            <section class="grid grid-cols-2 gap-2.5 sm:gap-3 xl:grid-cols-4">
+                @foreach ($cards as [$label, $value, $hint, $tone, $icon])
+                    <div class="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white p-3 transition hover:border-slate-300 hover:shadow-sm">
+                        <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl {{ $tone }} sm:h-9 sm:w-9">
+                            <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ $icon }}"/></svg>
                         </div>
-
-                        <div class="min-w-0 flex-1">
-                            <h2 class="text-lg font-semibold text-slate-950">
-                                {{ $student->name }}
-                            </h2>
-
-                            <div class="mt-2 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-500">
-                                <span>
-                                    NIS:
-                                    <span class="font-medium text-slate-700">
-                                        {{ $student->identity_number }}
-                                    </span>
-                                </span>
-
-                                <span>
-                                    Kelas:
-                                    <span class="font-medium text-slate-700">
-                                        {{ $student->classRoom->name ?? '-' }}
-                                    </span>
-                                </span>
-
-                                <span>
-                                    Status:
-                                    <span class="font-medium {{ $student->status === 'active' ? 'text-emerald-600' : 'text-slate-500' }}">
-                                        {{ $student->status === 'active' ? 'Aktif' : 'Tidak Aktif' }}
-                                    </span>
-                                </span>
-                            </div>
+                        <div class="min-w-0">
+                            <p class="text-[10px] text-slate-500 sm:text-[11px]">{{ $label }}</p>
+                            <p class="text-base font-bold tracking-tight text-slate-900 sm:text-lg">{{ $value }}</p>
+                            <p class="truncate text-[9px] text-slate-400 sm:text-[10px]">{{ $hint }}</p>
                         </div>
                     </div>
-                </section>
+                @endforeach
+            </section>
 
-                <section>
-                    <div class="mb-4">
-                        <h2 class="text-lg font-semibold text-slate-950">
-                            Ringkasan SPP
-                        </h2>
-
-                        <p class="mt-1 text-sm text-slate-500">
-                            Status pembayaran tagihan SPP kamu.
-                        </p>
+            <section class="grid gap-4 xl:grid-cols-[2fr_1fr]">
+                <div class="self-start rounded-xl border border-slate-200 bg-white">
+                    <div class="flex items-center justify-between px-4 pb-2.5 pt-3.5 sm:px-5 sm:pt-4">
+                        <div>
+                            <h2 class="text-[11px] font-bold text-slate-900 sm:text-xs">Tagihan SPP terakhir</h2>
+                            <p class="text-[10px] text-slate-500 sm:text-[11px]">Informasi pembayaran terbaru</p>
+                        </div>
+                        <a href="{{ route('student.spp') }}" class="rounded-lg px-2.5 py-1.5 text-[10px] font-medium text-blue-600 transition hover:bg-blue-50 sm:text-[11px]">Lihat semua</a>
                     </div>
-
-                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                        <div class="border border-slate-200 bg-white p-5">
-                            <p class="text-sm font-medium text-slate-500">
-                                Total Tagihan
-                            </p>
-
-                            <p class="mt-2 text-2xl font-semibold text-slate-950">
-                                {{ $sppStats['total'] }}
-                            </p>
-                        </div>
-
-                        <div class="border border-emerald-200 bg-emerald-50 p-5">
-                            <p class="text-sm font-medium text-emerald-700">
-                                Lunas
-                            </p>
-
-                            <p class="mt-2 text-2xl font-semibold text-emerald-800">
-                                {{ $sppStats['paid'] }}
-                            </p>
-
-                            <p class="mt-1 text-xs text-emerald-700">
-                                Rp {{ number_format($sppStats['paidAmount'], 0, ',', '.') }}
-                            </p>
-                        </div>
-
-                        <div class="border border-amber-200 bg-amber-50 p-5">
-                            <p class="text-sm font-medium text-amber-700">
-                                Belum Lunas
-                            </p>
-
-                            <p class="mt-2 text-2xl font-semibold text-amber-800">
-                                {{ $sppStats['unpaid'] }}
-                            </p>
-
-                            <p class="mt-1 text-xs text-amber-700">
-                                Rp {{ number_format($sppStats['unpaidAmount'], 0, ',', '.') }}
-                            </p>
-                        </div>
-
-                        <div class="border border-blue-200 bg-blue-50 p-5">
-                            <p class="text-sm font-medium text-blue-700">
-                                Menunggu
-                            </p>
-
-                            <p class="mt-2 text-2xl font-semibold text-blue-800">
-                                {{ $sppStats['pending'] }}
-                            </p>
-
-                            <p class="mt-1 text-xs text-blue-700">
-                                Pembayaran diproses
-                            </p>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
-                    <div class="border border-slate-200 bg-white">
-                        <div class="border-b border-slate-200 px-5 py-4">
-                            <h2 class="text-sm font-semibold text-slate-950">
-                                Tagihan SPP Terakhir
-                            </h2>
-
-                            <p class="mt-1 text-xs text-slate-500">
-                                Informasi tagihan terbaru.
-                            </p>
-                        </div>
-
-                        @if ($latestSppBill)
-                            <div class="p-5">
-                                <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-                                    <div>
-                                        <p class="text-sm text-slate-500">
-                                            Periode
-                                        </p>
-
-                                        <p class="mt-1 text-lg font-semibold text-slate-950">
-                                            {{ $latestSppBill->period }}
-                                        </p>
-                                    </div>
-
-                                    <span class="{{ match ($latestSppBill->status) {
-                                        'paid' => 'bg-emerald-50 text-emerald-700',
-                                        'pending' => 'bg-blue-50 text-blue-700',
-                                        'failed' => 'bg-red-50 text-red-700',
-                                        'expired' => 'bg-slate-100 text-slate-600',
-                                        default => 'bg-amber-50 text-amber-700',
-                                    } }} rounded-full px-2.5 py-1 text-xs font-medium">
-                                        {{ match ($latestSppBill->status) {
-                                            'paid' => 'Lunas',
-                                            'pending' => 'Menunggu Pembayaran',
-                                            'failed' => 'Gagal',
-                                            'expired' => 'Expired',
-                                            default => 'Belum Lunas',
-                                        } }}
-                                    </span>
+                    @if ($latestSppBill)
+                        <div class="border-t border-slate-100 p-4 sm:p-5">
+                            <div class="flex flex-wrap items-start justify-between gap-4">
+                                <div>
+                                    <p class="text-[11px] text-slate-500">Periode</p>
+                                    <p class="mt-1 text-sm font-semibold text-slate-900 sm:text-base">{{ $latestSppBill->period }}</p>
                                 </div>
-
-                                <div class="mt-6 border-t border-slate-100 pt-5">
-                                    <p class="text-sm text-slate-500">
-                                        Jumlah Tagihan
-                                    </p>
-
-                                    <p class="mt-1 text-2xl font-semibold text-slate-950">
-                                        Rp {{ number_format($latestSppBill->amount, 0, ',', '.') }}
-                                    </p>
-                                </div>
-
-                                @if ($latestSppBill->paid_at)
-                                    <div class="mt-4 text-sm text-slate-500">
-                                        Dibayar pada
-                                        <span class="font-medium text-slate-700">
-                                            {{ $latestSppBill->paid_at->translatedFormat('d F Y, H:i') }}
-                                        </span>
-                                    </div>
-                                @endif
+                                <span class="{{ match ($latestSppBill->status) {
+                                    'paid' => 'bg-emerald-50 text-emerald-700',
+                                    'pending' => 'bg-sky-50 text-sky-700',
+                                    'failed' => 'bg-rose-50 text-rose-700',
+                                    'expired' => 'bg-slate-100 text-slate-600',
+                                    default => 'bg-amber-50 text-amber-700',
+                                } }} rounded-full px-2.5 py-1 text-[9px] font-semibold sm:text-[10px]">
+                                    {{ match ($latestSppBill->status) {
+                                        'paid' => 'Lunas',
+                                        'pending' => 'Menunggu pembayaran',
+                                        'failed' => 'Gagal',
+                                        'expired' => 'Kedaluwarsa',
+                                        default => 'Belum lunas',
+                                    } }}
+                                </span>
                             </div>
-                        @else
-                            <div class="px-5 py-12 text-center">
-                                <p class="text-sm font-medium text-slate-700">
-                                    Belum ada tagihan SPP
-                                </p>
-
-                                <p class="mt-1 text-sm text-slate-500">
-                                    Data tagihan SPP kamu akan muncul di sini.
-                                </p>
+                            <div class="mt-4 border-t border-slate-100 pt-3.5">
+                                <p class="text-[11px] text-slate-500">Jumlah tagihan</p>
+                                <p class="mt-1 text-lg font-bold tabular-nums text-slate-900 sm:text-xl">Rp {{ number_format($latestSppBill->amount, 0, ',', '.') }}</p>
                             </div>
-                        @endif
-                    </div>
-
-                    <div class="border border-slate-200 bg-white">
-                        <div class="border-b border-slate-200 px-5 py-4">
-                            <h2 class="text-sm font-semibold text-slate-950">
-                                Informasi Siswa
-                            </h2>
-
-                            <p class="mt-1 text-xs text-slate-500">
-                                Data akademik kamu.
-                            </p>
+                            @if ($latestSppBill->paid_at)
+                                <p class="mt-2.5 text-[11px] text-slate-500">Dibayar pada <span class="font-medium text-slate-700">{{ $latestSppBill->paid_at->translatedFormat('d F Y, H:i') }}</span></p>
+                            @endif
                         </div>
+                    @else
+                        <div class="border-t border-slate-100 px-4 py-7 text-center sm:px-5"><p class="text-[11px] text-slate-500">Belum ada tagihan SPP.</p></div>
+                    @endif
+                </div>
 
-                        <div class="divide-y divide-slate-100">
-                            <div class="flex items-center justify-between gap-4 px-5 py-4">
-                                <span class="text-sm text-slate-500">
-                                    Nama
-                                </span>
-
-                                <span class="text-right text-sm font-medium text-slate-900">
-                                    {{ $student->name }}
-                                </span>
-                            </div>
-
-                            <div class="flex items-center justify-between gap-4 px-5 py-4">
-                                <span class="text-sm text-slate-500">
-                                    NIS
-                                </span>
-
-                                <span class="text-right text-sm font-medium text-slate-900">
-                                    {{ $student->identity_number }}
-                                </span>
-                            </div>
-
-                            <div class="flex items-center justify-between gap-4 px-5 py-4">
-                                <span class="text-sm text-slate-500">
-                                    Kelas
-                                </span>
-
-                                <span class="text-right text-sm font-medium text-slate-900">
-                                    {{ $student->classRoom->name ?? '-' }}
-                                </span>
-                            </div>
-
-                            <div class="flex items-center justify-between gap-4 px-5 py-4">
-                                <span class="text-sm text-slate-500">
-                                    Status
-                                </span>
-
-                                <span class="text-right text-sm font-medium {{ $student->status === 'active' ? 'text-emerald-600' : 'text-slate-500' }}">
-                                    {{ $student->status === 'active' ? 'Aktif' : 'Tidak Aktif' }}
-                                </span>
-                            </div>
-                        </div>
+                <div class="self-start rounded-xl border border-slate-200 bg-white">
+                    <div class="border-b border-slate-100 px-4 py-3.5 sm:px-5"><h2 class="text-[11px] font-bold text-slate-900 sm:text-xs">Informasi siswa</h2></div>
+                    <div class="divide-y divide-slate-100">
+                        <div class="flex items-center justify-between gap-3 px-4 py-2.5 sm:px-5"><span class="text-[11px] text-slate-500">Nama</span><span class="text-right text-[11px] font-medium text-slate-900">{{ $student->name }}</span></div>
+                        <div class="flex items-center justify-between gap-3 px-4 py-2.5 sm:px-5"><span class="text-[11px] text-slate-500">NIS</span><span class="text-right text-[11px] font-medium text-slate-900">{{ $student->identity_number }}</span></div>
+                        <div class="flex items-center justify-between gap-3 px-4 py-2.5 sm:px-5"><span class="text-[11px] text-slate-500">Kelas</span><span class="text-right text-[11px] font-medium text-slate-900">{{ $student->classRoom->name ?? '-' }}</span></div>
+                        <div class="flex items-center justify-between gap-3 px-4 py-2.5 sm:px-5"><span class="text-[11px] text-slate-500">Status</span><span class="text-right text-[11px] font-semibold {{ $student->status === 'active' ? 'text-emerald-600' : 'text-slate-500' }}">{{ $student->status === 'active' ? 'Aktif' : 'Tidak aktif' }}</span></div>
                     </div>
-                </section>
-
-                <section class="border border-slate-200 bg-white">
-                    <div class="border-b border-slate-200 px-5 py-4">
-                        <h2 class="text-sm font-semibold text-slate-950">
-                            Menu Siswa
-                        </h2>
-
-                        <p class="mt-1 text-xs text-slate-500">
-                            Akses fitur student portal.
-                        </p>
-                    </div>
-
-                    <div class="grid gap-px bg-slate-200 sm:grid-cols-3">
-                        <a
-                            href="{{ route('student.profile') }}"
-                            class="bg-white p-5 transition hover:bg-slate-50"
-                        >
-                            <div class="flex h-9 w-9 items-center justify-center rounded-md bg-slate-100 text-slate-600">
-                                <svg
-                                    class="h-4 w-4"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                >
-                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                                    <circle cx="9" cy="7" r="4"/>
-                                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                                </svg>
-                            </div>
-
-                            <h3 class="mt-4 text-sm font-semibold text-slate-900">
-                                Profil
-                            </h3>
-
-                            <p class="mt-1 text-sm text-slate-500">
-                                Kelola informasi profil siswa.
-                            </p>
-                        </a>
-
-                        <a
-                            href="{{ route('student.attendance') }}"
-                            class="bg-white p-5 transition hover:bg-slate-50"
-                        >
-                            <div class="flex h-9 w-9 items-center justify-center rounded-md bg-slate-100 text-slate-600">
-                                <svg
-                                    class="h-4 w-4"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                >
-                                    <rect x="3" y="4" width="18" height="18" rx="2"/>
-                                    <path d="M16 2v4"/>
-                                    <path d="M8 2v4"/>
-                                    <path d="M3 10h18"/>
-                                </svg>
-                            </div>
-
-                            <h3 class="mt-4 text-sm font-semibold text-slate-900">
-                                Absensi
-                            </h3>
-
-                            <p class="mt-1 text-sm text-slate-500">
-                                Lihat riwayat kehadiran belajar.
-                            </p>
-                        </a>
-
-                        <a
-                            href="{{ route('student.spp') }}"
-                            class="bg-white p-5 transition hover:bg-slate-50"
-                        >
-                            <div class="flex h-9 w-9 items-center justify-center rounded-md bg-slate-100 text-slate-600">
-                                <svg
-                                    class="h-4 w-4"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                >
-                                    <rect x="3" y="4" width="18" height="16" rx="2"/>
-                                    <path d="M7 8h10"/>
-                                    <path d="M7 12h10"/>
-                                    <path d="M7 16h6"/>
-                                </svg>
-                            </div>
-
-                            <h3 class="mt-4 text-sm font-semibold text-slate-900">
-                                SPP
-                            </h3>
-
-                            <p class="mt-1 text-sm text-slate-500">
-                                Lihat tagihan dan riwayat pembayaran.
-                            </p>
-                        </a>
-                    </div>
-                </section>
-            </div>
+                </div>
+            </section>
         </main>
     </div>
+
+    <script>
+    (() => {
+        const dateEl = document.getElementById('live-date');
+        const clockEl = document.getElementById('live-clock');
+        if (!dateEl || !clockEl) return;
+        const dateFormat = new Intl.DateTimeFormat('id-ID', { weekday:'long', day:'2-digit', month:'long', year:'numeric' });
+        const timeFormat = new Intl.DateTimeFormat('en-GB', { hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false });
+        function tick() {
+            const current = new Date();
+            dateEl.textContent = dateFormat.format(current);
+            clockEl.textContent = timeFormat.format(current);
+        }
+        tick();
+        setInterval(tick, 1000);
+    })();
+    </script>
 </body>
 </html>

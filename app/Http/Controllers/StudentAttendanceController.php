@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Attendance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -10,18 +10,12 @@ class StudentAttendanceController extends Controller
 {
     public function index(Request $request)
     {
-        /** @var User $user */
         $user = Auth::user();
 
         $student = $user->student()->firstOrFail();
 
-        $query = $student->attendances()
-            ->with('schedule.classRoom')
-            ->latest('date');
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
+        $query = Attendance::with('schedule.classRoom')
+            ->where('student_id', $student->id);
 
         if ($request->filled('month')) {
             $query->whereMonth('date', $request->month);
@@ -32,20 +26,29 @@ class StudentAttendanceController extends Controller
         }
 
         $attendances = $query
-            ->paginate(10)
-            ->withQueryString();
+            ->orderByDesc('date')
+            ->orderByDesc('id')
+            ->get();
 
-        $attendanceStats = [
-            'total' => $student->attendances()->count(),
-            'present' => $student->attendances()->where('status', 'present')->count(),
-            'permission' => $student->attendances()->where('status', 'permission')->count(),
-            'sick' => $student->attendances()->where('status', 'sick')->count(),
-            'absent' => $student->attendances()->where('status', 'absent')->count(),
+        $stats = [
+            'total' => $attendances->count(),
+            'present' => $attendances->where('status', 'present')->count(),
+            'permission' => $attendances->where('status', 'permission')->count(),
+            'sick' => $attendances->where('status', 'sick')->count(),
+            'absent' => $attendances->where('status', 'absent')->count(),
         ];
 
-        return view(
-            'student.attendance',
-            compact('student', 'attendances', 'attendanceStats')
-        );
+        $years = Attendance::where('student_id', $student->id)
+            ->selectRaw('YEAR(date) as year')
+            ->distinct()
+            ->orderByDesc('year')
+            ->pluck('year');
+
+        return view('student.attendance', compact(
+            'student',
+            'attendances',
+            'stats',
+            'years'
+        ));
     }
 }

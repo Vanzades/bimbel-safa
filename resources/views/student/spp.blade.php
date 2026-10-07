@@ -1,139 +1,176 @@
 <!DOCTYPE html>
-
-<html lang="{{ str_replace('\_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-
     <meta charset="utf-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Bimbel') }} — SPP Siswa</title>
+    <title>{{ config('app.name', 'Bimbel') }} - SPP Siswa</title>
 
     {{-- Favicon Responsif --}}
-
     <link rel="icon" type="image/x-icon" href="{{ asset('image/favicon.ico') }}">
-
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('image/favicon-16x16.png') }}">
-
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('image/favicon-32x32.png') }}">
-
     <link rel="icon" type="image/png" sizes="48x48" href="{{ asset('image/favicon-48x48.png') }}">
-
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('image/favicon-180x180.png') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-
         .student-page {
-
             min-height: 100vh;
-
             background: var(--student-topbar, #F6F6F6);
-
             color: var(--student-text, #1f2937);
-
         }
 
         .student-card {
-
             border: 1px solid var(--student-border, #e5e7eb);
-
             background: var(--student-surface, #fff);
-
             box-shadow: 0 4px 20px var(--student-shadow, rgba(15, 23, 42, .08));
-
         }
 
         .student-field {
-
             border: 1px solid var(--student-border, #e5e7eb);
-
             background: var(--student-soft, #f6f7f9);
-
             color: var(--student-text, #1f2937);
-
         }
 
         .student-muted {
-
             color: var(--student-muted, #64748b);
-
         }
 
         .student-divider {
-
             border-color: var(--student-border, #e5e7eb);
-
         }
 
         .student-table-head {
-
             background: var(--student-soft, #f6f7f9);
+        }
 
+        .student-row {
+            transition: background-color .15s ease;
         }
 
         .student-row:hover {
-
             background: var(--student-hover, rgba(15, 23, 42, .055));
-
         }
 
-        .spp-badge-paid { background: #059669; color: #fff; }
-
-        .spp-badge-pending { background: #2563eb; color: #fff; }
-
-        .spp-badge-failed { background: #dc2626; color: #fff; }
-
-        .spp-badge-expired { background: #64748b; color: #fff; }
-
-        .spp-badge-unpaid { background: #d97706; color: #fff; }
-
-        html[data-student-theme="dark"] .spp-badge-paid {
-
-            background: rgba(16, 185, 129, .18);
-
-            color: #6ee7b7;
-
+        .student-row:last-child {
+            border-bottom: 0;
         }
 
-        html[data-student-theme="dark"] .spp-badge-pending {
+        /* Kartu statistik */
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
 
-            background: rgba(59, 130, 246, .18);
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
 
+        .stat-icon {
+            display: inline-flex;
+            height: 2rem;
+            width: 2rem;
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+        }
+
+        .stat-icon svg {
+            height: 1rem;
+            width: 1rem;
+        }
+
+        .tone-total   { color: var(--student-muted, #64748b); }
+        .tone-paid    { color: #059669; }
+        .tone-unpaid  { color: #d97706; }
+        .tone-pending { color: #2563eb; }
+
+        .stat-icon.tone-total   { background: rgba(100, 116, 139, .12); }
+        .stat-icon.tone-paid    { background: rgba(16, 185, 129, .12); }
+        .stat-icon.tone-unpaid  { background: rgba(245, 158, 11, .14); }
+        .stat-icon.tone-pending { background: rgba(37, 99, 235, .12); }
+
+        html[data-student-theme="dark"] .tone-paid    { color: #6ee7b7; }
+        html[data-student-theme="dark"] .tone-unpaid  { color: #fcd34d; }
+        html[data-student-theme="dark"] .tone-pending { color: #93c5fd; }
+
+        /* Badge status (lembut + titik penanda) */
+        .spp-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+
+        .spp-badge::before {
+            content: "";
+            height: 6px;
+            width: 6px;
+            border-radius: 999px;
+            background: currentColor;
+        }
+
+        .spp-badge-paid    { background: #d1fae5; color: #047857; }
+        .spp-badge-pending { background: #dbeafe; color: #1d4ed8; }
+        .spp-badge-failed  { background: #fee2e2; color: #b91c1c; }
+        .spp-badge-expired { background: #e2e8f0; color: #475569; }
+        .spp-badge-unpaid  { background: #fef3c7; color: #b45309; }
+
+        html[data-student-theme="dark"] .spp-badge-paid    { background: rgba(16, 185, 129, .18); color: #6ee7b7; }
+        html[data-student-theme="dark"] .spp-badge-pending { background: rgba(59, 130, 246, .18); color: #93c5fd; }
+        html[data-student-theme="dark"] .spp-badge-failed  { background: rgba(239, 68, 68, .18); color: #fca5a5; }
+        html[data-student-theme="dark"] .spp-badge-expired { background: rgba(148, 163, 184, .16); color: #cbd5e1; }
+        html[data-student-theme="dark"] .spp-badge-unpaid  { background: rgba(245, 158, 11, .18); color: #fcd34d; }
+
+        /* Tombol biru tetap (tidak mengikuti variabel tema) */
+        .btn-blue {
+            background-color: #2563EB;
+            box-shadow: 0 3px 8px rgba(37, 99, 235, .25);
+            transition: filter .15s ease, transform .15s ease;
+        }
+
+        .btn-blue:hover {
+            filter: brightness(1.1);
+        }
+
+        .btn-blue:active {
+            transform: translateY(1px);
+        }
+
+        .btn-blue:focus-visible {
+            outline: 2px solid #93c5fd;
+            outline-offset: 2px;
+        }
+
+        /* Link Detail di tabel */
+        .detail-link {
+            color: #2563EB;
+            transition: background-color .15s ease;
+        }
+
+        .detail-link:hover {
+            background: rgba(37, 99, 235, .1);
+        }
+
+        html[data-student-theme="dark"] .detail-link {
             color: #93c5fd;
-
         }
 
-        html[data-student-theme="dark"] .spp-badge-failed {
-
-            background: rgba(239, 68, 68, .18);
-
-            color: #fca5a5;
-
+        .select-wrap select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
         }
-
-        html[data-student-theme="dark"] .spp-badge-expired {
-
-            background: rgba(148, 163, 184, .16);
-
-            color: #cbd5e1;
-
-        }
-
-        html[data-student-theme="dark"] .spp-badge-unpaid {
-
-            background: rgba(245, 158, 11, .18);
-
-            color: #fcd34d;
-
-        }
-
     </style>
-
 </head>
 
 <body class="min-h-screen antialiased">
@@ -144,372 +181,308 @@
 
         <x-student-topbar :student="$student" title="SPP" />
 
-        <main class="mx-auto w-full max-w-90rem px-4 py-4 pb-10 sm:px-6 lg:px-10 lg:py-6">
+        @php
+            $isFiltering = request()->filled('status') || request()->filled('year');
+
+            $totalBills = method_exists($sppBills, 'total') ? $sppBills->total() : $sppBills->count();
+
+            $th = 'whitespace-nowrap px-6 py-3.5 text-left text-xs sm:text-sm font-semibold uppercase tracking-wider student-muted';
+            $td = 'px-6 py-4 text-xs sm:text-sm';
+            $field = 'student-field box-border h-9 w-full rounded-lg pl-3 pr-9 text-xs sm:text-[13px] outline-none transition-colors duration-150 focus:border-blue-500 focus:ring-1 focus:ring-blue-500';
+        @endphp
+
+        <main class="mx-auto w-full max-w-90rem px-4 pt-4 pb-4 sm:px-6 lg:px-10 lg:pt-6 lg:pb-6">
 
             {{-- Breadcrumb --}}
-
             <nav
-
                 class="mb-3 flex items-center gap-1.5 text-[11px] font-medium sm:text-xs"
-
                 style="color: var(--student-muted, #64748b);"
-
                 aria-label="Breadcrumb"
-
             >
-
-                <a href="{{ route('student.dashboard') }}" class="hover:opacity-75">Dashboard</a>
+                <a href="{{ route('student.dashboard') }}" class="hover:opacity-85">Dashboard</a>
 
                 <svg class="h-2.5 w-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
-
                 </svg>
 
                 <span class="font-semibold" style="color: var(--student-text, #1f2937);">SPP</span>
-
             </nav>
 
             {{-- Judul --}}
+            <div class="mt-8 mb-12 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight sm:text-2xl">SPP</h1>
 
-            <div class="mb-8 mt-8 sm:mb-10">
-
-                <h1 class="text-xl font-bold tracking-tight sm:text-2xl">SPP</h1>
-
-                <p class="mt-1.5 text-xs sm:text-sm student-muted">
-
-                    Lihat tagihan dan riwayat pembayaran SPP kamu.
-
-                </p>
-
+                    <p class="mt-1.5 text-xs sm:text-sm student-muted">
+                        Lihat tagihan dan riwayat pembayaran SPP kamu.
+                    </p>
+                </div>
             </div>
 
             {{-- Ringkasan --}}
+            <section class="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 
-            <section class="mb-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div class="student-card stat-card rounded-2xl p-5">
+                    <div class="flex items-start justify-between gap-3">
+                        <p class="text-xs font-medium sm:text-sm student-muted">Total Tagihan</p>
 
-                <div class="student-card rounded-2xl p-5">
+                        <span class="stat-icon tone-total">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="3" y="5" width="18" height="14" rx="2"/>
+                                <path d="M3 10h18M7 15h3"/>
+                            </svg>
+                        </span>
+                    </div>
 
-                    <p class="text-xs sm:text-sm font-medium student-muted">Total Tagihan</p>
-
-                    <p class="mt-2 text-xs sm:text-sm font-bold">{{ $sppStats['total'] }}</p>
-
+                    <p class="mt-3 text-xl font-bold sm:text-2xl">{{ $sppStats['total'] }}</p>
+                    <p class="mt-1 text-[11px] sm:text-xs student-muted">Semua tagihan</p>
                 </div>
 
-                <div class="student-card rounded-2xl p-5">
+                <div class="student-card stat-card rounded-2xl p-5">
+                    <div class="flex items-start justify-between gap-3">
+                        <p class="text-xs font-medium sm:text-sm tone-paid">Lunas</p>
 
-                    <p class="text-xs sm:text-sm font-medium text-emerald-600 dark:text-emerald-400">Lunas</p>
+                        <span class="stat-icon tone-paid">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="12" cy="12" r="9"/>
+                                <path d="m8.5 12.5 2.5 2.5 4.5-5"/>
+                            </svg>
+                        </span>
+                    </div>
 
-                    <p class="mt-2 text-xs sm:text-sm font-bold">{{ $sppStats['paid'] }}</p>
-
+                    <p class="mt-3 text-xl font-bold sm:text-2xl">{{ $sppStats['paid'] }}</p>
                     <p class="mt-1 text-[11px] sm:text-xs student-muted">
-
                         Rp {{ number_format($sppStats['paidAmount'], 0, ',', '.') }}
-
                     </p>
-
                 </div>
 
-                <div class="student-card rounded-2xl p-5">
+                <div class="student-card stat-card rounded-2xl p-5">
+                    <div class="flex items-start justify-between gap-3">
+                        <p class="text-xs font-medium sm:text-sm tone-unpaid">Belum Lunas</p>
 
-                    <p class="text-xs sm:text-sm font-medium text-amber-600 dark:text-amber-400">Belum Lunas</p>
+                        <span class="stat-icon tone-unpaid">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="12" cy="12" r="9"/>
+                                <path d="M12 7v5l3 2"/>
+                            </svg>
+                        </span>
+                    </div>
 
-                    <p class="mt-2 text-xs sm:text-sm font-bold">{{ $sppStats['unpaid'] }}</p>
-
+                    <p class="mt-3 text-xl font-bold sm:text-2xl">{{ $sppStats['unpaid'] }}</p>
                     <p class="mt-1 text-[11px] sm:text-xs student-muted">
-
                         Rp {{ number_format($sppStats['unpaidAmount'], 0, ',', '.') }}
-
                     </p>
-
                 </div>
 
-                <div class="student-card rounded-2xl p-5">
+                <div class="student-card stat-card rounded-2xl p-5">
+                    <div class="flex items-start justify-between gap-3">
+                        <p class="text-xs font-medium sm:text-sm tone-pending">Menunggu</p>
 
-                    <p class="text-xs sm:text-sm font-medium text-blue-600 dark:text-blue-400">Menunggu</p>
+                        <span class="stat-icon tone-pending">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M6 3h12M6 21h12M7 3v4a5 5 0 0 0 2 4l1 1-1 1a5 5 0 0 0-2 4v4M17 3v4a5 5 0 0 1-2 4l-1 1 1 1a5 5 0 0 1 2 4v4"/>
+                            </svg>
+                        </span>
+                    </div>
 
-                    <p class="mt-2 text-xs sm:text-sm font-bold">{{ $sppStats['pending'] }}</p>
-
+                    <p class="mt-3 text-xl font-bold sm:text-2xl">{{ $sppStats['pending'] }}</p>
+                    <p class="mt-1 text-[11px] sm:text-xs student-muted">Menunggu pembayaran</p>
                 </div>
 
             </section>
 
-            {{-- Filter --}}
-
-            <section class="student-card mb-5 overflow-hidden rounded-2xl">
-
-                <div class="border-b px-5 py-4 sm:px-6 student-divider">
-
-                    <h2 class="text-sm sm:text-base font-semibold">Filter Tagihan</h2>
-
-                </div>
+            {{-- Card besar: toolbar filter + tabel --}}
+            <section class="student-card rounded-2xl p-5 shadow-sm sm:p-6">
 
                 <form
-
                     method="GET"
-
                     action="{{ route('student.spp') }}"
-
-                    class="grid gap-5 p-5 sm:grid-cols-3 sm:p-6"
-
+                    class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"
                 >
 
-                    <div>
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
 
-                        <label for="status" class="mb-2 block text-[13px] sm:text-sm font-semibold student-muted">
+                        <div class="select-wrap relative w-full sm:w-56 sm:shrink-0">
+                            <label for="status" class="sr-only">Status</label>
 
-                            Status
+                            <select id="status" name="status" class="{{ $field }}">
+                                <option value="">Semua Status</option>
+                                <option value="paid" @selected(request('status') === 'paid')>Lunas</option>
+                                <option value="unpaid" @selected(request('status') === 'unpaid')>Belum Lunas</option>
+                                <option value="pending" @selected(request('status') === 'pending')>Menunggu Pembayaran</option>
+                                <option value="failed" @selected(request('status') === 'failed')>Gagal</option>
+                                <option value="expired" @selected(request('status') === 'expired')>Expired</option>
+                            </select>
 
-                        </label>
+                            <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center student-muted">
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path d="m6 9 6 6 6-6"/>
+                                </svg>
+                            </span>
+                        </div>
 
-                        <select
+                        <div class="select-wrap relative w-full sm:w-36 sm:shrink-0">
+                            <label for="year" class="sr-only">Tahun</label>
 
-                            id="status"
+                            <select id="year" name="year" class="{{ $field }}">
+                                <option value="">Semua Tahun</option>
 
-                            name="status"
+                                @foreach ($years as $year)
+                                    <option
+                                        value="{{ $year }}"
+                                        @selected((string) request('year') === (string) $year)
+                                    >
+                                        {{ $year }}
+                                    </option>
+                                @endforeach
+                            </select>
 
-                            class="student-field w-full rounded-xl px-4 py-2.5 text-xs sm:text-sm outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-
-                        >
-
-                            <option value="">Semua Status</option>
-
-                            <option value="paid" @selected(request('status') === 'paid')>Lunas</option>
-
-                            <option value="unpaid" @selected(request('status') === 'unpaid')>Belum Lunas</option>
-
-                            <option value="pending" @selected(request('status') === 'pending')>Menunggu Pembayaran</option>
-
-                            <option value="failed" @selected(request('status') === 'failed')>Gagal</option>
-
-                            <option value="expired" @selected(request('status') === 'expired')>Expired</option>
-
-                        </select>
-
-                    </div>
-
-                    <div>
-
-                        <label for="year" class="mb-2 block text-[13px] sm:text-sm font-semibold student-muted">
-
-                            Tahun
-
-                        </label>
-
-                        <select
-
-                            id="year"
-
-                            name="year"
-
-                            class="student-field w-full rounded-xl px-4 py-2.5 text-xs sm:text-sm outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-
-                        >
-
-                            <option value="">Semua Tahun</option>
-
-                            @foreach ($years as $year)
-
-                                <option
-
-                                    value="{{ $year }}"
-
-                                    @selected((string) request('year') === (string) $year)
-
-                                >
-
-                                    {{ $year }}
-
-                                </option>
-
-                            @endforeach
-
-                        </select>
-
-                    </div>
-
-                    <div class="flex items-end gap-2">
+                            <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center student-muted">
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path d="m6 9 6 6 6-6"/>
+                                </svg>
+                            </span>
+                        </div>
 
                         <button
-
                             type="submit"
-
-                            class="rounded-xl px-5 py-2.5 text-[13px] sm:text-sm font-semibold text-white transition hover:brightness-110"
-
-                            style="background-color: var(--student-accent, #2563eb);"
-
+                            class="btn-blue inline-flex h-9 w-full shrink-0 items-center justify-center rounded-lg px-4 text-xs font-semibold text-white sm:w-auto sm:text-[13px]"
                         >
-
                             Terapkan
-
                         </button>
 
-                        <a
+                        @if ($isFiltering)
+                            <a
+                                href="{{ route('student.spp') }}"
+                                class="student-field inline-flex h-9 shrink-0 items-center justify-center rounded-lg px-3 text-xs font-medium transition-colors duration-150 hover:opacity-80 sm:text-[13px] student-muted"
+                            >
+                                Reset
+                            </a>
+                        @endif
 
-                            href="{{ route('student.spp') }}"
+                    </div>
 
-                            class="student-field rounded-xl px-5 py-2.5 text-[13px] sm:text-sm font-medium transition hover:opacity-80"
-
-                        >
-
-                            Reset
-
-                        </a>
-
+                    <div class="student-field inline-flex h-7 w-fit items-center rounded-full px-3 text-[11px] font-medium sm:text-xs student-muted">
+                        {{ $totalBills }} tagihan
                     </div>
 
                 </form>
 
-            </section>
+                <div class="student-divider overflow-hidden rounded-xl border">
 
-            {{-- Daftar tagihan --}}
+                    <div class="overflow-x-auto">
 
-            <section class="student-card overflow-hidden rounded-2xl">
+                        <table class="w-full min-w-900px border-collapse text-left">
 
-                <div class="border-b px-5 py-4 sm:px-6 student-divider">
-
-                    <h2 class="text-sm sm:text-base font-semibold">Daftar Tagihan SPP</h2>
-
-                </div>
-
-                <div class="overflow-x-auto">
-
-                    <table class="w-full text-left text-xs sm:text-sm">
-
-                        <thead class="student-table-head">
-
-                            <tr class="border-b student-divider">
-
-                                <th class="whitespace-nowrap px-5 py-3.5 text-xs sm:text-sm font-semibold student-muted">Periode</th>
-
-                                <th class="whitespace-nowrap px-5 py-3.5 text-xs sm:text-sm font-semibold student-muted">Jumlah</th>
-
-                                <th class="whitespace-nowrap px-5 py-3.5 text-xs sm:text-sm font-semibold student-muted">Status</th>
-
-                                <th class="whitespace-nowrap px-5 py-3.5 text-xs sm:text-sm font-semibold student-muted">Dibayar</th>
-
-                                <th class="whitespace-nowrap px-5 py-3.5 text-right text-xs sm:text-sm font-semibold student-muted">Aksi</th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            @forelse ($sppBills as $sppBill)
-
-                                @php
-
-                                    [$statusLabel, $statusClass] = match ($sppBill->status) {
-
-                                        'paid' => ['Lunas', 'spp-badge-paid'],
-
-                                        'pending' => ['Menunggu Pembayaran', 'spp-badge-pending'],
-
-                                        'failed' => ['Gagal', 'spp-badge-failed'],
-
-                                        'expired' => ['Expired', 'spp-badge-expired'],
-
-                                        default => ['Belum Lunas', 'spp-badge-unpaid'],
-
-                                    };
-
-                                @endphp
-
-                                <tr class="student-row border-b student-divider">
-
-                                    <td class="whitespace-nowrap px-5 py-4">
-
-                                        <p class="font-medium">{{ $sppBill->period }}</p>
-
-                                        <p class="mt-0.5 text-[11px] sm:text-xs student-muted">
-
-                                            {{ $sppBill->created_at->translatedFormat('d F Y') }}
-
-                                        </p>
-
-                                    </td>
-
-                                    <td class="whitespace-nowrap px-5 py-4 font-medium">
-
-                                        Rp {{ number_format($sppBill->amount, 0, ',', '.') }}
-
-                                    </td>
-
-                                    <td class="whitespace-nowrap px-5 py-4">
-
-                                        <span class="{{ $statusClass }} inline-flex rounded-md px-2.5 py-1 text-xs sm:text-sm font-semibold">
-
-                                            {{ $statusLabel }}
-
-                                        </span>
-
-                                    </td>
-
-                                    <td class="whitespace-nowrap px-5 py-4 student-muted">
-
-                                        {{ $sppBill->paid_at
-
-                                            ? $sppBill->paid_at->translatedFormat('d F Y, H:i')
-
-                                            : '-' }}
-
-                                    </td>
-
-                                    <td class="whitespace-nowrap px-5 py-4 text-right">
-
-                                        <a
-
-                                            href="{{ route('student.spp.show', $sppBill->id) }}"
-
-                                            class="text-xs sm:text-sm font-semibold transition hover:opacity-75"
-
-                                            style="color: var(--student-accent, #2563eb);"
-
-                                        >
-
-                                            Detail
-
-                                        </a>
-
-                                    </td>
-
-                                </tr>
-
-                            @empty
-
+                            <thead class="student-table-head border-b student-divider">
                                 <tr>
-
-                                    <td colspan="5" class="px-5 py-12 text-center">
-
-                                        <p class="text-xs sm:text-sm font-semibold">Belum ada tagihan SPP</p>
-
-                                        <p class="mt-1 text-[11px] sm:text-xs student-muted">
-
-                                            Tagihan SPP kamu akan muncul di halaman ini.
-
-                                        </p>
-
-                                    </td>
-
+                                    <th class="{{ $th }}">Periode</th>
+                                    <th class="{{ $th }}">Jumlah</th>
+                                    <th class="{{ $th }}">Status</th>
+                                    <th class="{{ $th }}">Dibayar</th>
+                                    <th class="{{ $th }} text-right">Aksi</th>
                                 </tr>
+                            </thead>
 
-                            @endforelse
+                            <tbody>
 
-                        </tbody>
+                                @forelse ($sppBills as $sppBill)
 
-                    </table>
+                                    @php
+                                        [$statusLabel, $statusClass] = match ($sppBill->status) {
+                                            'paid' => ['Lunas', 'spp-badge-paid'],
+                                            'pending' => ['Menunggu Pembayaran', 'spp-badge-pending'],
+                                            'failed' => ['Gagal', 'spp-badge-failed'],
+                                            'expired' => ['Expired', 'spp-badge-expired'],
+                                            default => ['Belum Lunas', 'spp-badge-unpaid'],
+                                        };
+                                    @endphp
+
+                                    <tr class="student-row border-b student-divider">
+
+                                        <td class="{{ $td }} whitespace-nowrap">
+                                            <div class="min-w-0">
+                                                <div class="truncate font-semibold">
+                                                    {{ $sppBill->period }}
+                                                </div>
+
+                                                <div class="mt-0.5 text-[11px] sm:text-xs student-muted">
+                                                    {{ $sppBill->created_at->translatedFormat('d F Y') }}
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <td class="{{ $td }} whitespace-nowrap font-semibold">
+                                            Rp {{ number_format($sppBill->amount, 0, ',', '.') }}
+                                        </td>
+
+                                        <td class="{{ $td }} whitespace-nowrap">
+                                            <span class="spp-badge {{ $statusClass }} text-xs sm:text-[13px]">
+                                                {{ $statusLabel }}
+                                            </span>
+                                        </td>
+
+                                        <td class="{{ $td }} whitespace-nowrap student-muted">
+                                            {{ $sppBill->paid_at
+                                                ? $sppBill->paid_at->translatedFormat('d F Y, H:i')
+                                                : '-' }}
+                                        </td>
+
+                                        <td class="{{ $td }} whitespace-nowrap text-right">
+                                            <a
+                                                href="{{ route('student.spp.show', $sppBill->id) }}"
+                                                class="detail-link inline-flex h-8 items-center gap-1 rounded-lg px-3 text-xs font-semibold sm:text-[13px]"
+                                            >
+                                                Detail
+
+                                                <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                                                    <path d="m9 5 7 7-7 7"/>
+                                                </svg>
+                                            </a>
+                                        </td>
+
+                                    </tr>
+
+                                @empty
+
+                                    <tr>
+                                        <td colspan="5" class="px-6 py-14 text-center">
+
+                                            <div
+                                                class="student-divider mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full border student-muted"
+                                                style="background: var(--student-soft, #f6f7f9);"
+                                            >
+                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                                                    <rect x="3" y="5" width="18" height="14" rx="2"/>
+                                                    <path d="M3 10h18M7 15h3"/>
+                                                </svg>
+                                            </div>
+
+                                            <p class="text-xs font-medium sm:text-sm">
+                                                Belum ada tagihan SPP
+                                            </p>
+
+                                            <p class="mt-1 text-[11px] sm:text-xs student-muted">
+                                                Tagihan SPP kamu akan muncul di halaman ini.
+                                            </p>
+
+                                        </td>
+                                    </tr>
+
+                                @endforelse
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
 
                 </div>
 
                 @if ($sppBills->hasPages())
-
-                    <div class="border-t px-5 py-4 student-divider">
-
+                    <div class="mt-4">
                         {{ $sppBills->links() }}
-
                     </div>
-
                 @endif
 
             </section>

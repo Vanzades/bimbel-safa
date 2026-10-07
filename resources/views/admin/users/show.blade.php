@@ -1,401 +1,309 @@
 <x-admin-layout>
-
     <x-slot name="title">
-
         Detail Akun
-
     </x-slot>
 
-
-
     @php
-
         $roleStyles = [
-
             'admin' => [
-
                 'label' => 'Admin',
-
-                'badge' => 'bg-purple-600 text-white font-semibold dark:bg-purple-500/20 dark:text-purple-300',
-
+                'badge' => 'bg-purple-100/80 dark:bg-purple-500/20',
             ],
-
             'guru' => [
-
                 'label' => 'Guru',
-
-                'badge' => 'bg-indigo-600 text-white font-semibold dark:bg-indigo-500/20 dark:text-indigo-300',
-
+                'badge' => 'bg-indigo-100/80 dark:bg-indigo-500/20',
             ],
-
             'siswa' => [
-
                 'label' => 'Siswa',
-
-                'badge' => 'bg-emerald-600 text-white font-semibold dark:bg-emerald-500/20 dark:text-emerald-300',
-
+                'badge' => 'bg-emerald-100/80 dark:bg-emerald-500/20',
             ],
-
         ];
-
-
 
         $statusStyles = [
-
-            'active'   => 'bg-emerald-600 text-white font-semibold dark:bg-emerald-500/20 dark:text-emerald-300',
-
-            'inactive' => 'bg-red-600 text-white font-semibold dark:bg-red-500/20 dark:text-red-300',
-
+            'active' => 'bg-emerald-100/80 dark:bg-emerald-500/20',
+            'inactive' => 'bg-red-100/80 dark:bg-red-500/20',
         ];
-
-
 
         $style = $roleStyles[$user->role] ?? $roleStyles['siswa'];
 
-
-
-        $label = 'block text-[13px] sm:text-sm font-semibold uppercase tracking-wider mb-1';
-
-        $field = 'w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-medium outline-none';
-
-        $fieldStyle = 'background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-text);';
-
+        $label = 'mb-2 block text-[11px] font-semibold uppercase tracking-wider sm:text-xs';
+        $infoBox = 'min-w-0 rounded-xl border p-3.5 sm:p-4';
+        $infoBoxStyle = 'background-color: var(--admin-surface-soft); border-color: var(--admin-border);';
+        $value = 'wrap-break-word text-xs font-medium leading-relaxed sm:text-sm';
     @endphp
 
+    {{-- Wrapper mengikuti halaman Akun --}}
+    <div
+        class="-mt-3 min-h-screen pt-0 pb-4 transition-colors duration-150 lg:-mt-4 lg:pb-6"
+        style="background-color: var(--admin-bg); color: var(--admin-text);"
+    >
+        <div class="mx-auto max-w-90rem px-4 sm:px-6 lg:px-6">
 
+            {{-- Breadcrumb --}}
+            <nav
+                class="mb-3 flex items-center gap-1.5 text-[11px] font-medium sm:text-xs"
+                style="color: var(--admin-muted);"
+                aria-label="Breadcrumb"
+            >
+                <a href="{{ route('admin.dashboard') }}" class="hover:opacity-85">
+                    Dashboard
+                </a>
 
-    {{-- Wrapper utama --}}
+                <svg class="h-2.5 w-2.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
 
-    <div class="py-4 lg:py-6 min-h-screen transition-colors duration-150" style="background-color: var(--admin-bg); color: var(--admin-text);">
+                <a href="{{ route('admin.users.index') }}" class="hover:opacity-85">
+                    Akun
+                </a>
 
-        <div class="max-w-90rem mx-auto px-4 sm:px-6 lg:px-10">
+                <svg class="h-2.5 w-2.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
 
-
-
-            {{-- ====== Breadcrumb ====== --}}
-
-            <nav class="flex items-center gap-1.5 text-[11px] sm:text-xs font-medium mb-3" style="color: var(--admin-muted);">
-
-                <a href="{{ route('admin.dashboard') }}" class="hover:opacity-85">Dashboard</a>
-
-                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-
-                <a href="{{ route('admin.users.index') }}" class="hover:opacity-85">Akun</a>
-
-                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-
-                <span class="font-semibold" style="color: var(--admin-text);">Detail Akun</span>
-
+                <span class="font-semibold" style="color: var(--admin-text);">
+                    Detail Akun
+                </span>
             </nav>
 
-
-
-            {{-- ====== JUDUL HALAMAN ====== --}}
-
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-8 mb-12">
-
+            {{-- Judul halaman --}}
+            <div class="mt-8 mb-12 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-
-                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight">
-
+                    <h1 class="text-xl font-bold tracking-tight sm:text-2xl">
                         Detail Akun
-
                     </h1>
 
                     <p class="mt-1.5 text-xs sm:text-sm" style="color: var(--admin-muted);">
-
                         Informasi akun dan data yang terhubung.
-
                     </p>
-
                 </div>
-
             </div>
 
+            {{-- Card detail akun --}}
+            <div
+                class="overflow-hidden rounded-2xl shadow-sm"
+                style="border: 1px solid var(--admin-border); background-color: var(--admin-surface); box-shadow: 0 4px 20px var(--admin-shadow);"
+            >
+                {{-- Header akun --}}
+                <div
+                    class="flex flex-col justify-between gap-4 border-b p-5 sm:flex-row sm:items-center sm:p-6"
+                    style="border-color: var(--admin-border);"
+                >
+                    <div class="min-w-0">
+                        <h2
+                            class="wrap-break-word text-sm font-bold tracking-tight sm:text-base"
+                            style="color: var(--admin-text);"
+                        >
+                            {{ $user->name }}
+                        </h2>
 
-
-            {{-- ====== CARD UTAMA (Full Width / Panjang) ====== --}}
-
-            <div class="rounded-2xl p-6 sm:p-8 shadow-sm space-y-8" style="border: 1px solid var(--admin-border); background-color: var(--admin-surface); box-shadow: 0 4px 20px var(--admin-shadow);">
-
-
-
-                {{-- Header Profile Singkat di dalam Card --}}
-
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b" style="border-color: var(--admin-border);">
-
-                    <div class="flex items-center gap-4">
-
-                        <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-xl font-bold uppercase" style="background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-text);">
-
-                            {{ substr($user->name, 0, 1) }}
-
-                        </div>
-
-                        <div>
-
-                            <h2 class="text-sm sm:text-base font-bold tracking-tight" style="color: var(--admin-text);">
-
-                                {{ $user->name }}
-
-                            </h2>
-
-                            <p class="text-[11px] sm:text-xs mt-0.5" style="color: var(--admin-muted);">
-
-                                ID Pengguna: <span class="font-medium" style="color: var(--admin-text);">#{{ $user->id }}</span>
-
-                            </p>
-
-                        </div>
-
+                        <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-muted);">
+                            ID Pengguna:
+                            <span class="font-semibold" style="color: var(--admin-text);">
+                                #{{ $user->id }}
+                            </span>
+                        </p>
                     </div>
 
-
-
-                    <div>
-
-                        <span class="inline-flex items-center px-3 py-1.5 rounded-md text-xs sm:text-sm backdrop-blur-sm {{ $style['badge'] }}">
-
-                            {{ $style['label'] }}
-
-                        </span>
-
-                    </div>
-
+                    <span
+                        class="inline-flex w-fit shrink-0 items-center rounded-lg px-3 py-1.5 text-xs font-semibold {{ $style['badge'] }} sm:text-[13px]"
+                        style="color: var(--admin-text);"
+                    >
+                        {{ $style['label'] }}
+                    </span>
                 </div>
 
+                <div class="space-y-7 p-5 sm:space-y-8 sm:p-6">
 
+                    {{-- Informasi login --}}
+                    <section>
+                        <div class="mb-4 flex items-center gap-3">
+                            <span
+                                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+                                style="background-color: var(--admin-surface-soft); color: var(--admin-icon);"
+                            >
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <rect x="4" y="5" width="16" height="14" rx="2" stroke-width="1.8"/>
+                                    <circle cx="9" cy="11" r="2" stroke-width="1.8"/>
+                                    <path stroke-linecap="round" stroke-width="1.8" d="M6.5 16c.6-1.3 1.5-2 2.5-2s1.9.7 2.5 2M14 10h3M14 14h3"/>
+                                </svg>
+                            </span>
 
-                {{-- Informasi Akun --}}
-
-                <div>
-
-                    <h3 class="text-sm sm:text-base font-bold uppercase tracking-wider mb-4" style="color: var(--admin-muted);">
-
-                        Informasi Login
-
-                    </h3>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-                        <div>
-
-                            <label class="{{ $label }}" style="color: var(--admin-muted);">Nama Pengguna</label>
-
-                            <input type="text" value="{{ $user->name }}" disabled class="{{ $field }}" style="{{ $fieldStyle }}">
-
+                            <h3 class="text-sm font-bold sm:text-base" style="color: var(--admin-text);">
+                                Informasi Login
+                            </h3>
                         </div>
 
-
-
-                        <div>
-
-                            <label class="{{ $label }}" style="color: var(--admin-muted);">Email</label>
-
-                            <input type="text" value="{{ $user->email }}" disabled class="{{ $field }}" style="{{ $fieldStyle }}">
-
-                        </div>
-
-
-
-                        <div>
-
-                            <label class="{{ $label }}" style="color: var(--admin-muted);">Role</label>
-
-                            <input type="text" value="{{ $style['label'] }}" disabled class="{{ $field }}" style="{{ $fieldStyle }}">
-
-                        </div>
-
-
-
-                        <div class="md:col-span-2 lg:col-span-3">
-
-                            <label class="{{ $label }}" style="color: var(--admin-muted);">Akun Dibuat</label>
-
-                            <input type="text" value="{{ $user->created_at->format('d F Y, H:i') }}" disabled class="{{ $field }}" style="{{ $fieldStyle }}">
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-
-                {{-- ====== DATA GURU TERHUBUNG ====== --}}
-
-                @if ($user->teacher)
-
-                <div class="pt-6 border-t" style="border-color: var(--admin-border);">
-
-                    <h3 class="text-sm sm:text-base font-bold uppercase tracking-wider mb-4" style="color: var(--admin-muted);">
-
-                        Data Guru Terhubung
-
-                    </h3>
-
-
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-                        <div>
-
-                            <label class="{{ $label }}" style="color: var(--admin-muted);">Nama Guru</label>
-
-                            <input type="text" value="{{ $user->teacher->name }}" disabled class="{{ $field }}" style="{{ $fieldStyle }}">
-
-                        </div>
-
-
-
-                        <div>
-
-                            <label class="{{ $label }}" style="color: var(--admin-muted);">NIP / NIK</label>
-
-                            <input type="text" value="{{ $user->teacher->identity_number }}" disabled class="{{ $field }}" style="{{ $fieldStyle }}">
-
-                        </div>
-
-
-
-                        <div>
-
-                            <label class="{{ $label }}" style="color: var(--admin-muted);">Jenis Kelamin</label>
-
-                            <input type="text" value="{{ $user->teacher->gender === 'male' ? 'Laki-laki' : 'Perempuan' }}" disabled class="{{ $field }}" style="{{ $fieldStyle }}">
-
-                        </div>
-
-
-
-                        <div>
-
-                            <label class="{{ $label }}" style="color: var(--admin-muted);">No. Telepon</label>
-
-                            <input type="text" value="{{ $user->teacher->phone ?: '-' }}" disabled class="{{ $field }}" style="{{ $fieldStyle }}">
-
-                        </div>
-
-
-
-                        <div>
-
-                            <label class="{{ $label }}" style="color: var(--admin-muted);">Status Guru</label>
-
-                            <div class="{{ $field }} flex items-center" style="{{ $fieldStyle }}">
-
-                                <span class="inline-flex px-2.5 py-1 rounded-md text-xs sm:text-sm backdrop-blur-sm {{ $statusStyles[$user->teacher->status] ?? $statusStyles['inactive'] }}">
-
-                                    {{ $user->teacher->status === 'active' ? 'Aktif' : 'Tidak Aktif' }}
-
+                        <div class="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 sm:gap-4">
+                            <div class="{{ $infoBox }}" style="{{ $infoBoxStyle }}">
+                                <span class="{{ $label }}" style="color: var(--admin-muted);">
+                                    Nama Pengguna
                                 </span>
-
+                                <p class="{{ $value }}" style="color: var(--admin-text);">
+                                    {{ $user->name }}
+                                </p>
                             </div>
 
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-
-                {{-- ====== DATA SISWA TERHUBUNG ====== --}}
-
-                @elseif ($user->student)
-
-                <div class="pt-6 border-t" style="border-color: var(--admin-border);">
-
-                    <h3 class="text-sm sm:text-base font-bold uppercase tracking-wider mb-4" style="color: var(--admin-muted);">
-
-                        Data Siswa Terhubung
-
-                    </h3>
-
-
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-                        <div>
-
-                            <label class="{{ $label }}" style="color: var(--admin-muted);">Nama Siswa</label>
-
-                            <input type="text" value="{{ $user->student->name }}" disabled class="{{ $field }}" style="{{ $fieldStyle }}">
-
-                        </div>
-
-
-
-                        <div>
-
-                            <label class="{{ $label }}" style="color: var(--admin-muted);">NIS / NISN</label>
-
-                            <input type="text" value="{{ $user->student->identity_number }}" disabled class="{{ $field }}" style="{{ $fieldStyle }}">
-
-                        </div>
-
-
-
-                        <div>
-
-                            <label class="{{ $label }}" style="color: var(--admin-muted);">Jenis Kelamin</label>
-
-                            <input type="text" value="{{ $user->student->gender === 'male' ? 'Laki-laki' : 'Perempuan' }}" disabled class="{{ $field }}" style="{{ $fieldStyle }}">
-
-                        </div>
-
-
-
-                        <div>
-
-                            <label class="{{ $label }}" style="color: var(--admin-muted);">Kelas</label>
-
-                            <input type="text" value="{{ $user->student->classRoom->name ?? '-' }}" disabled class="{{ $field }}" style="{{ $fieldStyle }}">
-
-                        </div>
-
-
-
-                        <div>
-
-                            <label class="{{ $label }}" style="color: var(--admin-muted);">No. Telepon</label>
-
-                            <input type="text" value="{{ $user->student->phone ?: '-' }}" disabled class="{{ $field }}" style="{{ $fieldStyle }}">
-
-                        </div>
-
-
-
-                        <div>
-
-                            <label class="{{ $label }}" style="color: var(--admin-muted);">Status Siswa</label>
-
-                            <div class="{{ $field }} flex items-center" style="{{ $fieldStyle }}">
-
-                                <span class="inline-flex px-2.5 py-1 rounded-md text-xs sm:text-sm backdrop-blur-sm {{ $statusStyles[$user->student->status] ?? $statusStyles['inactive'] }}">
-
-                                    {{ $user->student->status === 'active' ? 'Aktif' : 'Tidak Aktif' }}
-
+                            <div class="{{ $infoBox }}" style="{{ $infoBoxStyle }}">
+                                <span class="{{ $label }}" style="color: var(--admin-muted);">
+                                    Email
                                 </span>
-
+                                <p class="{{ $value }}" style="color: var(--admin-text);">
+                                    {{ $user->email }}
+                                </p>
                             </div>
 
+                            <div class="{{ $infoBox }}" style="{{ $infoBoxStyle }}">
+                                <span class="{{ $label }}" style="color: var(--admin-muted);">
+                                    Role
+                                </span>
+                                <p class="{{ $value }}" style="color: var(--admin-text);">
+                                    {{ $style['label'] }}
+                                </p>
+                            </div>
+
+                            <div class="{{ $infoBox }} sm:col-span-2 lg:col-span-3" style="{{ $infoBoxStyle }}">
+                                <span class="{{ $label }}" style="color: var(--admin-muted);">
+                                    Akun Dibuat
+                                </span>
+                                <p class="{{ $value }}" style="color: var(--admin-text);">
+                                    {{ $user->created_at->format('d F Y, H:i') }}
+                                </p>
+                            </div>
                         </div>
+                    </section>
 
-                    </div>
+                    {{-- Data guru terhubung --}}
+                    @if ($user->teacher)
+                        <section class="border-t pt-6" style="border-color: var(--admin-border);">
+                            <div class="mb-4 flex items-center gap-3">
+                                <span
+                                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+                                    style="background-color: var(--admin-surface-soft); color: var(--admin-icon);"
+                                >
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 20v-1.5a4.5 4.5 0 0 0-4.5-4.5h-3A4.5 4.5 0 0 0 4 18.5V20M10 10a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM17 8h4M19 6v4"/>
+                                    </svg>
+                                </span>
 
+                                <h3 class="text-sm font-bold sm:text-base" style="color: var(--admin-text);">
+                                    Data Guru Terhubung
+                                </h3>
+                            </div>
+
+                            <div class="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 sm:gap-4">
+                                <div class="{{ $infoBox }}" style="{{ $infoBoxStyle }}">
+                                    <span class="{{ $label }}" style="color: var(--admin-muted);">
+                                        Nama Guru
+                                    </span>
+                                    <p class="{{ $value }}" style="color: var(--admin-text);">
+                                        {{ $user->teacher->name }}
+                                    </p>
+                                </div>
+
+                                <div class="{{ $infoBox }}" style="{{ $infoBoxStyle }}">
+                                    <span class="{{ $label }}" style="color: var(--admin-muted);">
+                                        NIP / NIK
+                                    </span>
+                                    <p class="{{ $value }}" style="color: var(--admin-text);">
+                                        {{ $user->teacher->identity_number }}
+                                    </p>
+                                </div>
+
+                                <div class="{{ $infoBox }}" style="{{ $infoBoxStyle }}">
+                                    <span class="{{ $label }}" style="color: var(--admin-muted);">
+                                        No. Telepon
+                                    </span>
+                                    <p class="{{ $value }}" style="color: var(--admin-text);">
+                                        {{ $user->teacher->phone ?: '-' }}
+                                    </p>
+                                </div>
+
+                                <div class="{{ $infoBox }}" style="{{ $infoBoxStyle }}">
+                                    <span class="{{ $label }}" style="color: var(--admin-muted);">
+                                        Status Guru
+                                    </span>
+                                    <span
+                                        class="inline-flex rounded-md px-2.5 py-1 text-xs font-semibold {{ $statusStyles[$user->teacher->status] ?? $statusStyles['inactive'] }}"
+                                        style="color: var(--admin-text);"
+                                    >
+                                        {{ $user->teacher->status === 'active' ? 'Aktif' : 'Tidak Aktif' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </section>
+
+                    {{-- Data siswa terhubung --}}
+                    @elseif ($user->student)
+                        <section class="border-t pt-6" style="border-color: var(--admin-border);">
+                            <div class="mb-4 flex items-center gap-3">
+                                <span
+                                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+                                    style="background-color: var(--admin-surface-soft); color: var(--admin-icon);"
+                                >
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 20v-1.5a4.5 4.5 0 0 0-4.5-4.5h-3A4.5 4.5 0 0 0 4 18.5V20M10 10a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM17 8h4M19 6v4"/>
+                                    </svg>
+                                </span>
+
+                                <h3 class="text-sm font-bold sm:text-base" style="color: var(--admin-text);">
+                                    Data Siswa Terhubung
+                                </h3>
+                            </div>
+
+                            <div class="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 sm:gap-4">
+                                <div class="{{ $infoBox }}" style="{{ $infoBoxStyle }}">
+                                    <span class="{{ $label }}" style="color: var(--admin-muted);">
+                                        Nama Siswa
+                                    </span>
+                                    <p class="{{ $value }}" style="color: var(--admin-text);">
+                                        {{ $user->student->name }}
+                                    </p>
+                                </div>
+
+                                <div class="{{ $infoBox }}" style="{{ $infoBoxStyle }}">
+                                    <span class="{{ $label }}" style="color: var(--admin-muted);">
+                                        NIS / NISN
+                                    </span>
+                                    <p class="{{ $value }}" style="color: var(--admin-text);">
+                                        {{ $user->student->identity_number }}
+                                    </p>
+                                </div>
+
+                                <div class="{{ $infoBox }}" style="{{ $infoBoxStyle }}">
+                                    <span class="{{ $label }}" style="color: var(--admin-muted);">
+                                        Kelas
+                                    </span>
+                                    <p class="{{ $value }}" style="color: var(--admin-text);">
+                                        {{ $user->student->classRoom->name ?? '-' }}
+                                    </p>
+                                </div>
+
+                                <div class="{{ $infoBox }}" style="{{ $infoBoxStyle }}">
+                                    <span class="{{ $label }}" style="color: var(--admin-muted);">
+                                        No. Telepon
+                                    </span>
+                                    <p class="{{ $value }}" style="color: var(--admin-text);">
+                                        {{ $user->student->phone ?: '-' }}
+                                    </p>
+                                </div>
+
+                                <div class="{{ $infoBox }}" style="{{ $infoBoxStyle }}">
+                                    <span class="{{ $label }}" style="color: var(--admin-muted);">
+                                        Status Siswa
+                                    </span>
+                                    <span
+                                        class="inline-flex rounded-md px-2.5 py-1 text-xs font-semibold {{ $statusStyles[$user->student->status] ?? $statusStyles['inactive'] }}"
+                                        style="color: var(--admin-text);"
+                                    >
+                                        {{ $user->student->status === 'active' ? 'Aktif' : 'Tidak Aktif' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </section>
+                    @endif
                 </div>
-
-                @endif
-
-
-
             </div>
-
-
-
         </div>
-
     </div>
-
 </x-admin-layout>

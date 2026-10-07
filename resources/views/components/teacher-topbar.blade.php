@@ -6,11 +6,9 @@
     try {
         theme = localStorage.getItem('teacher-theme');
     } catch (error) {}
-
     if (theme !== 'light' && theme !== 'dark') {
         theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
-
     document.documentElement.dataset.teacherTheme = theme;
     document.documentElement.classList.toggle('dark', theme === 'dark');
 })();
@@ -85,7 +83,9 @@
         color: var(--teacher-accent);
     }
 
-    #teacher-topbar summary::-webkit-details-marker { display:none; }
+    #teacher-topbar summary::-webkit-details-marker {
+        display: none;
+    }
 
     #teacher-topbar .teacher-account {
         height: 40px;
@@ -156,9 +156,17 @@
         color: var(--teacher-accent);
     }
 
-    #teacher-topbar .teacher-sun { display: none; }
-    html[data-teacher-theme="dark"] #teacher-topbar .teacher-moon { display: none; }
-    html[data-teacher-theme="dark"] #teacher-topbar .teacher-sun { display: block; }
+    #teacher-topbar .teacher-sun {
+        display: none;
+    }
+
+    html[data-teacher-theme="dark"] #teacher-topbar .teacher-moon {
+        display: none;
+    }
+
+    html[data-teacher-theme="dark"] #teacher-topbar .teacher-sun {
+        display: block;
+    }
 </style>
 
 <header id="teacher-topbar" class="sticky top-0 z-30 flex h-16 items-center">
@@ -195,7 +203,7 @@
                 </svg>
                 <svg class="teacher-sun" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
                     <circle cx="12" cy="12" r="4"/>
-                    <path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/>
+                    <path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M4.93 19.07l-1.42 1.42m11.3-11.3 1.42-1.42"/>
                 </svg>
             </button>
 
@@ -205,62 +213,125 @@
                         <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
                         <path d="M10 21h4"/>
                     </svg>
+
+                    @php
+                        $unreadNotifications = auth()->user()
+                            ->unreadNotifications()
+                            ->latest()
+                            ->take(5)
+                            ->get();
+
+                        $unreadCount = auth()->user()
+                            ->unreadNotifications()
+                            ->count();
+                    @endphp
+
+                    @if ($unreadCount > 0)
+                        <span class="absolute right-0.5 top-0.5 flex min-h-[16px] min-w-[16px] items-center justify-center rounded-full bg-blue-600 px-1 text-[9px] font-bold text-white">
+                            {{ $unreadCount > 9 ? '9+' : $unreadCount }}
+                        </span>
+                    @endif
                 </summary>
 
                 <div class="teacher-dropdown teacher-notifications-panel">
-                    <div class="teacher-dropdown-title">Notifikasi</div>
-                    <div class="flex min-h-36 flex-col items-center justify-center gap-3 px-4 py-6 text-xs" style="color:var(--teacher-muted)">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
-                            <path d="M10 21h4"/>
-                        </svg>
-                        <p>Belum ada notifikasi</p>
-                    </div>
-                </div>
-            </details>
+                    <div class="flex items-center justify-between border-b" style="border-color:var(--teacher-border)">
+                        <div class="teacher-dropdown-title">
+                            Notifikasi
+                        </div>
 
-            <details class="relative">
-                <summary class="teacher-account flex cursor-pointer items-center" aria-label="Menu akun">
-                    <span class="teacher-avatar flex shrink-0 items-center justify-center text-xs font-semibold" aria-hidden="true">
-                        {{ strtoupper(substr($teacher->name, 0, 1)) }}
-                    </span>
-                    <span class="hidden max-w-32 truncate text-[13px] font-medium lg:block">
-                        {{ $teacher->name }}
-                    </span>
-                    <svg class="hidden lg:block" style="color:var(--teacher-muted)" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="m6 9 6 6 6-6"/>
-                    </svg>
-                </summary>
-
-                <div class="teacher-dropdown">
-                    <div class="teacher-dropdown-title">
-                        <div class="truncate">{{ $teacher->name }}</div>
-                        <div class="teacher-email truncate">{{ auth()->user()?->email ?? '' }}</div>
+                        @if ($unreadCount > 0)
+                            <form method="POST" action="{{ route('notifications.read-all') }}" class="mr-2">
+                                @csrf
+                                <button
+                                    type="submit"
+                                    class="text-[11px] font-semibold"
+                                    style="color:var(--teacher-accent)"
+                                >
+                                    Tandai dibaca
+                                </button>
+                            </form>
+                        @endif
                     </div>
 
-                    @if (\Illuminate\Support\Facades\Route::has('teacher.profile'))
-                        <a href="{{ route('teacher.profile') }}" class="teacher-profile">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <circle cx="12" cy="8" r="4"/>
-                                <path d="M4 21a8 8 0 0 1 16 0"/>
-                            </svg>
-                            Profil
+                    <div class="max-h-[320px] overflow-y-auto">
+                        @forelse ($unreadNotifications as $notification)
+                            @php
+                                $data = $notification->data;
+                                $url = $data['url'] ?? route('notifications.index');
+                            @endphp
+
+                            <form
+                                method="POST"
+                                action="{{ route('notifications.read', $notification->id) }}"
+                            >
+                                @csrf
+                                <button
+                                    type="submit"
+                                    class="flex w-full gap-3 border-b px-4 py-3 text-left transition"
+                                    style="border-color:var(--teacher-border)"
+                                    onmouseover="this.style.background='var(--teacher-hover)'"
+                                    onmouseout="this.style.background='transparent'"
+                                >
+                                    <span class="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-blue-600"></span>
+
+                                    <span class="min-w-0 flex-1">
+                                        <span
+                                            class="block truncate text-xs font-semibold"
+                                            style="color:var(--teacher-text)"
+                                        >
+                                            {{ $data['title'] ?? 'Notifikasi' }}
+                                        </span>
+
+                                        <span
+                                            class="mt-1 block text-xs leading-5"
+                                            style="color:var(--teacher-muted)"
+                                        >
+                                            {{ $data['message'] ?? '' }}
+                                        </span>
+
+                                        <span
+                                            class="mt-1.5 block text-[10px]"
+                                            style="color:var(--teacher-muted)"
+                                        >
+                                            {{ $notification->created_at->diffForHumans() }}
+                                        </span>
+                                    </span>
+                                </button>
+                            </form>
+                        @empty
+                            <div class="flex min-h-36 flex-col items-center justify-center gap-3 px-4 py-6 text-xs" style="color:var(--teacher-muted)">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                                    <path d="M10 21h4"/>
+                                </svg>
+                                <p>Belum ada notifikasi</p>
+                            </div>
+                        @endforelse
+                    </div>
+
+                    <div
+                        class="border-t px-4 py-3 text-center"
+                        style="border-color:var(--teacher-border); background:var(--teacher-soft)"
+                    >
+                        <a
+                            href="{{ route('notifications.index') }}"
+                            class="text-xs font-semibold"
+                            style="color:var(--teacher-accent)"
+                        >
+                            Lihat semua notifikasi
                         </a>
-                    @endif
-
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="teacher-logout w-full">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                                <path d="m16 17 5-5-5-5"/>
-                                <path d="M21 12H9"/>
-                            </svg>
-                            Keluar
-                        </button>
-                    </form>
+                    </div>
                 </div>
             </details>
+
+            <div class="teacher-account flex items-center">
+                <span class="teacher-avatar flex shrink-0 items-center justify-center text-xs font-semibold" aria-hidden="true">
+                    {{ strtoupper(substr($teacher->name, 0, 1)) }}
+                </span>
+                <span class="hidden max-w-32 truncate text-[13px] font-medium lg:block">
+                    {{ $teacher->name }}
+                </span>
+            </div>
         </div>
     </div>
 </header>
@@ -276,6 +347,7 @@
     function updateButton() {
         const dark = root.dataset.teacherTheme === 'dark';
         const label = dark ? 'Aktifkan tema terang' : 'Aktifkan tema gelap';
+
         button.setAttribute('aria-label', label);
         button.setAttribute('title', label);
         button.setAttribute('aria-pressed', String(dark));
@@ -285,6 +357,7 @@
 
     button.addEventListener('click', () => {
         const theme = root.dataset.teacherTheme === 'dark' ? 'light' : 'dark';
+
         root.dataset.teacherTheme = theme;
         root.classList.toggle('dark', theme === 'dark');
 
@@ -311,10 +384,13 @@
 
     document.addEventListener('keydown', (event) => {
         if (event.key !== 'Escape') return;
+
         const open = dropdowns.find((item) => item.open);
         if (!open) return;
+
         const focused = open.contains(document.activeElement);
         open.open = false;
+
         if (focused) open.querySelector('summary')?.focus();
     });
 })();

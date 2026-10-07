@@ -3,23 +3,38 @@
         [
             'label' => 'Overview',
             'items' => [
-                ['label' => 'Dashboard', 'route' => 'student.dashboard', 'icon' => 'dashboard'],
+                [
+                    'label' => 'Dashboard',
+                    'route' => 'student.dashboard',
+                    'active' => ['student.dashboard', 'student.dashboard.*'],
+                    'icon' => 'dashboard'
+                ],
             ],
         ],
         [
             'label' => 'Akademik',
             'items' => [
-                ['label' => 'Absensi', 'route' => 'student.attendance', 'icon' => 'attendance'],
-                ['label' => 'SPP', 'route' => 'student.spp', 'icon' => 'spp'],
+                [
+                    'label' => 'Absensi',
+                    'route' => 'student.attendance',
+                    'active' => ['student.attendance', 'student.attendance.*'],
+                    'icon' => 'attendance'
+                ],
+                [
+                    'label' => 'SPP',
+                    'route' => 'student.spp',
+                    'active' => ['student.spp', 'student.spp.*'],
+                    'icon' => 'spp'
+                ],
             ],
         ],
     ];
 
     $icons = [
-        'dashboard' => '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
-        'profile' => '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+        'dashboard'  => '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+        'profile'    => '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
         'attendance' => '<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/>',
-        'spp' => '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="M7 14h4"/><path d="M16 14h1"/><path d="M16 17h1"/>',
+        'spp'        => '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="M7 14h4"/><path d="M16 14h1"/><path d="M16 17h1"/>',
     ];
 
     $logoPath = public_path('image/logo.png');
@@ -33,10 +48,37 @@
         --student-sidebar-collapsed: 72px;
         --student-sidebar-open: 256px;
         --student-sidebar-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+        /* 🌞 LIGHT MODE COLORS */
+        --student-surface: #ffffff;
+        --student-text: #1f2937;
+        --student-muted: #62769a;
+        --student-icon: #7693b9;
+        --student-accent: #2563eb;
+        --student-nav-hover: rgba(59, 130, 246, 0.08);
+        --student-nav-active-bg: rgba(59, 130, 246, 0.1); /* Flat blue */
+        --student-shadow: rgba(15, 23, 42, 0.06);
+        --student-danger: #ef4444; /* Pure red */
+    }
+
+    /* 🌙 DARK MODE COLORS */
+    html.dark,
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --student-surface: #111827;
+            --student-text: #f3f4f6;
+            --student-muted: #9ca3af;
+            --student-icon: #6b7280;
+            --student-accent: #3b82f6;
+            --student-nav-hover: rgba(59, 130, 246, 0.15);
+            --student-nav-active-bg: rgba(59, 130, 246, 0.15); /* Flat blue Dark */
+            --student-shadow: rgba(0, 0, 0, 0.3);
+            --student-danger: #ef4444;
+        }
     }
 
     #student-overlay {
-        background: rgba(15, 17, 20, 0.36);
+        background: rgba(15, 17, 20, 0.4);
         backdrop-filter: blur(3px);
         -webkit-backdrop-filter: blur(3px);
         opacity: 0;
@@ -47,45 +89,28 @@
 
     #student-sidebar {
         width: var(--student-sidebar-collapsed);
-        background: var(--student-surface, #ffffff);
-        box-shadow: 8px 0 28px var(--student-shadow, rgba(15, 23, 42, 0.06));
-        color: var(--student-text, #1f2937);
+        background: var(--student-surface);
+        box-shadow: 8px 0 28px var(--student-shadow);
+        color: var(--student-text);
         overflow: hidden;
-        transition: width 260ms var(--student-sidebar-ease);
+        transition: width 260ms var(--student-sidebar-ease), transform 260ms var(--student-sidebar-ease);
     }
 
-    html[data-student-sidebar-open="true"] #student-sidebar {
-        width: var(--student-sidebar-open);
-    }
+    html[data-student-sidebar-open="true"] #student-sidebar { width: var(--student-sidebar-open); }
+    html[data-student-sidebar-open="false"] #student-sidebar { width: var(--student-sidebar-collapsed); }
 
-    html[data-student-sidebar-open="false"] #student-sidebar {
-        width: var(--student-sidebar-collapsed);
-    }
-
-    [class~="lg:pl-64"] {
-        padding-left: var(--student-sidebar-collapsed);
-        transition: padding-left 260ms var(--student-sidebar-ease);
-    }
-
-    [class~="lg:ml-64"] {
-        margin-left: var(--student-sidebar-collapsed);
-        transition: margin-left 260ms var(--student-sidebar-ease);
-    }
+    [class~="lg:pl-64"] { padding-left: var(--student-sidebar-collapsed); transition: padding-left 260ms var(--student-sidebar-ease); }
+    [class~="lg:ml-64"] { margin-left: var(--student-sidebar-collapsed); transition: margin-left 260ms var(--student-sidebar-ease); }
 
     html.student-sidebar-scroll-locked,
-    html.student-sidebar-scroll-locked body {
-        overflow: hidden;
-    }
+    html.student-sidebar-scroll-locked body { overflow: hidden; }
 
     @media (max-width: 1023px) {
-        html[data-student-sidebar-open="false"] #student-sidebar {
+        #student-sidebar {
             transform: translateX(-100%);
             width: var(--student-sidebar-open);
         }
-        html[data-student-sidebar-open="true"] #student-sidebar {
-            transform: translateX(0);
-            width: var(--student-sidebar-open);
-        }
+        html[data-student-sidebar-open="true"] #student-sidebar { transform: translateX(0); }
         html[data-student-sidebar-open="true"] #student-overlay {
             opacity: 1;
             visibility: visible;
@@ -97,26 +122,12 @@
     }
 
     @media (min-width: 1024px) {
-        #student-sidebar {
-            width: var(--student-sidebar-open);
-            transform: none !important;
-        }
-
-        [class~="lg:pl-64"] {
-            padding-left: var(--student-sidebar-open);
-        }
-
-        [class~="lg:ml-64"] {
-            margin-left: var(--student-sidebar-open);
-        }
-
-        html[data-student-sidebar-open="false"] [class~="lg:pl-64"] {
-            padding-left: var(--student-sidebar-collapsed);
-        }
-
-        html[data-student-sidebar-open="false"] [class~="lg:ml-64"] {
-            margin-left: var(--student-sidebar-collapsed);
-        }
+        #student-sidebar { transform: none !important; width: var(--student-sidebar-open); }
+        [class~="lg:pl-64"] { padding-left: var(--student-sidebar-open); }
+        [class~="lg:ml-64"] { margin-left: var(--student-sidebar-open); }
+        html[data-student-sidebar-open="false"] [class~="lg:pl-64"] { padding-left: var(--student-sidebar-collapsed); }
+        html[data-student-sidebar-open="false"] [class~="lg:ml-64"] { margin-left: var(--student-sidebar-collapsed); }
+        html[data-student-sidebar-open="false"] #student-sidebar { width: var(--student-sidebar-collapsed); }
     }
 
     #student-sidebar .student-brand-wrap {
@@ -157,7 +168,7 @@
         align-items: center;
         justify-content: center;
         border-radius: 12px;
-        background: var(--student-accent, #2563eb);
+        background: var(--student-accent);
         color: #fff;
         font-weight: 700;
     }
@@ -175,14 +186,14 @@
         border: 0;
         border-radius: 8px;
         background: transparent;
-        color: var(--student-muted, #62769a);
+        color: var(--student-icon);
         cursor: pointer;
         transform: translateY(-50%);
     }
 
     #student-sidebar .student-sidebar-close:hover {
-        background: var(--student-hover, rgba(59, 130, 246, 0.08));
-        color: var(--student-accent, #2563eb);
+        background: var(--student-nav-hover);
+        color: var(--student-accent);
     }
 
     #student-sidebar .student-menu {
@@ -195,20 +206,13 @@
         -ms-overflow-style: none;
     }
 
-    #student-sidebar .student-menu::-webkit-scrollbar {
-        display: none;
-        width: 0;
-        height: 0;
-    }
-
-    #student-sidebar .student-nav-section + .student-nav-section {
-        margin-top: 25px;
-    }
+    #student-sidebar .student-menu::-webkit-scrollbar { display: none; }
+    #student-sidebar .student-nav-section + .student-nav-section { margin-top: 25px; }
 
     #student-sidebar .student-section-label {
         margin-bottom: 9px;
         padding: 0 15px;
-        color: var(--student-muted, #62769a);
+        color: var(--student-muted);
         font-size: 10px;
         font-weight: 600;
         line-height: 16px;
@@ -218,45 +222,51 @@
         transition: opacity 160ms ease;
     }
 
+    /* === GRID & UKURAN MENU (SAMAKAN MENU LINK DAN LOGOUT) === */
     #student-sidebar .student-nav-link,
     #student-sidebar .student-logout-button {
-        display: flex;
-        min-height: 43px;
-        min-width: 0;
+        display: grid;
+        grid-template-columns: 20px minmax(0, 1fr);
+        justify-content: start;
+        column-gap: 16px;
         align-items: center;
-        gap: 12px;
-        padding: 10px 15px;
+        min-width: 0;
+        box-sizing: border-box;
+        overflow: hidden;
         border-radius: 10px;
-        color: var(--student-muted, #62769a);
+        text-decoration: none;
+        transition: background-color 160ms ease, color 160ms ease, transform 140ms ease;
+        min-height: 43px;
+        padding: 10px 15px;
         font-size: 13px;
         font-weight: 500;
         line-height: 20px;
-        text-decoration: none;
-        overflow: hidden;
-        transition:
-            background-color 160ms ease,
-            color 160ms ease,
-            box-shadow 160ms ease,
-            transform 140ms ease;
+    }
+
+    #student-sidebar .student-nav-link {
+        color: var(--student-muted);
     }
 
     #student-sidebar .student-nav-link > svg,
     #student-sidebar .student-logout-button > svg {
-        flex: none;
+        grid-column: 1;
+        justify-self: center;
+        align-self: center;
         stroke-linecap: round;
         stroke-linejoin: round;
+        width: 18px;
+        height: 18px;
+        stroke-width: 1.7;
         transition: color 160ms ease;
     }
 
     #student-sidebar .student-nav-link > svg {
-        width: 16px;
-        height: 16px;
-        color: var(--student-icon, #7693b9);
-        stroke-width: 1.7;
+        color: var(--student-icon);
     }
 
     #student-sidebar .student-nav-label,
     #student-sidebar .student-logout-label {
+        grid-column: 2;
         max-width: 180px;
         min-width: 0;
         overflow: hidden;
@@ -265,26 +275,26 @@
         transition: max-width 260ms ease, opacity 160ms ease;
     }
 
+    /* === EFEK HOVER & ACTIVE (TANPA GRADIEN) === */
     #student-sidebar .student-nav-link:hover {
-        background: var(--student-nav-hover, rgba(59, 130, 246, 0.08));
-        color: var(--student-accent, #2563eb);
+        background: var(--student-nav-hover);
+        color: var(--student-accent);
     }
 
     #student-sidebar .student-nav-link:hover > svg,
     #student-sidebar .student-nav-link.is-active > svg {
-        color: var(--student-accent, #2563eb);
+        color: var(--student-accent);
     }
 
-    #student-sidebar .student-nav-link.is-active,
-    #student-sidebar .student-nav-link:active {
-        background:
-            linear-gradient(125deg, var(--student-nav-sheen, rgba(255, 255, 255, 0.5)), transparent 55%),
-            linear-gradient(115deg, var(--student-nav-glass-start, rgba(96, 165, 250, 0.25)), var(--student-nav-glass-end, rgba(59, 130, 246, 0.1)));
-        box-shadow: 0 5px 16px var(--student-nav-shadow, rgba(37, 99, 235, 0.1));
-        backdrop-filter: blur(10px) saturate(140%);
-        -webkit-backdrop-filter: blur(10px) saturate(140%);
-        color: var(--student-accent, #2563eb);
+    #student-sidebar .student-nav-link.is-active {
+        background-color: var(--student-nav-active-bg);
+        color: var(--student-accent);
         font-weight: 600;
+    }
+
+    #student-sidebar .student-nav-link:active,
+    #student-sidebar .student-logout-button:active {
+        transform: scale(.98);
     }
 
     #student-sidebar .student-footer {
@@ -295,28 +305,32 @@
         gap: 8px;
     }
 
-    #student-sidebar .student-logout-form {
-        margin: 0;
-    }
+    #student-sidebar .student-logout-form { margin: 0; }
 
+    /* === TOMBOL LOGOUT TRANSPARAN + MERAH === */
     #student-sidebar .student-logout-button {
         width: 100%;
-        min-height: 40px;
         border: 0;
-        background: var(--student-surface, #fff);
-        box-shadow: 0 3px 12px var(--student-shadow, rgba(15, 23, 42, 0.06));
-        color: var(--student-muted, #62769a);
+        background: transparent;
+        box-shadow: none;
+        color: var(--student-danger);
         font: inherit;
-        font-size: 12px;
-        font-weight: 600;
-        line-height: 20px;
         cursor: pointer;
-        transition: background-color 160ms ease, color 160ms ease;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    #student-sidebar .student-logout-button > svg {
+        color: var(--student-danger);
     }
 
     #student-sidebar .student-logout-button:hover {
-        background: var(--student-danger-surface, #fff5f4);
-        color: var(--student-danger, #b33e36);
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--student-danger);
+    }
+
+    #student-sidebar .student-logout-button:active {
+        background: rgba(239, 68, 68, 0.2);
+        transform: scale(.98);
     }
 
     @media (min-width: 1024px) {
@@ -327,24 +341,6 @@
         html[data-student-sidebar-open="false"] #student-sidebar .student-logout-label {
             max-width: 0;
             opacity: 0;
-        }
-    }
-
-    #student-sidebar .student-brand:focus-visible,
-    #student-sidebar .student-nav-link:focus-visible,
-    #student-sidebar .student-sidebar-close:focus-visible,
-    #student-sidebar .student-logout-button:focus-visible {
-        outline: none;
-        box-shadow: 0 0 8px 2px var(--student-accent, #2563eb);
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        #student-sidebar,
-        #student-sidebar *,
-        #student-overlay,
-        [class~="lg:pl-64"],
-        [class~="lg:ml-64"] {
-            transition: none !important;
         }
     }
 </style>
@@ -372,13 +368,7 @@
             aria-label="Buka menu siswa"
         >
             @if ($logoUrl !== null)
-                <img
-                    src="{{ $logoUrl }}"
-                    alt=""
-                    width="112"
-                    height="42"
-                    class="student-brand-logo"
-                >
+                <img src="{{ $logoUrl }}" alt="" width="112" height="42" class="student-brand-logo">
             @else
                 <span class="student-brand-mark" aria-hidden="true">S</span>
             @endif
@@ -391,17 +381,7 @@
             onclick="closeStudentSidebar()"
             aria-label="Tutup menu navigasi"
         >
-            <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.7"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-            >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <rect x="3" y="3" width="18" height="18" rx="3"/>
                 <path d="M9 3v18"/>
             </svg>
@@ -418,7 +398,8 @@
                 <nav class="space-y-1">
                     @foreach ($section['items'] as $item)
                         @php
-                            $active = request()->routeIs($item['route']);
+                            // Menggunakan parameter array active
+                            $active = request()->routeIs($item['active']);
                         @endphp
 
                         <a
@@ -428,13 +409,9 @@
                             class="student-nav-link {{ $active ? 'is-active' : '' }}"
                             @if ($active) aria-current="page" @endif
                         >
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                aria-hidden="true"
-                            >{!! $icons[$item['icon']] ?? '' !!}</svg>
-
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                {!! $icons[$item['icon']] ?? '' !!}
+                            </svg>
                             <span class="student-nav-label">
                                 {{ $item['label'] }}
                             </span>
@@ -447,8 +424,9 @@
 
     <div class="student-footer shrink-0">
         @php
-            $profileActive = request()->routeIs('student.profile');
+            $profileActive = request()->routeIs('student.profile', 'student.profile.*');
         @endphp
+
         <a
             href="{{ route('student.profile') }}"
             title="Profil"
@@ -456,13 +434,9 @@
             class="student-nav-link {{ $profileActive ? 'is-active' : '' }}"
             @if ($profileActive) aria-current="page" @endif
         >
-            <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                aria-hidden="true"
-            >{!! $icons['profile'] !!}</svg>
-
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                {!! $icons['profile'] !!}
+            </svg>
             <span class="student-nav-label">Profil</span>
         </a>
 
@@ -475,20 +449,11 @@
                 aria-label="Keluar"
                 title="Keluar"
             >
-                <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    aria-hidden="true"
-                >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                     <path d="m16 17 5-5-5-5"/>
                     <path d="M21 12H9"/>
                 </svg>
-
                 <span class="student-logout-label">Keluar</span>
             </button>
         </form>
@@ -528,7 +493,6 @@
 
     function openStudentSidebar() {
         setStudentSidebarState(true, { persist: true });
-
         if (!window.matchMedia('(min-width: 1024px)').matches) {
             const closeBtn = document.getElementById('student-sidebar-close');
             if (closeBtn) closeBtn.focus({ preventScroll: true });
@@ -548,6 +512,7 @@
         }
     }
 
+    // Eksekusi segera supaya tidak ada flicker/flash transisi
     (() => {
         const desktop = window.matchMedia('(min-width: 1024px)');
 
@@ -569,12 +534,7 @@
             }
         };
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initialize, { once: true });
-        } else {
-            initialize();
-        }
-
+        initialize();
         desktop.addEventListener('change', initialize);
 
         document.addEventListener('keydown', (event) => {
@@ -583,26 +543,6 @@
             if (event.key === 'Escape') {
                 closeStudentSidebar();
                 return;
-            }
-
-            if (event.key !== 'Tab') return;
-
-            const sidebar = document.getElementById('student-sidebar');
-            if (!sidebar) return;
-
-            const controls = [...sidebar.querySelectorAll('a[href], button:not([disabled])')];
-            if (controls.length === 0) return;
-
-            const first = controls[0];
-            const last = controls[controls.length - 1];
-            const outside = !sidebar.contains(document.activeElement);
-
-            if (event.shiftKey && (document.activeElement === first || outside)) {
-                event.preventDefault();
-                last.focus();
-            } else if (!event.shiftKey && (document.activeElement === last || outside)) {
-                event.preventDefault();
-                first.focus();
             }
         });
     })();

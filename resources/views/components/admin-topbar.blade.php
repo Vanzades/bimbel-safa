@@ -39,7 +39,9 @@
         --admin-danger: #b33e36;
     }
 
-    html[data-admin-theme="light"] { color-scheme: light; }
+    html[data-admin-theme="light"] {
+        color-scheme: light;
+    }
 
     html[data-admin-theme="dark"] {
         color-scheme: dark;
@@ -119,10 +121,18 @@
         color: var(--admin-text);
     }
 
-    #admin-topbar .admin-topbar-inner { min-width: 0; }
-    #admin-topbar .admin-heading { min-width: 0; }
+    #admin-topbar .admin-topbar-inner {
+        min-width: 0;
+    }
 
-    #admin-topbar .admin-topbar-actions { flex-shrink: 0; margin-left: auto; }
+    #admin-topbar .admin-heading {
+        min-width: 0;
+    }
+
+    #admin-topbar .admin-topbar-actions {
+        flex-shrink: 0;
+        margin-left: auto;
+    }
 
     #admin-topbar .admin-icon-button {
         display: inline-flex;
@@ -141,7 +151,6 @@
         transition: background-color 160ms ease, color 160ms ease;
     }
 
-    /* Pengaturan Responsif Tombol Burger (Muncul di HP, Sembunyi di Laptop) */
     #admin-topbar .admin-burger-btn {
         display: inline-flex;
     }
@@ -168,9 +177,13 @@
     }
 
     #admin-topbar .admin-account-summary:hover,
-    #admin-topbar details[open] > .admin-account-summary { background: var(--admin-hover); }
+    #admin-topbar details[open] > .admin-account-summary {
+        background: var(--admin-hover);
+    }
 
-    #admin-topbar summary::-webkit-details-marker { display: none; }
+    #admin-topbar summary::-webkit-details-marker {
+        display: none;
+    }
 
     #admin-topbar .admin-account-avatar {
         width: 32px;
@@ -181,8 +194,13 @@
         color: var(--admin-muted);
     }
 
-    #admin-topbar .admin-account-name { font-size: 13px; }
-    #admin-topbar .admin-account-chevron { color: var(--admin-icon); }
+    #admin-topbar .admin-account-name {
+        font-size: 13px;
+    }
+
+    #admin-topbar .admin-account-chevron {
+        color: var(--admin-icon);
+    }
 
     #admin-topbar .admin-dropdown {
         position: absolute;
@@ -206,7 +224,95 @@
         font-weight: 600;
     }
 
-    #admin-topbar .admin-notifications-panel { width: 288px; }
+    #admin-topbar .admin-notifications-panel {
+        width: 320px;
+    }
+
+    #admin-topbar .admin-notification-list {
+        max-height: 360px;
+        overflow-y: auto;
+    }
+
+    #admin-topbar .admin-notification-item {
+        display: block;
+        padding: 12px 14px;
+        color: var(--admin-text);
+        text-decoration: none;
+        transition: background-color 160ms ease;
+    }
+
+    #admin-topbar .admin-notification-item:hover {
+        background: var(--admin-hover);
+    }
+
+    #admin-topbar .admin-notification-item.unread {
+        background: var(--admin-nav-hover);
+    }
+
+    #admin-topbar .admin-notification-item.unread:hover {
+        background: var(--admin-hover);
+    }
+
+    #admin-topbar .admin-notification-title {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--admin-text);
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.4;
+    }
+
+    #admin-topbar .admin-notification-dot {
+        width: 6px;
+        height: 6px;
+        flex-shrink: 0;
+        border-radius: 999px;
+        background: var(--admin-accent);
+    }
+
+    #admin-topbar .admin-notification-message {
+        display: -webkit-box;
+        margin-top: 4px;
+        overflow: hidden;
+        color: var(--admin-muted);
+        font-size: 11px;
+        line-height: 1.5;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+    }
+
+    #admin-topbar .admin-notification-time {
+        display: block;
+        margin-top: 5px;
+        color: var(--admin-icon);
+        font-size: 10px;
+    }
+
+    #admin-topbar .admin-notifications-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 10px 14px;
+        border-top: 1px solid var(--admin-border);
+    }
+
+    #admin-topbar .admin-notifications-footer a,
+    #admin-topbar .admin-notifications-footer button {
+        border: 0;
+        background: transparent;
+        color: var(--admin-accent);
+        font-size: 11px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    #admin-topbar .admin-notifications-footer a:hover,
+    #admin-topbar .admin-notifications-footer button:hover {
+        opacity: 0.8;
+    }
 
     #admin-topbar .admin-notifications-empty {
         display: flex;
@@ -260,25 +366,69 @@
         box-shadow: 0 0 8px 2px var(--admin-accent);
     }
 
-    #admin-topbar .admin-theme-sun { display: none; }
-    html[data-admin-theme="dark"] #admin-topbar .admin-theme-moon { display: none; }
-    html[data-admin-theme="dark"] #admin-topbar .admin-theme-sun { display: block; }
+    #admin-topbar .admin-theme-sun {
+        display: none;
+    }
+
+    html[data-admin-theme="dark"] #admin-topbar .admin-theme-moon {
+        display: none;
+    }
+
+    html[data-admin-theme="dark"] #admin-topbar .admin-theme-sun {
+        display: block;
+    }
+
+    #admin-topbar .admin-notification-badge {
+        position: absolute;
+        top: 1px;
+        right: 1px;
+        display: flex;
+        min-width: 16px;
+        height: 16px;
+        align-items: center;
+        justify-content: center;
+        padding: 0 4px;
+        border: 2px solid var(--admin-topbar-surface);
+        border-radius: 999px;
+        background: #ef4444;
+        color: #ffffff;
+        font-size: 8px;
+        font-weight: 700;
+        line-height: 1;
+    }
 
     @media (max-width: 639px) {
-        #admin-topbar .admin-dropdown { max-width: calc(100vw - 104px); }
-        #admin-topbar .admin-notifications { position: static; }
-        #admin-topbar .admin-notifications-panel { right: 16px; }
-        #admin-topbar .admin-topbar-actions { gap: 3px; }
+        #admin-topbar .admin-dropdown {
+            max-width: calc(100vw - 104px);
+        }
+
+        #admin-topbar .admin-notifications {
+            position: static;
+        }
+
+        #admin-topbar .admin-notifications-panel {
+            right: 16px;
+            width: min(320px, calc(100vw - 32px));
+        }
+
+        #admin-topbar .admin-topbar-actions {
+            gap: 3px;
+        }
     }
 
     @media (prefers-reduced-motion: reduce) {
-        #admin-topbar .admin-icon-button { transition: none; }
+        #admin-topbar .admin-icon-button {
+            transition: none;
+        }
+
+        #admin-topbar .admin-notification-item {
+            transition: none;
+        }
     }
 </style>
 
 <header id="admin-topbar" class="sticky top-0 z-30 flex h-16 items-center bg-[#F6F6F6]">
     <div class="admin-topbar-inner flex w-full items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        {{-- Bagian Kiri: Tombol Burger (Otomatis hilang di laptop via CSS .admin-burger-btn) --}}
         <div class="admin-heading flex items-center gap-3">
             <button
                 type="button"
@@ -307,61 +457,120 @@
                 <svg class="admin-theme-moon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M20.9 13.1A9 9 0 0 1 10.9 3.1 9 9 0 1 0 20.9 13.1Z"/>
                 </svg>
-                <svg class="admin-theme-sun" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+
+                <svg class="admin-theme-sun" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <circle cx="12" cy="12" r="4"/>
-                    <path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/>
+                    <path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M4.93 19.07l-1.42 1.42m11.3-11.3 1.42-1.42"/>
                 </svg>
             </button>
 
+            @php
+                $unreadNotifications = auth()->user()
+                    ->unreadNotifications()
+                    ->latest()
+                    ->take(5)
+                    ->get();
+
+                $unreadCount = auth()->user()
+                    ->unreadNotifications()
+                    ->count();
+            @endphp
+
             <details class="admin-notifications relative">
-                <summary class="admin-icon-button" aria-label="Notifikasi" title="Notifikasi">
+                <summary class="admin-icon-button relative" aria-label="Notifikasi" title="Notifikasi">
                     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
                         <path d="M10 21h4"/>
                     </svg>
+
+                    @if ($unreadCount > 0)
+                        <span class="admin-notification-badge">
+                            {{ $unreadCount > 99 ? '99+' : $unreadCount }}
+                        </span>
+                    @endif
                 </summary>
 
                 <div class="admin-dropdown admin-notifications-panel">
-                    <div class="admin-dropdown-heading">Notifikasi</div>
-                    <div class="admin-notifications-empty">
-                        <div class="admin-empty-icon">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
-                                <path d="M10 21h4"/>
-                            </svg>
-                        </div>
-                        <p>Belum ada notifikasi</p>
+                    <div class="admin-dropdown-heading">
+                        Notifikasi
                     </div>
+
+                    @if ($unreadNotifications->isNotEmpty())
+                        <div class="admin-notification-list">
+                            @foreach ($unreadNotifications as $notification)
+                                <form
+                                    method="POST"
+                                    action="{{ route('notifications.read', $notification->id) }}"
+                                >
+                                    @csrf
+
+                                    <button
+                                        type="submit"
+                                        class="admin-notification-item unread w-full text-left"
+                                    >
+                                        <div class="admin-notification-title">
+                                            <span class="admin-notification-dot"></span>
+                                            {{ $notification->data['title'] ?? 'Notifikasi' }}
+                                        </div>
+
+                                        <div class="admin-notification-message">
+                                            {{ $notification->data['message'] ?? '' }}
+                                        </div>
+
+                                        <span class="admin-notification-time">
+                                            {{ $notification->created_at->diffForHumans() }}
+                                        </span>
+                                    </button>
+                                </form>
+                            @endforeach
+                        </div>
+
+                        <div class="admin-notifications-footer">
+                            <form method="POST" action="{{ route('notifications.read-all') }}">
+                                @csrf
+                                <button type="submit">
+                                    Tandai semua dibaca
+                                </button>
+                            </form>
+
+                            <a href="{{ route('notifications.index') }}">
+                                Lihat semua
+                            </a>
+                        </div>
+                    @else
+                        <div class="admin-notifications-empty">
+                            <div class="admin-empty-icon">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                                    <path d="M10 21h4"/>
+                                </svg>
+                            </div>
+
+                            <p>Belum ada notifikasi</p>
+
+                            <a
+                                href="{{ route('notifications.index') }}"
+                                class="text-[11px] font-semibold"
+                                style="color: var(--admin-accent);"
+                            >
+                                Lihat semua notifikasi
+                            </a>
+                        </div>
+                    @endif
                 </div>
             </details>
 
-            <details class="admin-account relative">
-                <summary class="admin-account-summary flex cursor-pointer items-center" aria-label="Menu akun">
+            <div class="admin-account relative">
+                <div class="admin-account-summary flex items-center">
                     <div class="admin-account-avatar flex shrink-0 items-center justify-center text-xs font-semibold" aria-hidden="true">
                         {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                     </div>
+
                     <span class="admin-account-name hidden max-w-32 truncate font-medium lg:block">
                         {{ auth()->user()->name }}
                     </span>
-                    <svg class="admin-account-chevron hidden lg:block" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="m6 9 6 6 6-6"/>
-                    </svg>
-                </summary>
-
-                <div class="admin-dropdown">
-                    <div class="admin-dropdown-heading">
-                        <div class="truncate">{{ auth()->user()->name }}</div>
-                        <div class="admin-account-email truncate">{{ auth()->user()->email }}</div>
-                    </div>
-                    <a href="{{ route('profile.edit') }}" class="admin-profile-link">
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <circle cx="12" cy="8" r="4"/>
-                            <path d="M4 21a8 8 0 0 1 16 0"/>
-                        </svg>
-                        Profil
-                    </a>
                 </div>
-            </details>
+            </div>
         </div>
     </div>
 </header>
@@ -375,6 +584,7 @@
         const updateThemeButton = () => {
             const isDark = root.dataset.adminTheme === 'dark';
             const label = isDark ? 'Aktifkan tema terang' : 'Aktifkan tema gelap';
+
             themeButton.setAttribute('aria-label', label);
             themeButton.setAttribute('title', label);
             themeButton.setAttribute('aria-pressed', String(isDark));
@@ -384,6 +594,7 @@
 
         themeButton.addEventListener('click', () => {
             const theme = root.dataset.adminTheme === 'dark' ? 'light' : 'dark';
+
             root.dataset.adminTheme = theme;
             root.classList.toggle('dark', theme === 'dark');
 
@@ -417,12 +628,16 @@
             if (event.key !== 'Escape') return;
 
             const openDropdown = dropdowns.find((dropdown) => dropdown.open);
+
             if (!openDropdown) return;
 
             const focusWasInside = openDropdown.contains(document.activeElement);
+
             openDropdown.open = false;
 
-            if (focusWasInside) openDropdown.querySelector('summary').focus();
+            if (focusWasInside) {
+                openDropdown.querySelector('summary').focus();
+            }
         });
     })();
 </script>

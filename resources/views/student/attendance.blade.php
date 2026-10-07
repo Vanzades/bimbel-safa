@@ -1,566 +1,515 @@
 <!DOCTYPE html>
-
-<html lang="{{ str_replace('\_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-
     <meta charset="utf-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Bimbel') }} — Riwayat Absensi</title>
-
-    {{-- Favicon Responsif --}}
+    <title>{{ config('app.name', 'Bimbel') }} - Absensi Siswa</title>
 
     <link rel="icon" type="image/x-icon" href="{{ asset('image/favicon.ico') }}">
-
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('image/favicon-16x16.png') }}">
-
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('image/favicon-32x32.png') }}">
-
     <link rel="icon" type="image/png" sizes="48x48" href="{{ asset('image/favicon-48x48.png') }}">
-
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('image/favicon-180x180.png') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-
-        .attendance-page {
-
+        .student-page {
             min-height: 100vh;
-
             background: var(--student-topbar, #F6F6F6);
-
             color: var(--student-text, #1f2937);
-
         }
 
-        .attendance-card {
-
+        .student-card {
             border: 1px solid var(--student-border, #e5e7eb);
-
             background: var(--student-surface, #fff);
-
             box-shadow: 0 4px 20px var(--student-shadow, rgba(15, 23, 42, .08));
-
         }
 
-        .attendance-field {
-
+        .student-field {
             border: 1px solid var(--student-border, #e5e7eb);
-
             background: var(--student-soft, #f6f7f9);
-
             color: var(--student-text, #1f2937);
-
         }
 
-        .attendance-muted {
-
+        .student-muted {
             color: var(--student-muted, #64748b);
-
         }
 
-        .attendance-divider {
-
+        .student-divider {
             border-color: var(--student-border, #e5e7eb);
-
         }
 
-        .attendance-table-head {
-
+        .student-table-head {
             background: var(--student-soft, #f6f7f9);
-
         }
 
-        .attendance-row:hover {
+        .student-row {
+            transition: background-color .15s ease;
+        }
 
+        .student-row:hover {
             background: var(--student-hover, rgba(15, 23, 42, .055));
-
         }
 
-        .attendance-badge-present {
-
-            background: #059669;
-
-            color: #fff;
-
+        .student-row:last-child {
+            border-bottom: 0;
         }
 
-        .attendance-badge-permission {
-
-            background: #4f46e5;
-
-            color: #fff;
-
+        /* Kartu statistik */
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+            transition: transform .15s ease, box-shadow .15s ease;
         }
 
-        .attendance-badge-sick {
-
-            background: #d97706;
-
-            color: #fff;
-
+        .stat-card:hover {
+            transform: translateY(-2px);
         }
 
-        .attendance-badge-absent {
-
-            background: #dc2626;
-
-            color: #fff;
-
+        .stat-icon {
+            display: inline-flex;
+            height: 2rem;
+            width: 2rem;
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
         }
 
-        html[data-student-theme="dark"] .attendance-badge-present {
-
-            background: rgba(16, 185, 129, .18);
-
-            color: #6ee7b7;
-
+        .stat-icon svg {
+            height: 1rem;
+            width: 1rem;
         }
 
-        html[data-student-theme="dark"] .attendance-badge-permission {
+        .tone-total   { color: var(--student-muted, #64748b); }
+        .tone-present { color: #059669; }
+        .tone-permission { color: #d97706; }
+        .tone-sick    { color: #2563eb; }
+        .tone-absent  { color: #dc2626; }
 
-            background: rgba(99, 102, 241, .18);
+        .stat-icon.tone-total      { background: rgba(100, 116, 139, .12); }
+        .stat-icon.tone-present    { background: rgba(16, 185, 129, .12); }
+        .stat-icon.tone-permission { background: rgba(245, 158, 11, .14); }
+        .stat-icon.tone-sick       { background: rgba(37, 99, 235, .12); }
+        .stat-icon.tone-absent     { background: rgba(239, 68, 68, .12); }
 
-            color: #a5b4fc;
+        html[data-student-theme="dark"] .tone-present    { color: #6ee7b7; }
+        html[data-student-theme="dark"] .tone-permission { color: #fcd34d; }
+        html[data-student-theme="dark"] .tone-sick       { color: #93c5fd; }
+        html[data-student-theme="dark"] .tone-absent     { color: #fca5a5; }
 
+        /* Badge status (lembut + titik penanda) */
+        .attendance-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-weight: 600;
+            line-height: 1.25;
         }
 
-        html[data-student-theme="dark"] .attendance-badge-sick {
-
-            background: rgba(245, 158, 11, .18);
-
-            color: #fcd34d;
-
+        .attendance-badge::before {
+            content: "";
+            height: 6px;
+            width: 6px;
+            border-radius: 999px;
+            background: currentColor;
         }
 
-        html[data-student-theme="dark"] .attendance-badge-absent {
+        .attendance-present    { background: #d1fae5; color: #047857; }
+        .attendance-permission { background: #fef3c7; color: #b45309; }
+        .attendance-sick       { background: #dbeafe; color: #1d4ed8; }
+        .attendance-absent     { background: #fee2e2; color: #b91c1c; }
+        .attendance-unknown    { background: var(--student-soft, #f6f7f9); color: var(--student-muted, #64748b); }
 
-            background: rgba(239, 68, 68, .18);
+        html[data-student-theme="dark"] .attendance-present    { background: rgba(16, 185, 129, .18); color: #6ee7b7; }
+        html[data-student-theme="dark"] .attendance-permission { background: rgba(245, 158, 11, .18); color: #fcd34d; }
+        html[data-student-theme="dark"] .attendance-sick       { background: rgba(59, 130, 246, .18); color: #93c5fd; }
+        html[data-student-theme="dark"] .attendance-absent     { background: rgba(239, 68, 68, .18); color: #fca5a5; }
 
-            color: #fca5a5;
-
+        /* Chip kelas */
+        .class-chip {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 8px;
+            border: 1px solid var(--student-border, #e5e7eb);
+            background: var(--student-soft, #f6f7f9);
+            padding: 3px 10px;
+            font-weight: 500;
+            color: var(--student-text, #1f2937);
         }
 
+        /* Tombol biru tetap (tidak mengikuti variabel tema) */
+        .btn-blue {
+            background-color: #2563EB;
+            box-shadow: 0 3px 8px rgba(37, 99, 235, .25);
+            transition: filter .15s ease, transform .15s ease;
+        }
+
+        .btn-blue:hover {
+            filter: brightness(1.1);
+        }
+
+        .btn-blue:active {
+            transform: translateY(1px);
+        }
+
+        .btn-blue:focus-visible {
+            outline: 2px solid #93c5fd;
+            outline-offset: 2px;
+        }
+
+        .select-wrap select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
     </style>
-
 </head>
 
 <body class="min-h-screen antialiased">
 
     <x-student-sidebar />
 
-    <div class="attendance-page lg:pl-64">
+    <div class="student-page lg:pl-64">
 
-        <x-student-topbar :student="$student" title="Riwayat Absensi" />
+        <x-student-topbar :student="$student" title="Absensi" />
 
-        <main class="mx-auto w-full max-w-90rem space-y-5 px-4 py-4 pb-10 sm:px-6 lg:px-10 lg:py-6">
+        @php
+            $isFiltering = request()->filled('month') || request()->filled('year');
 
-            {{-- Breadcrumb --}}
+            $rate = $stats['total'] > 0
+                ? round(($stats['present'] / $stats['total']) * 100)
+                : 0;
+
+            $th = 'whitespace-nowrap px-6 py-3.5 text-left text-xs sm:text-sm font-semibold uppercase tracking-wider student-muted';
+            $td = 'px-6 py-4 text-xs sm:text-sm';
+            $field = 'student-field box-border h-9 w-full rounded-lg pl-3 pr-9 text-xs sm:text-[13px] outline-none transition-colors duration-150 focus:border-blue-500 focus:ring-1 focus:ring-blue-500';
+        @endphp
+
+        <main class="mx-auto w-full max-w-90rem px-4 pt-4 pb-4 sm:px-6 lg:px-10 lg:pt-6 lg:pb-6">
 
             <nav
-
                 class="mb-3 flex items-center gap-1.5 text-[11px] font-medium sm:text-xs"
-
                 style="color: var(--student-muted, #64748b);"
-
                 aria-label="Breadcrumb"
-
             >
-
-                <a href="{{ route('student.dashboard') }}" class="transition hover:opacity-75">
-
+                <a href="{{ route('student.dashboard') }}" class="hover:opacity-85">
                     Dashboard
-
                 </a>
 
                 <svg class="h-2.5 w-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
-
                 </svg>
 
                 <span class="font-semibold" style="color: var(--student-text, #1f2937);">
-
-                    Riwayat Absensi
-
+                    Absensi
                 </span>
-
             </nav>
 
-            {{-- Judul halaman --}}
+            <div class="mt-8 mb-12 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight sm:text-2xl">
+                        Absensi
+                    </h1>
 
-            <div class="mb-8 mt-8 sm:mb-12">
-
-                <h1 class="text-xl font-bold tracking-tight sm:text-2xl">
-
-                    Riwayat Absensi
-
-                </h1>
-
-                <p class="mt-1.5 text-xs sm:text-sm attendance-muted">
-
-                    Pantau riwayat kehadiran kamu.
-
-                </p>
-
+                    <p class="mt-1.5 text-xs sm:text-sm student-muted">
+                        Lihat riwayat dan rekap kehadiran kamu.
+                    </p>
+                </div>
             </div>
 
-            {{-- Ringkasan Stats dengan Desain Baru --}}
+            {{-- Statistik --}}
+            <section class="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
 
-            <section class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+                <div class="student-card stat-card rounded-2xl p-5">
+                    <div class="flex items-start justify-between gap-3">
+                        <p class="text-xs font-medium sm:text-sm student-muted">Total</p>
 
-                @php
-
-                    $stats = [
-
-                        [
-
-                            'label' => 'Total',
-
-                            'value' => $attendanceStats['total'],
-
-                            'color' => 'text-slate-600 dark:text-slate-400',
-
-                            'bg' => 'bg-slate-500/10 dark:bg-slate-400/20',
-
-                            'border' => 'border-slate-200 dark:border-slate-700/50',
-
-                            'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>'
-
-                        ],
-
-                        [
-
-                            'label' => 'Hadir',
-
-                            'value' => $attendanceStats['present'],
-
-                            'color' => 'text-emerald-600 dark:text-emerald-400',
-
-                            'bg' => 'bg-emerald-500/10 dark:bg-emerald-500/20',
-
-                            'border' => 'border-emerald-200 dark:border-emerald-500/20',
-
-                            'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>'
-
-                        ],
-
-                        [
-
-                            'label' => 'Izin',
-
-                            'value' => $attendanceStats['permission'],
-
-                            'color' => 'text-indigo-600 dark:text-indigo-400',
-
-                            'bg' => 'bg-indigo-500/10 dark:bg-indigo-500/20',
-
-                            'border' => 'border-indigo-200 dark:border-indigo-500/20',
-
-                            'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>'
-
-                        ],
-
-                        [
-
-                            'label' => 'Sakit',
-
-                            'value' => $attendanceStats['sick'],
-
-                            'color' => 'text-amber-600 dark:text-amber-400',
-
-                            'bg' => 'bg-amber-500/10 dark:bg-amber-500/20',
-
-                            'border' => 'border-amber-200 dark:border-amber-500/20',
-
-                            'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>'
-
-                        ],
-
-                        [
-
-                            'label' => 'Alpa',
-
-                            'value' => $attendanceStats['absent'],
-
-                            'color' => 'text-rose-600 dark:text-rose-400',
-
-                            'bg' => 'bg-rose-500/10 dark:bg-rose-500/20',
-
-                            'border' => 'border-rose-200 dark:border-rose-500/20',
-
-                            'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>'
-
-                        ],
-
-                    ];
-
-                @endphp
-
-                @foreach ($stats as $stat)
-
-                    <div class="attendance-card group relative overflow-hidden rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-
-                        <div class="flex items-center justify-between gap-3">
-
-                            <div>
-
-                                <p class="text-xs sm:text-sm font-medium attendance-muted">
-
-                                    {{ $stat['label'] }}
-
-                                </p>
-
-                                <p class="mt-2 text-xs sm:text-sm font-bold tracking-tight">
-
-                                    {{ $stat['value'] }}
-
-                                </p>
-
-                            </div>
-
-                            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl {{ $stat['bg'] }} {{ $stat['color'] }} transition-transform duration-300 group-hover:scale-110">
-
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-
-                                    {!! $stat['icon'] !!}
-
-                                </svg>
-
-                            </div>
-
-                        </div>
-
+                        <span class="stat-icon tone-total">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M9 5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-4"/>
+                                <path d="M9 5a3 3 0 0 0 6 0M9 5h6M9 12h6M9 16h4"/>
+                            </svg>
+                        </span>
                     </div>
 
-                @endforeach
+                    <p class="mt-3 text-xl font-bold sm:text-2xl">{{ $stats['total'] }}</p>
+                    <p class="mt-1 text-[11px] sm:text-xs student-muted">Data absensi</p>
+                </div>
+
+                <div class="student-card stat-card rounded-2xl p-5">
+                    <div class="flex items-start justify-between gap-3">
+                        <p class="text-xs font-medium sm:text-sm tone-present">Hadir</p>
+
+                        <span class="stat-icon tone-present">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="12" cy="12" r="9"/>
+                                <path d="m8.5 12.5 2.5 2.5 4.5-5"/>
+                            </svg>
+                        </span>
+                    </div>
+
+                    <p class="mt-3 text-xl font-bold sm:text-2xl">{{ $stats['present'] }}</p>
+                    <p class="mt-1 text-[11px] sm:text-xs student-muted">{{ $rate }}% dari total</p>
+                </div>
+
+                <div class="student-card stat-card rounded-2xl p-5">
+                    <div class="flex items-start justify-between gap-3">
+                        <p class="text-xs font-medium sm:text-sm tone-permission">Izin</p>
+
+                        <span class="stat-icon tone-permission">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/>
+                                <path d="M14 3v5h5M9 13h6M9 17h4"/>
+                            </svg>
+                        </span>
+                    </div>
+
+                    <p class="mt-3 text-xl font-bold sm:text-2xl">{{ $stats['permission'] }}</p>
+                    <p class="mt-1 text-[11px] sm:text-xs student-muted">Izin tidak hadir</p>
+                </div>
+
+                <div class="student-card stat-card rounded-2xl p-5">
+                    <div class="flex items-start justify-between gap-3">
+                        <p class="text-xs font-medium sm:text-sm tone-sick">Sakit</p>
+
+                        <span class="stat-icon tone-sick">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="3" y="3" width="18" height="18" rx="4"/>
+                                <path d="M12 8v8M8 12h8"/>
+                            </svg>
+                        </span>
+                    </div>
+
+                    <p class="mt-3 text-xl font-bold sm:text-2xl">{{ $stats['sick'] }}</p>
+                    <p class="mt-1 text-[11px] sm:text-xs student-muted">Tidak hadir</p>
+                </div>
+
+                <div class="student-card stat-card rounded-2xl p-5">
+                    <div class="flex items-start justify-between gap-3">
+                        <p class="text-xs font-medium sm:text-sm tone-absent">Alpa</p>
+
+                        <span class="stat-icon tone-absent">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="12" cy="12" r="9"/>
+                                <path d="m9 9 6 6M15 9l-6 6"/>
+                            </svg>
+                        </span>
+                    </div>
+
+                    <p class="mt-3 text-xl font-bold sm:text-2xl">{{ $stats['absent'] }}</p>
+                    <p class="mt-1 text-[11px] sm:text-xs student-muted">Tanpa keterangan</p>
+                </div>
 
             </section>
 
-            {{-- Filter --}}
-
-            <section class="attendance-card overflow-hidden rounded-2xl">
-
-                <div class="border-b px-5 py-4 sm:px-6 attendance-divider">
-
-                    <h2 class="text-sm sm:text-base font-semibold">Filter Absensi</h2>
-
-                </div>
+            {{-- Card besar: toolbar filter + tabel --}}
+            <section class="student-card rounded-2xl p-5 shadow-sm sm:p-6">
 
                 <form
-
                     method="GET"
-
                     action="{{ route('student.attendance') }}"
-
-                    class="grid gap-5 p-5 sm:grid-cols-3 sm:p-6"
-
+                    class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"
                 >
 
-                    <div>
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
 
-                        <label for="status" class="mb-2 block text-[13px] sm:text-sm font-semibold attendance-muted">
+                        <div class="select-wrap relative w-full sm:w-40 sm:shrink-0">
+                            <label for="month" class="sr-only">Bulan</label>
 
-                            Status
+                            <select id="month" name="month" class="{{ $field }}">
+                                <option value="">Semua Bulan</option>
 
-                        </label>
+                                @foreach ([
+                                    1 => 'Januari',
+                                    2 => 'Februari',
+                                    3 => 'Maret',
+                                    4 => 'April',
+                                    5 => 'Mei',
+                                    6 => 'Juni',
+                                    7 => 'Juli',
+                                    8 => 'Agustus',
+                                    9 => 'September',
+                                    10 => 'Oktober',
+                                    11 => 'November',
+                                    12 => 'Desember',
+                                ] as $monthNumber => $monthName)
+                                    <option
+                                        value="{{ $monthNumber }}"
+                                        @selected((string) request('month') === (string) $monthNumber)
+                                    >
+                                        {{ $monthName }}
+                                    </option>
+                                @endforeach
+                            </select>
 
-                        <select
+                            <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center student-muted">
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path d="m6 9 6 6 6-6"/>
+                                </svg>
+                            </span>
+                        </div>
 
-                            id="status"
+                        <div class="select-wrap relative w-full sm:w-36 sm:shrink-0">
+                            <label for="year" class="sr-only">Tahun</label>
 
-                            name="status"
+                            <select id="year" name="year" class="{{ $field }}">
+                                <option value="">Semua Tahun</option>
 
-                            class="attendance-field w-full rounded-xl px-4 py-2.5 text-xs sm:text-sm outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                                @foreach ($years as $year)
+                                    <option
+                                        value="{{ $year }}"
+                                        @selected((string) request('year') === (string) $year)
+                                    >
+                                        {{ $year }}
+                                    </option>
+                                @endforeach
+                            </select>
 
-                        >
-
-                            <option value="">Semua Status</option>
-
-                            <option value="present" @selected(request('status') === 'present')>Hadir</option>
-
-                            <option value="permission" @selected(request('status') === 'permission')>Izin</option>
-
-                            <option value="sick" @selected(request('status') === 'sick')>Sakit</option>
-
-                            <option value="absent" @selected(request('status') === 'absent')>Alpa</option>
-
-                        </select>
-
-                    </div>
-
-                    <div>
-
-                        <label for="month" class="mb-2 block text-[13px] sm:text-sm font-semibold attendance-muted">
-
-                            Bulan
-
-                        </label>
-
-                        <select
-
-                            id="month"
-
-                            name="month"
-
-                            class="attendance-field w-full rounded-xl px-4 py-2.5 text-xs sm:text-sm outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-
-                        >
-
-                            <option value="">Semua Bulan</option>
-
-                            @foreach ([
-
-                                1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
-
-                                5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
-
-                                9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember',
-
-                            ] as $number => $monthName)
-
-                                <option
-
-                                    value="{{ $number }}"
-
-                                    @selected((string) request('month') === (string) $number)
-
-                                >
-
-                                    {{ $monthName }}
-
-                                </option>
-
-                            @endforeach
-
-                        </select>
-
-                    </div>
-
-                    <div>
-
-                        <label for="year" class="mb-2 block text-[13px] sm:text-sm font-semibold attendance-muted">
-
-                            Tahun
-
-                        </label>
-
-                        <select
-
-                            id="year"
-
-                            name="year"
-
-                            class="attendance-field w-full rounded-xl px-4 py-2.5 text-xs sm:text-sm outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-
-                        >
-
-                            <option value="">Semua Tahun</option>
-
-                            @foreach (range(now()->year, now()->year - 5) as $year)
-
-                                <option
-
-                                    value="{{ $year }}"
-
-                                    @selected((string) request('year') === (string) $year)
-
-                                >
-
-                                    {{ $year }}
-
-                                </option>
-
-                            @endforeach
-
-                        </select>
-
-                    </div>
-
-                    <div class="flex items-center gap-2 sm:col-span-3">
+                            <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center student-muted">
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path d="m6 9 6 6 6-6"/>
+                                </svg>
+                            </span>
+                        </div>
 
                         <button
-
                             type="submit"
-
-                            class="rounded-xl bg-blue-600 px-5 py-2.5 text-[13px] sm:text-sm font-semibold text-white transition hover:bg-blue-700"
-
+                            class="btn-blue inline-flex h-9 w-full shrink-0 items-center justify-center rounded-lg px-4 text-xs font-semibold text-white sm:w-auto sm:text-[13px]"
                         >
-
-                            Terapkan Filter
-
+                            Terapkan
                         </button>
 
-                        <a
+                        @if ($isFiltering)
+                            <a
+                                href="{{ route('student.attendance') }}"
+                                class="student-field inline-flex h-9 shrink-0 items-center justify-center rounded-lg px-3 text-xs font-medium transition-colors duration-150 hover:opacity-80 sm:text-[13px] student-muted"
+                            >
+                                Reset
+                            </a>
+                        @endif
 
-                            href="{{ route('student.attendance') }}"
+                    </div>
 
-                            class="attendance-field rounded-xl px-5 py-2.5 text-[13px] sm:text-sm font-medium transition hover:opacity-80"
-
-                        >
-
-                            Reset
-
-                        </a>
-
+                    <div
+                        class="student-field inline-flex h-7 w-fit items-center rounded-full px-3 text-[11px] font-medium sm:text-xs student-muted"
+                    >
+                        {{ $attendances->count() }} data
                     </div>
 
                 </form>
 
-            </section>
+                <div class="student-divider overflow-hidden rounded-xl border">
 
-            {{-- Riwayat kehadiran --}}
+                    <div class="overflow-x-auto">
 
-            <section class="attendance-card overflow-hidden rounded-2xl">
+                        <table class="w-full min-w-900px border-collapse text-left">
 
-                <div class="border-b px-5 py-4 sm:px-6 attendance-divider">
+                            <thead class="student-table-head border-b student-divider">
+                                <tr>
+                                    <th class="{{ $th }}">Tanggal</th>
+                                    <th class="{{ $th }}">Mata Pelajaran</th>
+                                    <th class="{{ $th }}">Kelas</th>
+                                    <th class="{{ $th }}">Status</th>
+                                    <th class="{{ $th }}">Catatan</th>
+                                </tr>
+                            </thead>
 
-                    <h2 class="text-sm sm:text-base font-semibold">Riwayat Kehadiran</h2>
+                            <tbody>
 
-                </div>
+                                @forelse ($attendances as $attendance)
 
-                <div class="overflow-x-auto">
+                                    @php
+                                        [$statusLabel, $statusClass] = match ($attendance->status) {
+                                            'present' => ['Hadir', 'attendance-badge attendance-present'],
+                                            'permission' => ['Izin', 'attendance-badge attendance-permission'],
+                                            'sick' => ['Sakit', 'attendance-badge attendance-sick'],
+                                            'absent' => ['Alpa', 'attendance-badge attendance-absent'],
+                                            default => ['Tidak Diketahui', 'attendance-badge attendance-unknown'],
+                                        };
 
-                    <table class="w-full text-left text-xs sm:text-sm">
+                                        $className = $attendance->schedule?->classRoom?->name;
+                                    @endphp
 
-                        <thead class="attendance-table-head">
+                                    <tr class="student-row border-b student-divider">
 
-                            <tr class="border-b attendance-divider">
+                                        <td class="{{ $td }} whitespace-nowrap">
+                                            <div class="min-w-0">
+                                                <div class="truncate font-semibold">
+                                                    {{ $attendance->date->translatedFormat('d F Y') }}
+                                                </div>
 
-                                <th class="whitespace-nowrap px-5 py-3.5 text-xs sm:text-sm font-semibold attendance-muted sm:px-6">
+                                                <div class="mt-0.5 text-[11px] sm:text-xs student-muted">
+                                                    {{ $attendance->date->translatedFormat('l') }}
+                                                </div>
+                                            </div>
+                                        </td>
 
-                                    Tanggal
+                                        <td class="{{ $td }} whitespace-nowrap">
+                                            <span class="font-medium">
+                                                {{ $attendance->schedule?->subject ?? '-' }}
+                                            </span>
+                                        </td>
 
-                                </th >
+                                        <td class="{{ $td }} whitespace-nowrap">
+                                            @if ($className)
+                                                <span class="class-chip text-xs sm:text-[13px]">{{ $className }}</span>
+                                            @else
+                                                <span class="student-muted">-</span>
+                                            @endif
+                                        </td>
 
-                                <th class="whitespace-nowrap px-5 py-3.5 text-xs sm:text-sm font-semibold attendance-muted sm:px-6">
+                                        <td class="{{ $td }} whitespace-nowrap">
+                                            <span class="{{ $statusClass }} text-xs sm:text-[13px]">
+                                                {{ $statusLabel }}
+                                            </span>
+                                        </td>
 
-                                    Mata Pelajaran
+                                        <td class="{{ $td }} max-w-xs student-muted">
+                                            {{ $attendance->notes ?: '-' }}
+                                        </td>
 
-                                </th>
+                                    </tr>
 
-                                <th class="whitespace-nowrap px-5 py-3.5 text-xs sm:text-sm font-semibold attendance-muted sm:px-6">
+                                @empty
 
-                                    Status
+                                    <tr>
+                                        <td colspan="5" class="px-6 py-14 text-center">
 
-                                </th>
+                                            <div
+                                                class="student-divider mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full border student-muted"
+                                                style="background: var(--student-soft, #f6f7f9);"
+                                            >
+                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M9 5H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-4M9 5a3 3 0 0 0 6 0M9 5h6"/>
+                                                </svg>
+                                            </div>
 
-                            </tr>
+                                            <p class="text-xs font-medium sm:text-sm">
+                                                Belum ada data absensi
+                                            </p>
 
-                        </thead>
+                                            <p class="mt-1 text-[11px] sm:text-xs student-muted">
+                                                Data kehadiran kamu akan muncul setelah guru melakukan absensi.
+                                            </p>
 
-                        <tbody>
+                                        </td>
+                                    </tr>
 
-                            <!-- Baris tabel riwayat -->
+                                @endforelse
 
-                        </tbody>
+                            </tbody>
 
-                    </table>
+                        </table>
+
+                    </div>
 
                 </div>
 

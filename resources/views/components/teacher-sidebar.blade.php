@@ -9,7 +9,7 @@
                     'label' => 'Dashboard',
                     'route' => 'teacher.dashboard',
                     'fallback' => '/teacher',
-                    'active' => 'teacher.dashboard*',
+                    'active' => ['teacher.dashboard', 'teacher.dashboard.*'],
                     'icon' => 'dashboard',
                 ],
             ],
@@ -21,27 +21,15 @@
                     'label' => 'Jadwal Mengajar',
                     'route' => 'teacher.schedules.index',
                     'fallback' => '/teacher/schedules',
-                    'active' => 'teacher.schedules.*',
+                    'active' => ['teacher.schedules', 'teacher.schedules.*'],
                     'icon' => 'schedule',
                 ],
                 [
                     'label' => 'Absensi',
                     'route' => 'teacher.attendance',
                     'fallback' => '/teacher/attendance',
-                    'active' => 'teacher.attendance*',
+                    'active' => ['teacher.attendance', 'teacher.attendance.*'],
                     'icon' => 'attendance',
-                ],
-            ],
-        ],
-        [
-            'label' => 'Account',
-            'items' => [
-                [
-                    'label' => 'Profil',
-                    'route' => 'teacher.profile',
-                    'fallback' => '/teacher/profile',
-                    'active' => 'teacher.profile*',
-                    'icon' => 'profile',
                 ],
             ],
         ],
@@ -65,10 +53,37 @@
         --teacher-sidebar-collapsed: 72px;
         --teacher-sidebar-open: 256px;
         --teacher-sidebar-ease: cubic-bezier(.22, 1, .36, 1);
+
+        /* 🌞 LIGHT MODE COLORS */
+        --teacher-surface: #ffffff;
+        --teacher-text: #1f2937;
+        --teacher-muted: #62769a;
+        --teacher-icon: #7693b9;
+        --teacher-accent: #2563eb;
+        --teacher-nav-hover: rgba(59, 130, 246, 0.08);
+        --teacher-nav-active-bg: rgba(59, 130, 246, 0.1);
+        --teacher-shadow: rgba(15, 23, 42, 0.06);
+        --teacher-danger: #ef4444; /* Merah solid */
+    }
+
+    /* 🌙 DARK MODE COLORS */
+    html.dark,
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --teacher-surface: #111827;
+            --teacher-text: #f3f4f6;
+            --teacher-muted: #9ca3af;
+            --teacher-icon: #6b7280;
+            --teacher-accent: #3b82f6;
+            --teacher-nav-hover: rgba(59, 130, 246, 0.15);
+            --teacher-nav-active-bg: rgba(59, 130, 246, 0.15);
+            --teacher-shadow: rgba(0, 0, 0, 0.3);
+            --teacher-danger: #ef4444;
+        }
     }
 
     #teacher-overlay {
-        background: rgba(15, 17, 20, .36);
+        background: rgba(15, 17, 20, .4);
         backdrop-filter: blur(3px);
         -webkit-backdrop-filter: blur(3px);
         opacity: 0;
@@ -80,79 +95,44 @@
     #teacher-sidebar {
         width: var(--teacher-sidebar-collapsed);
         overflow: hidden;
-        background: var(--teacher-surface, #fff);
-        color: var(--teacher-text, #1f2937);
-        box-shadow: 8px 0 28px rgba(15, 23, 42, .06);
-        transition: width 260ms var(--teacher-sidebar-ease), transform 260ms var(--teacher-sidebar-ease);
+        background: var(--teacher-surface);
+        color: var(--teacher-text);
+        box-shadow: 8px 0 28px var(--teacher-shadow);
+        transition: width 260ms var(--teacher-sidebar-ease), transform 260ms var(--teacher-sidebar-ease), background-color 260ms ease;
     }
 
-    html[data-teacher-sidebar-open="true"] #teacher-sidebar {
-        width: var(--teacher-sidebar-open);
-    }
+    html[data-teacher-sidebar-open="true"] #teacher-sidebar { width: var(--teacher-sidebar-open); }
+    html[data-teacher-sidebar-open="false"] #teacher-sidebar { width: var(--teacher-sidebar-collapsed); }
 
-    html[data-teacher-sidebar-open="false"] #teacher-sidebar {
-        width: var(--teacher-sidebar-collapsed);
-    }
-
-    [class~="lg:pl-64"] {
-        padding-left: var(--teacher-sidebar-collapsed);
-        transition: padding-left 260ms var(--teacher-sidebar-ease);
-    }
-
-    [class~="lg:ml-64"] {
-        margin-left: var(--teacher-sidebar-collapsed);
-        transition: margin-left 260ms var(--teacher-sidebar-ease);
-    }
+    [class~="lg:pl-64"] { padding-left: var(--teacher-sidebar-collapsed); transition: padding-left 260ms var(--teacher-sidebar-ease); }
+    [class~="lg:ml-64"] { margin-left: var(--teacher-sidebar-collapsed); transition: margin-left 260ms var(--teacher-sidebar-ease); }
 
     html.teacher-sidebar-scroll-locked,
-    html.teacher-sidebar-scroll-locked body {
-        overflow: hidden;
-    }
+    html.teacher-sidebar-scroll-locked body { overflow: hidden; }
 
     @media (max-width: 1023px) {
         #teacher-sidebar {
             width: var(--teacher-sidebar-open);
             transform: translateX(-100%);
         }
-
-        html[data-teacher-sidebar-open="true"] #teacher-sidebar {
-            transform: translateX(0);
-        }
-
+        html[data-teacher-sidebar-open="true"] #teacher-sidebar { transform: translateX(0); }
         html[data-teacher-sidebar-open="true"] #teacher-overlay {
             opacity: 1;
             visibility: visible;
             pointer-events: auto;
         }
-
         [class~="lg:pl-64"] { padding-left: 0 !important; }
         [class~="lg:ml-64"] { margin-left: 0 !important; }
     }
 
     @media (min-width: 1024px) {
-        html[data-teacher-sidebar-open="true"] #teacher-sidebar {
-            width: var(--teacher-sidebar-open);
-        }
+        html[data-teacher-sidebar-open="true"] #teacher-sidebar { width: var(--teacher-sidebar-open); }
+        html[data-teacher-sidebar-open="true"] [class~="lg:pl-64"] { padding-left: var(--teacher-sidebar-open); }
+        html[data-teacher-sidebar-open="true"] [class~="lg:ml-64"] { margin-left: var(--teacher-sidebar-open); }
 
-        html[data-teacher-sidebar-open="true"] [class~="lg:pl-64"] {
-            padding-left: var(--teacher-sidebar-open);
-        }
-
-        html[data-teacher-sidebar-open="true"] [class~="lg:ml-64"] {
-            margin-left: var(--teacher-sidebar-open);
-        }
-
-        html[data-teacher-sidebar-open="false"] #teacher-sidebar {
-            width: var(--teacher-sidebar-collapsed);
-        }
-
-        html[data-teacher-sidebar-open="false"] [class~="lg:pl-64"] {
-            padding-left: var(--teacher-sidebar-collapsed);
-        }
-
-        html[data-teacher-sidebar-open="false"] [class~="lg:ml-64"] {
-            margin-left: var(--teacher-sidebar-collapsed);
-        }
+        html[data-teacher-sidebar-open="false"] #teacher-sidebar { width: var(--teacher-sidebar-collapsed); }
+        html[data-teacher-sidebar-open="false"] [class~="lg:pl-64"] { padding-left: var(--teacher-sidebar-collapsed); }
+        html[data-teacher-sidebar-open="false"] [class~="lg:ml-64"] { margin-left: var(--teacher-sidebar-collapsed); }
     }
 
     #teacher-sidebar .teacher-brand-wrap {
@@ -193,8 +173,8 @@
         align-items: center;
         justify-content: center;
         border-radius: 12px;
-        background: #2563eb;
-        color: #fff;
+        background: var(--teacher-accent);
+        color: #ffffff;
         font-weight: 700;
     }
 
@@ -211,14 +191,14 @@
         border: 0;
         border-radius: 8px;
         background: transparent;
-        color: var(--teacher-icon, #7693b9);
+        color: var(--teacher-icon);
         cursor: pointer;
         transform: translateY(-50%);
     }
 
     #teacher-sidebar .teacher-sidebar-close:hover {
-        background: var(--teacher-nav-hover, rgba(59, 130, 246, .08));
-        color: var(--teacher-accent, #2563eb);
+        background: var(--teacher-nav-hover);
+        color: var(--teacher-accent);
     }
 
     #teacher-sidebar .teacher-menu {
@@ -238,7 +218,7 @@
         margin-bottom: 9px;
         padding: 0 15px;
         overflow: hidden;
-        color: var(--teacher-muted, #62769a);
+        color: var(--teacher-muted);
         font-size: 10px;
         font-weight: 600;
         line-height: 16px;
@@ -250,25 +230,29 @@
     #teacher-sidebar .teacher-nav-link,
     #teacher-sidebar .teacher-logout-button {
         display: grid;
-        grid-template-columns: 16px minmax(0, 1fr);
+        grid-template-columns: 20px minmax(0, 1fr);
         justify-content: start;
-        column-gap: 12px;
+        column-gap: 16px;
         align-items: center;
         min-width: 0;
         box-sizing: border-box;
         overflow: hidden;
         border-radius: 10px;
         text-decoration: none;
-        transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 140ms ease;
+        transition: background-color 160ms ease, color 160ms ease, transform 140ms ease;
     }
 
-    #teacher-sidebar .teacher-nav-link {
+    #teacher-sidebar .teacher-nav-link,
+    #teacher-sidebar .teacher-logout-button {
         min-height: 43px;
         padding: 10px 15px;
-        color: var(--teacher-muted, #62769a);
         font-size: 13px;
         font-weight: 500;
         line-height: 20px;
+    }
+
+    #teacher-sidebar .teacher-nav-link {
+        color: var(--teacher-muted);
     }
 
     #teacher-sidebar .teacher-nav-link > svg,
@@ -278,14 +262,14 @@
         align-self: center;
         stroke-linecap: round;
         stroke-linejoin: round;
+        width: 18px;
+        height: 18px;
+        stroke-width: 1.7;
+        transition: color 160ms ease;
     }
 
     #teacher-sidebar .teacher-nav-link > svg {
-        width: 16px;
-        height: 16px;
-        color: var(--teacher-icon, #7693b9);
-        stroke-width: 1.7;
-        transition: color 160ms ease;
+        color: var(--teacher-icon);
     }
 
     #teacher-sidebar .teacher-nav-label,
@@ -299,72 +283,73 @@
         transition: opacity 160ms ease;
     }
 
+    /* HOVER & ACTIVE STATE MENU UTAMA */
     #teacher-sidebar .teacher-nav-link:hover {
-        background: var(--teacher-nav-hover, rgba(59, 130, 246, .08));
-        color: var(--teacher-accent, #2563eb);
+        background: var(--teacher-nav-hover);
+        color: var(--teacher-accent);
     }
 
     #teacher-sidebar .teacher-nav-link:hover > svg,
     #teacher-sidebar .teacher-nav-link.is-active > svg {
-        color: var(--teacher-accent, #2563eb);
+        color: var(--teacher-accent);
     }
 
-    #teacher-sidebar .teacher-nav-link.is-active,
-    #teacher-sidebar .teacher-nav-link:active {
-        background:
-            linear-gradient(125deg, var(--teacher-nav-sheen, rgba(255, 255, 255, .5)), transparent 55%),
-            linear-gradient(115deg, var(--teacher-nav-glass-start, rgba(96, 165, 250, .25)), var(--teacher-nav-glass-end, rgba(59, 130, 246, .1)));
-        box-shadow: 0 5px 16px var(--teacher-nav-shadow, rgba(37, 99, 235, .1));
-        backdrop-filter: blur(10px) saturate(140%);
-        -webkit-backdrop-filter: blur(10px) saturate(140%);
-        color: var(--teacher-accent, #2563eb);
+    #teacher-sidebar .teacher-nav-link.is-active {
+        background-color: var(--teacher-nav-active-bg);
+        color: var(--teacher-accent);
         font-weight: 600;
     }
 
-    #teacher-sidebar .teacher-nav-link:active { transform: scale(.98); }
+    #teacher-sidebar .teacher-nav-link:active {
+        transform: scale(.98);
+    }
 
     #teacher-sidebar .teacher-footer {
         flex-shrink: 0;
         padding: 14px 12px 16px;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
     }
 
     #teacher-sidebar .teacher-logout-form { margin: 0; }
 
+    /* =========================================================
+       TOMBOL LOGOUT (MURNI MERAH & TRANSPARAN)
+       ========================================================= */
     #teacher-sidebar .teacher-logout-button {
         width: 100%;
-        min-height: 40px;
-        padding: 9px 15px;
         border: 0;
-        background: var(--teacher-surface, #fff);
-        box-shadow: 0 3px 12px var(--teacher-shadow, rgba(15, 23, 42, .06));
-        color: var(--teacher-muted, #62769a);
+        background: transparent;
+        box-shadow: none;
+        color: var(--teacher-danger);
         font: inherit;
-        font-size: 12px;
-        font-weight: 600;
-        line-height: 20px;
         cursor: pointer;
-        transition: background-color 160ms ease, color 160ms ease;
+        -webkit-tap-highlight-color: transparent; /* Hilangkan blink kotak abu-abu di HP */
     }
 
+    #teacher-sidebar .teacher-logout-button > svg {
+        color: var(--teacher-danger);
+    }
+
+    /* Saat kursor diarahkan (hover) */
     #teacher-sidebar .teacher-logout-button:hover {
-        background: var(--teacher-danger-surface, #fff5f4);
-        color: var(--teacher-danger, #b33e36);
+        background: rgba(239, 68, 68, 0.1); /* Latar merah muda transparan (tidak ada putihnya) */
+        color: var(--teacher-danger);
     }
 
-    html[data-teacher-sidebar-open="false"] #teacher-sidebar .teacher-brand-logo {
-        width: 42px;
+    /* Saat beneran dipencet/diklik (active) */
+    #teacher-sidebar .teacher-logout-button:active {
+        background: rgba(239, 68, 68, 0.2); /* Latarnya makin merah */
+        transform: scale(.98); /* Efek tombol tertekan */
     }
 
-    html[data-teacher-sidebar-open="false"] #teacher-sidebar .teacher-sidebar-close {
-        display: none;
-    }
-
+    html[data-teacher-sidebar-open="false"] #teacher-sidebar .teacher-brand-logo { width: 42px; }
+    html[data-teacher-sidebar-open="false"] #teacher-sidebar .teacher-sidebar-close { display: none; }
     html[data-teacher-sidebar-open="false"] #teacher-sidebar .teacher-section-label,
     html[data-teacher-sidebar-open="false"] #teacher-sidebar .teacher-nav-label,
-    html[data-teacher-sidebar-open="false"] #teacher-sidebar .teacher-logout-label {
-        opacity: 0;
-    }
+    html[data-teacher-sidebar-open="false"] #teacher-sidebar .teacher-logout-label { opacity: 0; }
 </style>
 
 <div
@@ -440,10 +425,29 @@
     </div>
 
     <div class="teacher-footer">
+        @php
+            $profileActive = request()->routeIs('teacher.profile', 'teacher.profile.*');
+            $profileUrl = \Illuminate\Support\Facades\Route::has('teacher.profile')
+                ? route('teacher.profile')
+                : url('/teacher/profile');
+        @endphp
+
+        <a href="{{ $profileUrl }}"
+            title="Profil"
+            aria-label="Profil"
+            class="teacher-nav-link {{ $profileActive ? 'is-active' : '' }}"
+            @if ($profileActive) aria-current="page" @endif
+        >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                {!! $icons['profile'] !!}
+            </svg>
+            <span class="teacher-nav-label">Profil</span>
+        </a>
+
         <form method="POST" action="{{ route('logout') }}" class="teacher-logout-form">
             @csrf
             <button type="submit" class="teacher-logout-button" aria-label="Keluar" title="Keluar">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                     <path d="m16 17 5-5-5-5"/>
                     <path d="M21 12H9"/>

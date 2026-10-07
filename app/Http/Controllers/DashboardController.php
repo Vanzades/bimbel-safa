@@ -38,6 +38,6 @@ class DashboardController extends Controller
 
         $latestStudents = Student::with('classRoom')->latest()->limit(5)->get();
 
-        return view('dashboard', compact('stats', 'latestSchedules', 'latestTeachers', 'latestStudents'));
+        return view('admin.dashboard', compact('stats', 'latestSchedules', 'latestTeachers', 'latestStudents'));
     }
 }

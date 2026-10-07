@@ -1,100 +1,50 @@
 <x-guest-layout>
-    <div class="min-h-screen">
-        <div class="grid min-h-screen lg:grid-cols-2">
+    <div class="flex min-h-screen w-full flex-col bg-blue-50">
+        <div class="h-1 bg-blue-800"></div>
 
-            <div class="hidden bg-slate-950 lg:flex lg:flex-col lg:justify-between lg:p-12 xl:p-16">
-                <div>
-                    <a href="{{ url('/') }}" class="inline-flex items-center gap-3">
-                        <div class="flex h-9 w-9 items-center justify-center rounded-md bg-white text-sm font-bold text-slate-950">
-                            B
-                        </div>
+        <div class="flex flex-1 items-center justify-center px-5 py-10">
+            <div class="w-full max-w-sm">
 
-                        <div>
-                            <div class="text-sm font-semibold text-white">
-                                Bimbel
-                            </div>
-
-                            <div class="text-xs text-slate-400">
-                                Sistem Informasi Bimbingan Belajar
-                            </div>
-                        </div>
+                <div class="mb-6 flex justify-center">
+                    <a href="{{ url('/') }}" class="inline-flex">
+                        <img src="{{ asset('image/logo.png') }}" alt="{{ config('app.name', 'Bimbel') }}" class="h-10 w-auto">
                     </a>
                 </div>
 
-                <div class="max-w-xl">
-                    <p class="text-sm font-medium text-slate-400">
-                        Sistem Informasi Bimbingan Belajar
-                    </p>
+                <div class="rounded-xl border border-blue-100 bg-white p-6 shadow-sm sm:p-7">
+                    <div class="mb-6 text-center">
+                        <h1 class="text-xl font-semibold tracking-tight text-blue-950">
+                            Masuk ke akun
+                        </h1>
 
-                    <h1 class="mt-5 text-4xl font-semibold leading-tight tracking-tight text-white xl:text-6xl">
-                        Kelola kegiatan bimbingan belajar dengan lebih terstruktur.
-                    </h1>
-
-                    <p class="mt-6 max-w-lg text-base leading-7 text-slate-400">
-                        Kelola data siswa, guru, kelas, jadwal, absensi,
-                        dan pembayaran SPP melalui satu sistem.
-                    </p>
-                </div>
-
-                <p class="text-xs text-slate-500">
-                    &copy; {{ date('Y') }} Bimbel
-                </p>
-            </div>
-
-            <div class="flex min-h-screen items-center justify-center bg-white px-5 py-10 sm:px-8 lg:px-12">
-                <div class="w-full max-w-md">
-
-                    <div class="mb-10 lg:hidden">
-                        <a href="{{ url('/') }}" class="inline-flex items-center gap-3">
-                            <div class="flex h-9 w-9 items-center justify-center rounded-md bg-slate-950 text-sm font-bold text-white">
-                                B
-                            </div>
-
-                            <div>
-                                <div class="text-sm font-semibold text-slate-950">
-                                    Bimbel
-                                </div>
-
-                                <div class="text-xs text-slate-500">
-                                    Sistem Informasi Bimbingan Belajar
-                                </div>
-                            </div>
-                        </a>
+                        <p class="mt-1.5 text-sm text-blue-900/70">
+                            Masukkan email dan password Anda.
+                        </p>
                     </div>
 
-                    <div>
-                        <div class="mb-8">
-                            <p class="text-sm font-medium text-slate-500">
-                                Selamat datang
-                            </p>
+                    <x-auth-session-status
+                        class="mb-5"
+                        :status="session('status')"
+                    />
 
-                            <h2 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
-                                Masuk ke akun
-                            </h2>
+                    <form method="POST" action="{{ route('login') }}" class="space-y-4">
+                        @csrf
 
-                            <p class="mt-3 text-sm leading-6 text-slate-500">
-                                Masukkan email dan password untuk melanjutkan ke sistem.
-                            </p>
-                        </div>
+                        <div>
+                            <x-input-label
+                                for="email"
+                                :value="'Email'"
+                                class="mb-1.5 text-sm font-medium text-blue-950"
+                            />
 
-                        <x-auth-session-status
-                            class="mb-5"
-                            :status="session('status')"
-                        />
-
-                        <form method="POST" action="{{ route('login') }}" class="space-y-5">
-                            @csrf
-
-                            <div>
-                                <x-input-label
-                                    for="email"
-                                    :value="'Email'"
-                                    class="mb-2 text-sm font-medium text-slate-700"
-                                />
+                            <div class="relative">
+                                <svg class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m3 8 9 6 9-6M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2Z"/>
+                                </svg>
 
                                 <x-text-input
                                     id="email"
-                                    class="block w-full border-slate-300 bg-white px-3 py-2.5 text-sm shadow-none focus:border-slate-950 focus:ring-slate-950"
+                                    class="block w-full rounded-lg border-blue-200 bg-white py-2.5 pr-3 pl-10 text-sm text-blue-950 shadow-none placeholder:text-blue-900/40 focus:border-blue-800 focus:ring-blue-800"
                                     type="email"
                                     name="email"
                                     :value="old('email')"
@@ -103,23 +53,29 @@
                                     autocomplete="username"
                                     placeholder="nama@email.com"
                                 />
-
-                                <x-input-error
-                                    :messages="$errors->get('email')"
-                                    class="mt-2"
-                                />
                             </div>
 
-                            <div>
-                                <x-input-label
-                                    for="password"
-                                    :value="'Password'"
-                                    class="mb-2 text-sm font-medium text-slate-700"
-                                />
+                            <x-input-error
+                                :messages="$errors->get('email')"
+                                class="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <x-input-label
+                                for="password"
+                                :value="'Password'"
+                                class="mb-1.5 text-sm font-medium text-blue-950"
+                            />
+
+                            <div class="relative">
+                                <svg class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 10V7a4 4 0 0 0-8 0v3m-1 0h10a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1Z"/>
+                                </svg>
 
                                 <x-text-input
                                     id="password"
-                                    class="block w-full border-slate-300 bg-white px-3 py-2.5 text-sm shadow-none focus:border-slate-950 focus:ring-slate-950"
+                                    class="block w-full rounded-lg border-blue-200 bg-white py-2.5 pr-20 pl-10 text-sm text-blue-950 shadow-none placeholder:text-blue-900/40 focus:border-blue-800 focus:ring-blue-800"
                                     type="password"
                                     name="password"
                                     required
@@ -127,53 +83,52 @@
                                     placeholder="Masukkan password"
                                 />
 
-                                <x-input-error
-                                    :messages="$errors->get('password')"
-                                    class="mt-2"
-                                />
+                                <button
+                                    type="button"
+                                    class="absolute top-1/2 right-2 -translate-y-1/2 rounded-md px-2 py-1 text-xs font-semibold text-blue-800 transition hover:bg-blue-50"
+                                    aria-controls="password"
+                                    onclick="const i = document.getElementById('password'); const s = i.type === 'password'; i.type = s ? 'text' : 'password'; this.textContent = s ? 'Sembunyikan' : 'Lihat';"
+                                >Lihat</button>
                             </div>
 
-                            <div>
-                                <label for="remember" class="inline-flex items-center">
-                                    <input
-                                        id="remember"
-                                        type="checkbox"
-                                        name="remember"
-                                        class="h-4 w-4 border-slate-300 text-slate-950 focus:ring-slate-950"
-                                    >
-
-                                    <span class="ms-2 text-sm text-slate-600">
-                                        Ingat saya
-                                    </span>
-                                </label>
-                            </div>
-
-                            <button
-                                type="submit"
-                                class="inline-flex w-full items-center justify-center bg-slate-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2"
-                            >
-                                Masuk
-                            </button>
-                        </form>
-
-                        <div class="mt-8 border-t border-slate-200 pt-6">
-                            <p class="text-center text-xs leading-5 text-slate-500">
-                                Akun pengguna dibuat dan dikelola oleh administrator sistem.
-                            </p>
+                            <x-input-error
+                                :messages="$errors->get('password')"
+                                class="mt-2"
+                            />
                         </div>
-                    </div>
 
-                    <div class="mt-6 text-center">
-                        <a
-                            href="{{ url('/') }}"
-                            class="text-sm text-slate-500 transition hover:text-slate-950"
+                        <label for="remember" class="inline-flex items-center">
+                            <input
+                                id="remember"
+                                type="checkbox"
+                                name="remember"
+                                class="size-4 rounded border-blue-300 text-blue-800 focus:ring-blue-800"
+                            >
+
+                            <span class="ms-2 text-sm text-blue-900/70">
+                                Ingat saya
+                            </span>
+                        </label>
+
+                        <button
+                            type="submit"
+                            class="inline-flex w-full items-center justify-center rounded-lg bg-blue-800 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-900 focus:outline-hidden focus:ring-2 focus:ring-blue-800 focus:ring-offset-2"
                         >
-                            Kembali ke halaman utama
-                        </a>
-                    </div>
+                            Masuk
+                        </button>
+                    </form>
+                </div>
+
+                <p class="mt-5 text-center text-xs leading-5 text-blue-900/60">
+                    Akun pengguna dibuat dan dikelola oleh administrator sistem.
+                </p>
+
+                <div class="mt-3 text-center">
+                    <a href="{{ url('/') }}" class="text-sm text-blue-800 transition hover:text-blue-900 hover:underline">
+                        Kembali ke halaman utama
+                    </a>
                 </div>
             </div>
-
         </div>
     </div>
 </x-guest-layout>

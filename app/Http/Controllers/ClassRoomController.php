@@ -30,12 +30,12 @@ class ClassRoomController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('class-rooms.index', compact('classRooms'));
+        return view('admin.class-rooms.index', compact('classRooms'));
     }
 
     public function create()
     {
-        return view('class-rooms.create');
+        return view('admin.class-rooms.create');
     }
 
     public function store(Request $request)
@@ -50,7 +50,7 @@ class ClassRoomController extends Controller
         ClassRoom::create($validated);
 
         return redirect()
-            ->route('class-rooms.index')
+            ->route('admin.class-rooms.index')
             ->with('success', 'Data kelas berhasil ditambahkan.');
     }
 
@@ -58,12 +58,12 @@ class ClassRoomController extends Controller
     {
         $classRoom->load('students');
 
-        return view('class-rooms.show', compact('classRoom'));
+        return view('admin.class-rooms.show', compact('classRoom'));
     }
 
     public function edit(ClassRoom $classRoom)
     {
-        return view('class-rooms.edit', compact('classRoom'));
+        return view('admin.class-rooms.edit', compact('classRoom'));
     }
 
     public function update(Request $request, ClassRoom $classRoom)
@@ -83,7 +83,7 @@ class ClassRoomController extends Controller
         $classRoom->update($validated);
 
         return redirect()
-            ->route('class-rooms.index')
+            ->route('admin.class-rooms.index')
             ->with('success', 'Data kelas berhasil diperbarui.');
     }
 
@@ -91,14 +91,14 @@ class ClassRoomController extends Controller
     {
         if ($classRoom->students()->exists()) {
             return redirect()
-                ->route('class-rooms.index')
+                ->route('admin.class-rooms.index')
                 ->with('error', 'Kelas tidak dapat dihapus karena masih memiliki siswa.');
         }
 
         $classRoom->delete();
 
         return redirect()
-            ->route('class-rooms.index')
+            ->route('admin.class-rooms.index')
             ->with('success', 'Data kelas berhasil dihapus.');
     }
 }

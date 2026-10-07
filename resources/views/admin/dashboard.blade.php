@@ -25,7 +25,7 @@
                         <span id="live-date">{{ now()->translatedFormat('l, d F Y') }}</span>
                         <span class="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 font-medium tabular-nums text-white ring-1 ring-inset ring-white/15">
                             <svg class="h-3.5 w-3.5 text-indigo-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-                            <span id="live-clock">{{ now()->format('H:i:s') }}</span>
+                            <span id="live-clock">{{ now()->format('h:i:s A') }}</span>
                         </span>
                     </div>
                     <h1 class="mt-2 text-xl font-bold tracking-tight sm:mt-3 sm:text-2xl">Halo, {{ $firstName }}</h1>
@@ -145,7 +145,7 @@
                                         @if ($isToday)<span class="ml-1 text-[10px] font-medium text-indigo-600 sm:text-[11px]">Hari ini</span>@endif
                                     </td>
                                     <td class="whitespace-nowrap px-2.5 py-2.5 tabular-nums text-slate-600 sm:px-3 sm:py-3">
-                                        {{ \Carbon\Carbon::parse($schedule->start_time)->format('H:i') }} – {{ \Carbon\Carbon::parse($schedule->end_time)->format('H:i') }}
+                                        {{ \Carbon\Carbon::parse($schedule->start_time)->format('h:i A') }} – {{ \Carbon\Carbon::parse($schedule->end_time)->format('h:i A') }}
                                     </td>
                                     <td class="px-2.5 py-2.5 sm:px-3 sm:py-3">
                                         <div class="font-medium text-slate-900">{{ $schedule->classRoom->name ?? '-' }}</div>
@@ -223,7 +223,7 @@
             if (!dateEl || !clockEl) return;
 
             const dateFmt = new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
-            const timeFmt = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+            const timeFmt = new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
 
             function tick() {
                 const now = new Date();

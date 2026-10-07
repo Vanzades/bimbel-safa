@@ -42,7 +42,7 @@ class StudentController extends Controller
 
         $classRooms = ClassRoom::orderBy('name')->get();
 
-        return view('students.index', compact('students', 'classRooms'));
+        return view('admin.students.index', compact('students', 'classRooms'));
     }
 
     public function create()
@@ -51,7 +51,7 @@ class StudentController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('students.create', compact('classRooms'));
+        return view('admin.students.create', compact('classRooms'));
     }
 
     public function store(Request $request)
@@ -69,7 +69,7 @@ class StudentController extends Controller
         Student::create($validated);
 
         return redirect()
-            ->route('students.index')
+            ->route('admin.students.index')
             ->with('success', 'Data siswa berhasil ditambahkan.');
     }
 
@@ -77,14 +77,14 @@ class StudentController extends Controller
     {
         $student->load('classRoom');
 
-        return view('students.show', compact('student'));
+        return view('admin.students.show', compact('student'));
     }
 
     public function edit(Student $student)
     {
         $classRooms = ClassRoom::orderBy('name')->get();
 
-        return view('students.edit', compact('student', 'classRooms'));
+        return view('admin.students.edit', compact('student', 'classRooms'));
     }
 
     public function update(Request $request, Student $student)
@@ -107,7 +107,7 @@ class StudentController extends Controller
         $student->update($validated);
 
         return redirect()
-            ->route('students.index')
+            ->route('admin.students.index')
             ->with('success', 'Data siswa berhasil diperbarui.');
     }
 
@@ -116,7 +116,7 @@ class StudentController extends Controller
         $student->delete();
 
         return redirect()
-            ->route('students.index')
+            ->route('admin.students.index')
             ->with('success', 'Data siswa berhasil dihapus.');
     }
 }

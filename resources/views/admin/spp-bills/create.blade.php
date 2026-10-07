@@ -1,855 +1,415 @@
 <x-admin-layout>
-
     <x-slot name="title">
-
         Tambah Tagihan SPP
-
     </x-slot>
 
-
-
     @php
-
         $months = [
-
             1 => 'Januari',
-
             2 => 'Februari',
-
             3 => 'Maret',
-
             4 => 'April',
-
             5 => 'Mei',
-
             6 => 'Juni',
-
             7 => 'Juli',
-
             8 => 'Agustus',
-
             9 => 'September',
-
             10 => 'Oktober',
-
             11 => 'November',
-
             12 => 'Desember',
-
         ];
 
+        $labelClass = 'mb-2 block text-[13px] font-medium sm:text-sm';
+        $fieldClass = 'box-border h-10 w-full min-w-0 rounded-lg px-3.5 text-xs outline-none transition-colors duration-150 sm:text-[13px]';
+        $fieldStyle = 'background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-text);';
     @endphp
 
-
-
     <div
-
-        class="min-h-screen py-4 transition-colors duration-150 lg:py-6"
-
+        class="-mt-3 min-h-screen pt-0 pb-4 transition-colors duration-150 lg:-mt-4 lg:pb-6"
         style="background-color: var(--admin-bg); color: var(--admin-text);"
-
     >
-
-        <div class="mx-auto max-w-90rem px-4 sm:px-6 lg:px-10">
-
-
+        <div class="mx-auto max-w-90rem px-4 sm:px-6 lg:px-6">
 
             {{-- Breadcrumb --}}
-
             <nav
-
-                class="mb-3 flex items-center gap-1.5 text-[11px] font-medium sm:text-xs"
-
-                style="color: var(--admin-muted);"
-
                 aria-label="Breadcrumb"
-
+                class="mb-3 flex min-w-0 items-center gap-1.5 text-[11px] font-medium sm:text-xs"
+                style="color: var(--admin-muted);"
             >
-
-                <a href="{{ route('admin.dashboard') }}" class="transition-opacity hover:opacity-85">
-
+                <a href="{{ route('admin.dashboard') }}" class="shrink-0 hover:opacity-85">
                     Dashboard
-
                 </a>
 
-
-
-                <svg class="h-2.5 w-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-
+                <svg class="h-2.5 w-2.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
-
                 </svg>
 
-
-
-                <a href="{{ route('admin.spp-bills.index') }}" class="transition-opacity hover:opacity-85">
-
+                <a href="{{ route('admin.spp-bills.index') }}" class="shrink-0 hover:opacity-85">
                     SPP
-
                 </a>
 
-
-
-                <svg class="h-2.5 w-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-
+                <svg class="h-2.5 w-2.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
-
                 </svg>
 
-
-
-                <span class="font-semibold" style="color: var(--admin-text);">
-
+                <span class="truncate font-semibold" style="color: var(--admin-text);">
                     Tambah Tagihan
-
                 </span>
-
             </nav>
 
-
-
             {{-- Judul halaman --}}
-
-            <div class="mb-8 mt-8 sm:mb-10">
-
-                <div class="flex items-start gap-4">
-
-                    <div>
-
-                        <h1 class="text-xl font-bold tracking-tight sm:text-2xl">
-
-                            Tambah Tagihan SPP
-
-                        </h1>
-
-                        <p class="mt-1.5 text-xs sm:text-sm" style="color: var(--admin-muted);">
-
-                            Buat tagihan baru dan tentukan periode pembayaran siswa.
-
-                        </p>
-
-                    </div>
-
-                </div>
-
+            <div class="mb-12 mt-8">
+                <h1 class="text-xl font-bold tracking-tight sm:text-2xl">
+                    Tambah Tagihan SPP
+                </h1>
+                <p class="mt-1.5 text-xs sm:text-sm" style="color: var(--admin-muted);">
+                    Buat tagihan baru dan tentukan periode pembayaran siswa.
+                </p>
             </div>
 
-
-
-            {{-- Ringkasan error --}}
-
+            {{-- Pesan error --}}
             @if ($errors->any())
-
                 <div
-
                     class="mb-6 rounded-xl border px-4 py-3 text-xs sm:text-sm"
-
                     style="background-color: var(--admin-danger-surface, #fef2f2); border-color: var(--admin-danger-border, #fecaca); color: var(--admin-danger, #dc2626);"
-
                 >
-
                     <p class="mb-1 font-semibold">Periksa kembali data yang dimasukkan.</p>
-
                     <ul class="list-inside list-disc space-y-0.5">
-
                         @foreach ($errors->all() as $error)
-
-                            <li>{{ $error }}</li>
-
+                            <li class="wrap-break-word">{{ $error }}</li>
                         @endforeach
-
                     </ul>
-
                 </div>
-
             @endif
 
-
-
-            {{-- Form --}}
-
+            {{-- Card form --}}
             <section
-
-                class="overflow-hidden rounded-2xl shadow-sm"
-
-                style="border: 1px solid var(--admin-border); background-color: var(--admin-surface); box-shadow: 0 4px 20px var(--admin-shadow);"
-
+                class="overflow-hidden rounded-2xl border shadow-sm"
+                style="border-color: var(--admin-border); background-color: var(--admin-surface); box-shadow: 0 4px 20px var(--admin-shadow);"
             >
+                <div class="border-b px-5 py-5 sm:px-6" style="border-color: var(--admin-border);">
+                    <div class="flex items-start gap-3">
+                        <div
+                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+                            style="background-color: var(--admin-surface-soft); color: #2563EB;"
+                        >
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13ZM8 8h8M8 12h8M8 16h4"/>
+                            </svg>
+                        </div>
 
-                <div
-
-                    class="border-b px-5 py-5 sm:px-7"
-
-                    style="border-color: var(--admin-border);"
-
-                >
-
-                    <h2 class="text-sm sm:text-base font-semibold">Informasi Tagihan</h2>
-
-                    <p class="mt-1 text-xs sm:text-sm" style="color: var(--admin-muted);">
-
-                        Isi informasi siswa, nominal, dan periode tagihan.
-
-                    </p>
-
+                        <div class="min-w-0">
+                            <h2 class="text-sm font-semibold sm:text-base">
+                                Informasi Tagihan
+                            </h2>
+                            <p class="mt-1 text-xs sm:text-sm" style="color: var(--admin-muted);">
+                                Isi informasi siswa, nominal, dan periode tagihan.
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
-
-
-                <form action="{{ route('admin.spp-bills.store') }}" method="POST" class="p-5 sm:p-7">
-
+                <form action="{{ route('admin.spp-bills.store') }}" method="POST">
                     @csrf
 
+                    <div class="p-5 sm:p-6">
+                        <div class="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2">
 
-
-                    <div class="space-y-8">
-
-
-
-                        {{-- Data siswa --}}
-
-                        <section>
-
-                            <div class="mb-5">
-
-                                <h3 class="text-sm sm:text-base font-semibold">Data Siswa</h3>
-
-                                <p class="mt-1 text-[11px] sm:text-xs" style="color: var(--admin-muted);">
-
-                                    Pilih siswa yang akan menerima tagihan.
-
-                                </p>
-
-                            </div>
-
-
-
-                            <div>
-
-                                <label for="student_id" class="mb-2 block text-[13px] sm:text-sm font-medium">
-
+                            {{-- Siswa --}}
+                            <div class="min-w-0 sm:col-span-2">
+                                <label for="student_id" class="{{ $labelClass }}">
                                     Siswa <span style="color: var(--admin-danger, #dc2626);">*</span>
-
                                 </label>
 
+                                <div class="relative">
+                                    <select
+                                        id="student_id"
+                                        name="student_id"
+                                        required
+                                        class="{{ $fieldClass }} appearance-none pr-10"
+                                        style="{{ $fieldStyle }}"
+                                    >
+                                        <option value="">Pilih siswa</option>
 
+                                        @foreach ($students as $student)
+                                            <option
+                                                value="{{ $student->id }}"
+                                                @selected(old('student_id') == $student->id)
+                                            >
+                                                {{ $student->name }} — {{ $student->identity_number }}@if ($student->classRoom) — {{ $student->classRoom->name }}@endif
+                                            </option>
+                                        @endforeach
+                                    </select>
 
-                                <select
-
-                                    id="student_id"
-
-                                    name="student_id"
-
-                                    required
-
-                                    class="w-full rounded-xl px-4 py-2.5 text-[13px] sm:text-sm outline-none transition-colors duration-150"
-
-                                    style="background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-text);"
-
-                                >
-
-                                    <option value="">Pilih siswa</option>
-
-
-
-                                    @foreach ($students as $student)
-
-                                        <option
-
-                                            value="{{ $student->id }}"
-
-                                            @selected(old('student_id') == $student->id)
-
-                                        >
-
-                                            {{ $student->name }} — {{ $student->identity_number }}
-
-                                            @if ($student->classRoom)
-
-                                                — {{ $student->classRoom->name }}
-
-                                            @endif
-
-                                        </option>
-
-                                    @endforeach
-
-                                </select>
-
-
+                                    <svg class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--admin-muted);">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9 6 6 6-6"/>
+                                    </svg>
+                                </div>
 
                                 @error('student_id')
-
                                     <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-danger, #dc2626);">
-
                                         {{ $message }}
-
                                     </p>
-
                                 @enderror
-
                             </div>
 
-                        </section>
+                            {{-- Nominal SPP --}}
+                            <div class="min-w-0">
+                                <label for="amount" class="{{ $labelClass }}">
+                                    Nominal SPP <span style="color: var(--admin-danger, #dc2626);">*</span>
+                                </label>
 
+                                <div class="relative">
+                                    <span
+                                        class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-xs sm:text-[13px]"
+                                        style="color: var(--admin-muted);"
+                                    >
+                                        Rp
+                                    </span>
 
-
-                        <div class="border-t" style="border-color: var(--admin-border);"></div>
-
-
-
-                        {{-- Rincian tagihan --}}
-
-                        <section>
-
-                            <div class="mb-5">
-
-                                <h3 class="text-sm sm:text-base font-semibold">Rincian Tagihan</h3>
-
-                                <p class="mt-1 text-[11px] sm:text-xs" style="color: var(--admin-muted);">
-
-                                    Atur nominal, status, dan periode pembayaran.
-
-                                </p>
-
-                            </div>
-
-
-
-                            <div class="grid gap-5 sm:grid-cols-2">
-
-                                <div>
-
-                                    <label for="amount" class="mb-2 block text-[13px] sm:text-sm font-medium">
-
-                                        Nominal SPP <span style="color: var(--admin-danger, #dc2626);">*</span>
-
-                                    </label>
-
-
-
-                                    <div class="relative">
-
-                                        <span
-
-                                            class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-[13px] sm:text-sm"
-
-                                            style="color: var(--admin-muted);"
-
-                                        >
-
-                                            Rp
-
-                                        </span>
-
-
-
-                                        <input
-
-                                            type="number"
-
-                                            id="amount"
-
-                                            name="amount"
-
-                                            value="{{ old('amount') }}"
-
-                                            min="0"
-
-                                            step="0.01"
-
-                                            required
-
-                                            placeholder="500000"
-
-                                            class="w-full rounded-xl py-2.5 pl-11 pr-4 text-[13px] sm:text-sm outline-none transition-colors duration-150"
-
-                                            style="background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-text);"
-
-                                        >
-
-                                    </div>
-
-
-
-                                    @error('amount')
-
-                                        <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-danger, #dc2626);">
-
-                                            {{ $message }}
-
-                                        </p>
-
-                                    @enderror
-
+                                    <input
+                                        type="number"
+                                        id="amount"
+                                        name="amount"
+                                        value="{{ old('amount') }}"
+                                        min="0"
+                                        step="0.01"
+                                        required
+                                        placeholder="500000"
+                                        class="{{ $fieldClass }} pl-10"
+                                        style="{{ $fieldStyle }}"
+                                    >
                                 </div>
 
+                                @error('amount')
+                                    <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-danger, #dc2626);">
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
 
+                            {{-- Status --}}
+                            <div class="min-w-0">
+                                <label for="status" class="{{ $labelClass }}">
+                                    Status <span style="color: var(--admin-danger, #dc2626);">*</span>
+                                </label>
 
-                                <div>
-
-                                    <label for="status" class="mb-2 block text-[13px] sm:text-sm font-medium">
-
-                                        Status <span style="color: var(--admin-danger, #dc2626);">*</span>
-
-                                    </label>
-
-
-
+                                <div class="relative">
                                     <select
-
                                         id="status"
-
                                         name="status"
-
                                         required
-
-                                        class="w-full rounded-xl px-4 py-2.5 text-[13px] sm:text-sm outline-none transition-colors duration-150"
-
-                                        style="background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-text);"
-
+                                        class="{{ $fieldClass }} appearance-none pr-10"
+                                        style="{{ $fieldStyle }}"
                                     >
-
                                         <option value="unpaid" @selected(old('status', 'unpaid') === 'unpaid')>
-
                                             Belum Lunas
-
                                         </option>
-
                                         <option value="pending" @selected(old('status') === 'pending')>
-
                                             Menunggu Pembayaran
-
                                         </option>
-
                                         <option value="paid" @selected(old('status') === 'paid')>
-
                                             Lunas
-
                                         </option>
-
                                         <option value="failed" @selected(old('status') === 'failed')>
-
                                             Gagal
-
                                         </option>
-
                                         <option value="expired" @selected(old('status') === 'expired')>
-
                                             Expired
-
                                         </option>
-
                                     </select>
 
-
-
-                                    @error('status')
-
-                                        <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-danger, #dc2626);">
-
-                                            {{ $message }}
-
-                                        </p>
-
-                                    @enderror
-
+                                    <svg class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--admin-muted);">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9 6 6 6-6"/>
+                                    </svg>
                                 </div>
 
+                                @error('status')
+                                    <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-danger, #dc2626);">
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
 
+                            {{-- Bulan --}}
+                            <div class="min-w-0">
+                                <label for="month" class="{{ $labelClass }}">
+                                    Bulan <span style="color: var(--admin-danger, #dc2626);">*</span>
+                                </label>
 
-                                <div>
-
-                                    <label for="month" class="mb-2 block text-[13px] sm:text-sm font-medium">
-
-                                        Bulan <span style="color: var(--admin-danger, #dc2626);">*</span>
-
-                                    </label>
-
-
-
+                                <div class="relative">
                                     <select
-
                                         id="month"
-
                                         name="month"
-
                                         required
-
-                                        class="w-full rounded-xl px-4 py-2.5 text-[13px] sm:text-sm outline-none transition-colors duration-150"
-
-                                        style="background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-text);"
-
+                                        class="{{ $fieldClass }} appearance-none pr-10"
+                                        style="{{ $fieldStyle }}"
                                     >
-
                                         <option value="">Pilih bulan</option>
 
-
-
                                         @foreach ($months as $number => $name)
-
-                                            <option value="{{ $number }}" @selected(old('month') == $number)>
-
+                                            <option
+                                                value="{{ $number }}"
+                                                @selected(old('month') == $number)
+                                            >
                                                 {{ $name }}
-
                                             </option>
-
                                         @endforeach
-
                                     </select>
 
-
-
-                                    @error('month')
-
-                                        <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-danger, #dc2626);">
-
-                                            {{ $message }}
-
-                                        </p>
-
-                                    @enderror
-
+                                    <svg class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--admin-muted);">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9 6 6 6-6"/>
+                                    </svg>
                                 </div>
 
-
-
-                                <div>
-
-                                    <label for="year" class="mb-2 block text-[13px] sm:text-sm font-medium">
-
-                                        Tahun <span style="color: var(--admin-danger, #dc2626);">*</span>
-
-                                    </label>
-
-
-
-                                    <input
-
-                                        type="number"
-
-                                        id="year"
-
-                                        name="year"
-
-                                        value="{{ old('year', date('Y')) }}"
-
-                                        min="2000"
-
-                                        max="2100"
-
-                                        required
-
-                                        class="w-full rounded-xl px-4 py-2.5 text-[13px] sm:text-sm outline-none transition-colors duration-150"
-
-                                        style="background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-text);"
-
-                                    >
-
-
-
-                                    @error('year')
-
-                                        <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-danger, #dc2626);">
-
-                                            {{ $message }}
-
-                                        </p>
-
-                                    @enderror
-
-                                </div>
-
-                            </div>
-
-                        </section>
-
-
-
-                        <div class="border-t" style="border-color: var(--admin-border);"></div>
-
-
-
-                        {{-- Informasi pembayaran --}}
-
-                        <section>
-
-                            <div class="mb-5">
-
-                                <h3 class="text-sm sm:text-base font-semibold">Informasi Pembayaran</h3>
-
-                                <p class="mt-1 text-[11px] sm:text-xs" style="color: var(--admin-muted);">
-
-                                    Data berikut opsional dan bisa diisi untuk mencatat pembayaran.
-
-                                </p>
-
-                            </div>
-
-
-
-                            <div class="grid gap-5 sm:grid-cols-2">
-
-                                <div>
-
-                                    <label for="paid_at" class="mb-2 block text-[13px] sm:text-sm font-medium">
-
-                                        Tanggal Pembayaran
-
-                                    </label>
-
-
-
-                                    <input
-
-                                        type="datetime-local"
-
-                                        id="paid_at"
-
-                                        name="paid_at"
-
-                                        value="{{ old('paid_at') }}"
-
-                                        class="w-full rounded-xl px-4 py-2.5 text-[13px] sm:text-sm outline-none transition-colors duration-150"
-
-                                        style="background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-text);"
-
-                                    >
-
-
-
-                                    <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-muted);">
-
-                                        Isi jika tagihan sudah dibayar.
-
+                                @error('month')
+                                    <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-danger, #dc2626);">
+                                        {{ $message }}
                                     </p>
-
-
-
-                                    @error('paid_at')
-
-                                        <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-danger, #dc2626);">
-
-                                            {{ $message }}
-
-                                        </p>
-
-                                    @enderror
-
-                                </div>
-
-
-
-                                <div>
-
-                                    <label for="payment_reference" class="mb-2 block text-[13px] sm:text-sm font-medium">
-
-                                        Referensi Pembayaran
-
-                                    </label>
-
-
-
-                                    <input
-
-                                        type="text"
-
-                                        id="payment_reference"
-
-                                        name="payment_reference"
-
-                                        value="{{ old('payment_reference') }}"
-
-                                        placeholder="Contoh: PAY-2026-0001"
-
-                                        class="w-full rounded-xl px-4 py-2.5 text-[13px] sm:text-sm outline-none transition-colors duration-150"
-
-                                        style="background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-text);"
-
-                                    >
-
-
-
-                                    <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-muted);">
-
-                                        Opsional untuk mencatat nomor transaksi.
-
-                                    </p>
-
-
-
-                                    @error('payment_reference')
-
-                                        <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-danger, #dc2626);">
-
-                                            {{ $message }}
-
-                                        </p>
-
-                                    @enderror
-
-                                </div>
-
+                                @enderror
                             </div>
 
-                        </section>
+                            {{-- Tahun --}}
+                            <div class="min-w-0">
+                                <label for="year" class="{{ $labelClass }}">
+                                    Tahun <span style="color: var(--admin-danger, #dc2626);">*</span>
+                                </label>
 
-
-
-                        <div class="border-t" style="border-color: var(--admin-border);"></div>
-
-
-
-                        {{-- Catatan --}}
-
-                        <section>
-
-                            <label for="notes" class="mb-2 block text-[13px] sm:text-sm font-medium">
-
-                                Catatan
-
-                            </label>
-
-
-
-                            <textarea
-
-                                id="notes"
-
-                                name="notes"
-
-                                rows="4"
-
-                                placeholder="Tambahkan catatan jika diperlukan..."
-
-                                class="w-full resize-y rounded-xl px-4 py-3 text-[13px] sm:text-sm outline-none transition-colors duration-150"
-
-                                style="background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-text);"
-
-                            >{{ old('notes') }}</textarea>
-
-
-
-                            @error('notes')
-
-                                <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-danger, #dc2626);">
-
-                                    {{ $message }}
-
-                                </p>
-
-                            @enderror
-
-                        </section>
-
-
-
-                        {{-- Informasi tambahan --}}
-
-                        <aside
-
-                            class="rounded-xl border p-4 sm:p-5"
-
-                            style="background-color: var(--admin-surface-soft); border-color: var(--admin-border);"
-
-                        >
-
-                            <div class="flex items-start gap-3">
-
-                                <div
-
-                                    class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-
-                                    style="background-color: rgba(245, 158, 11, 0.12); color: #D97706;"
-
+                                <input
+                                    type="number"
+                                    id="year"
+                                    name="year"
+                                    value="{{ old('year', date('Y')) }}"
+                                    min="2000"
+                                    max="2100"
+                                    required
+                                    class="{{ $fieldClass }}"
+                                    style="{{ $fieldStyle }}"
                                 >
 
-                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-
-                                            d="M12 9v3m0 4h.01M10.3 3.9 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/>
-
-                                    </svg>
-
-                                </div>
-
-
-
-                                <div>
-
-                                    <h3 class="text-sm sm:text-base font-semibold">Perhatian</h3>
-
-                                    <p class="mt-1 text-[11px] sm:text-xs leading-6" style="color: var(--admin-muted);">
-
-                                        Setiap siswa hanya dapat memiliki satu tagihan untuk bulan dan tahun yang sama.
-
-                                        Jika status dipilih Lunas, tanggal pembayaran bisa dicatat untuk riwayat pembayaran.
-
+                                @error('year')
+                                    <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-danger, #dc2626);">
+                                        {{ $message }}
                                     </p>
-
-                                </div>
-
+                                @enderror
                             </div>
 
-                        </aside>
+                            {{-- Tanggal pembayaran --}}
+                            <div class="min-w-0">
+                                <label for="paid_at" class="{{ $labelClass }}">
+                                    Tanggal Pembayaran
+                                </label>
 
+                                <input
+                                    type="datetime-local"
+                                    id="paid_at"
+                                    name="paid_at"
+                                    value="{{ old('paid_at') }}"
+                                    class="{{ $fieldClass }}"
+                                    style="{{ $fieldStyle }}"
+                                >
+
+                                <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-muted);">
+                                    Isi jika tagihan sudah dibayar.
+                                </p>
+
+                                @error('paid_at')
+                                    <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-danger, #dc2626);">
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+
+                            {{-- Referensi pembayaran --}}
+                            <div class="min-w-0">
+                                <label for="payment_reference" class="{{ $labelClass }}">
+                                    Referensi Pembayaran
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="payment_reference"
+                                    name="payment_reference"
+                                    value="{{ old('payment_reference') }}"
+                                    placeholder="Contoh: PAY-2026-0001"
+                                    class="{{ $fieldClass }}"
+                                    style="{{ $fieldStyle }}"
+                                >
+
+                                <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-muted);">
+                                    Opsional untuk mencatat nomor transaksi.
+                                </p>
+
+                                @error('payment_reference')
+                                    <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-danger, #dc2626);">
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+
+                            {{-- Catatan --}}
+                            <div class="min-w-0 sm:col-span-2">
+                                <label for="notes" class="{{ $labelClass }}">
+                                    Catatan
+                                </label>
+
+                                <textarea
+                                    id="notes"
+                                    name="notes"
+                                    rows="4"
+                                    placeholder="Tambahkan catatan jika diperlukan..."
+                                    class="box-border w-full min-w-0 resize-y rounded-lg px-3.5 py-3 text-xs outline-none transition-colors duration-150 sm:text-[13px]"
+                                    style="{{ $fieldStyle }}"
+                                >{{ old('notes') }}</textarea>
+
+                                @error('notes')
+                                    <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-danger, #dc2626);">
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+
+                            {{-- Informasi tambahan --}}
+                            <aside
+                                class="min-w-0 rounded-xl border p-4 sm:col-span-2"
+                                style="background-color: var(--admin-surface-soft); border-color: var(--admin-border);"
+                            >
+                                <h3 class="text-xs font-semibold sm:text-[13px]">
+                                    Perhatian
+                                </h3>
+                                <p class="mt-1 text-[11px] leading-5 sm:text-xs" style="color: var(--admin-muted);">
+                                    Setiap siswa hanya dapat memiliki satu tagihan untuk bulan dan tahun yang sama.
+                                    Jika status dipilih Lunas, tanggal pembayaran bisa dicatat untuk riwayat pembayaran.
+                                </p>
+                            </aside>
+                        </div>
                     </div>
-
-
 
                     {{-- Tombol aksi --}}
-
                     <div
-
-                        class="mt-7 flex flex-col-reverse gap-3 border-t pt-6 sm:flex-row sm:justify-end"
-
+                        class="flex flex-col-reverse gap-3 border-t p-5 sm:flex-row sm:justify-end sm:px-6"
                         style="border-color: var(--admin-border);"
-
                     >
-
                         <a
-
                             href="{{ route('admin.spp-bills.index') }}"
-
-                            class="inline-flex items-center justify-center rounded-xl px-5 py-2.5 text-[13px] sm:text-sm font-medium transition-colors duration-150"
-
-                            style="background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-muted);"
-
+                            class="inline-flex h-9 w-full items-center justify-center rounded-lg border px-4 text-xs font-medium transition-colors duration-150 sm:w-auto sm:min-w-28 sm:text-[13px]"
+                            style="background-color: var(--admin-surface-soft); border-color: var(--admin-border); color: var(--admin-muted);"
                             onmouseover="this.style.backgroundColor='var(--admin-hover)'"
-
                             onmouseout="this.style.backgroundColor='var(--admin-surface-soft)'"
-
                         >
-
                             Batal
-
                         </a>
 
-
-
                         <button
-
                             type="submit"
-
-                            class="inline-flex items-center justify-center rounded-xl px-5 py-2.5 text-[13px] sm:text-sm font-semibold text-white transition hover:brightness-110"
-
+                            class="inline-flex h-9 w-full items-center justify-center rounded-lg px-4 text-xs font-semibold text-white transition-opacity hover:brightness-110 sm:w-auto sm:min-w-36 sm:text-[13px]"
                             style="background-color: #2563EB; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);"
-
                         >
-
                             Simpan Tagihan
-
                         </button>
-
                     </div>
-
                 </form>
-
             </section>
-
         </div>
-
     </div>
-
 </x-admin-layout>

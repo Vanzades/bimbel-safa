@@ -1,591 +1,365 @@
 <x-admin-layout>
-
-
-
     <x-slot name="title">
-
         Edit Guru
-
     </x-slot>
 
-
-
     @php
-
         $inputStyle = 'background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-text);';
-
         $labelStyle = 'color: var(--admin-text);';
 
+        $inputClass = 'box-border h-10 w-full min-w-0 rounded-xl px-3.5 text-xs outline-none transition duration-150 focus:ring-2 focus:ring-blue-500/20 sm:text-sm';
+        $labelClass = 'mb-2 block text-[13px] font-medium sm:text-sm';
+        $errorClass = 'mt-1.5 text-[11px] text-red-500 sm:text-xs';
     @endphp
 
-
-
-    <div class="py-4 lg:py-6 min-h-screen transition-colors duration-150"
-
-        style="background-color: var(--admin-bg); color: var(--admin-text);">
-
-
-
-        <div class="max-w-90rem mx-auto px-4 sm:px-6 lg:px-10">
-
-
+    {{-- Wrapper mengikuti halaman Akun --}}
+    <div
+        class="-mt-3 min-h-screen pt-0 pb-4 transition-colors duration-150 lg:-mt-4 lg:pb-6"
+        style="background-color: var(--admin-bg); color: var(--admin-text);"
+    >
+        <div class="mx-auto max-w-90rem px-4 sm:px-6 lg:px-6">
 
             {{-- Breadcrumb --}}
-
-            <nav class="flex items-center gap-1.5 text-[11px] sm:text-xs font-medium mb-3"
-
-                style="color: var(--admin-muted);">
-
-
-
+            <nav
+                class="mb-3 flex items-center gap-1.5 text-[11px] font-medium sm:text-xs"
+                style="color: var(--admin-muted);"
+                aria-label="Breadcrumb"
+            >
                 <a href="{{ route('admin.dashboard') }}" class="hover:opacity-85">
-
                     Dashboard
-
                 </a>
 
-
-
-                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-
+                <svg class="h-2.5 w-2.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
-
-
 
                 <a href="{{ route('admin.teachers.index') }}" class="hover:opacity-85">
-
                     Guru
-
                 </a>
 
-
-
-                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-
+                <svg class="h-2.5 w-2.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
 
-
-
                 <span class="font-semibold" style="color: var(--admin-text);">
-
                     Edit Guru
-
                 </span>
-
             </nav>
 
-
-
-            {{-- Judul Halaman --}}
-
+            {{-- Judul halaman --}}
             <div class="mt-8 mb-12">
-
-                <h1 class="text-xl sm:text-2xl font-bold tracking-tight">
-
+                <h1 class="text-xl font-bold tracking-tight sm:text-2xl">
                     Edit Guru
-
                 </h1>
 
-
-
                 <p class="mt-1.5 text-xs sm:text-sm" style="color: var(--admin-muted);">
-
                     Perbarui informasi guru yang dipilih.
-
                 </p>
-
             </div>
 
-
-
-            {{-- Error Messages --}}
-
+            {{-- Pesan error validasi --}}
             @if ($errors->any())
-
-                <div class="mb-6 rounded-xl border px-4 py-3 text-xs sm:text-sm"
-
-                    style="background-color: var(--admin-danger-surface, #fef2f2); border-color: var(--admin-danger-border, #fecaca); color: var(--admin-danger, #dc2626);">
-
-
-
-                    <div class="font-semibold mb-1">
-
+                <div
+                    class="mb-6 rounded-xl border px-4 py-3 text-xs sm:text-sm"
+                    style="background-color: var(--admin-danger-surface, #fef2f2); border-color: var(--admin-danger-border, #fecaca); color: var(--admin-danger, #dc2626);"
+                    role="alert"
+                >
+                    <p class="mb-1 font-semibold">
                         Periksa kembali data yang dimasukkan.
+                    </p>
 
-                    </div>
-
-
-
-                    <ul class="list-disc list-inside space-y-0.5">
-
+                    <ul class="list-inside list-disc space-y-0.5">
                         @foreach ($errors->all() as $error)
-
                             <li>{{ $error }}</li>
-
                         @endforeach
-
                     </ul>
-
                 </div>
-
             @endif
 
+            {{-- Card utama --}}
+            <div
+                class="overflow-hidden rounded-2xl shadow-sm"
+                style="border: 1px solid var(--admin-border); background-color: var(--admin-surface); box-shadow: 0 4px 20px var(--admin-shadow);"
+            >
+                {{-- Info guru yang sedang diedit --}}
+                <div class="p-5 pb-0 sm:p-6 sm:pb-0">
+                    <div
+                        class="flex min-w-0 items-start gap-3 rounded-xl border p-4"
+                        style="background-color: var(--admin-surface-soft); border-color: var(--admin-border);"
+                    >
+                        <span
+                            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+                            style="background-color: var(--admin-surface); color: var(--admin-icon); border: 1px solid var(--admin-border);"
+                        >
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 20v-1.5a4.5 4.5 0 0 0-4.5-4.5h-3A4.5 4.5 0 0 0 4 18.5V20M10 10a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM17 8h4M19 6v4"/>
+                            </svg>
+                        </span>
 
+                        <div class="min-w-0">
+                            <p class="text-xs sm:text-sm" style="color: var(--admin-muted);">
+                                Sedang mengedit data guru
+                            </p>
 
-            {{-- Card Utama --}}
+                            <p class="mt-0.5 wrap-break-word text-xs font-semibold sm:text-sm" style="color: var(--admin-text);">
+                                {{ $teacher->name }}
+                            </p>
 
-            <div class="rounded-2xl shadow-sm"
-
-                style="border: 1px solid var(--admin-border); background-color: var(--admin-surface); box-shadow: 0 4px 20px var(--admin-shadow);">
-
-
-
-                {{-- Informasi Guru yang Sedang Diedit --}}
-
-                <div class="mx-5 mt-5 sm:mx-6 sm:mt-6 rounded-xl px-4 py-3"
-
-                    style="background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border);">
-
-
-
-                    <p class="text-xs sm:text-sm" style="color: var(--admin-muted);">
-
-                        Sedang mengedit data guru
-
-                    </p>
-
-
-
-                    <p class="mt-1 text-xs sm:text-sm font-semibold" style="color: var(--admin-text);">
-
-                        {{ $teacher->name }}
-
-                    </p>
-
-
-
-                    <p class="mt-0.5 text-[11px] sm:text-xs" style="color: var(--admin-muted);">
-
-                        Nomor identitas: {{ $teacher->identity_number }}
-
-                    </p>
-
+                            <p class="mt-1 wrap-break-word text-[11px] sm:text-xs" style="color: var(--admin-muted);">
+                                Nomor identitas: {{ $teacher->identity_number }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
-
-
                 <form
-
                     method="POST"
-
                     action="{{ route('admin.teachers.update', $teacher) }}"
-
-                    class="mt-5 sm:mt-6">
-
-
-
+                >
                     @csrf
-
                     @method('PUT')
 
+                    {{-- Header form --}}
+                    <div class="px-5 pt-6 pb-5 sm:px-6">
+                        <div class="flex items-center gap-3">
+                            <span
+                                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+                                style="background-color: var(--admin-surface-soft); color: var(--admin-icon);"
+                            >
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z"/>
+                                </svg>
+                            </span>
 
-
-                    {{-- Header Form --}}
-
-                    <div class="px-5 sm:px-6 pb-5 border-b"
-
-                        style="border-color: var(--admin-border);">
-
-
-
-                        <h2 class="text-sm sm:text-base font-semibold" style="color: var(--admin-text);">
-
-                            Informasi Guru
-
-                        </h2>
-
-
-
-                        <p class="mt-1 text-xs sm:text-sm" style="color: var(--admin-muted);">
-
-                            Perbarui informasi dasar guru sesuai kebutuhan.
-
-                        </p>
-
+                            <div>
+                                <h2 class="text-sm font-bold sm:text-base" style="color: var(--admin-text);">
+                                    Informasi Guru
+                                </h2>
+                                <p class="mt-0.5 text-xs sm:text-sm" style="color: var(--admin-muted);">
+                                    Perbarui informasi dasar guru sesuai kebutuhan.
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
-
-
-                    {{-- Form Fields --}}
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 p-5 sm:p-6">
-
-
-
-                        {{-- Nama Lengkap --}}
-
-                        <div class="md:col-span-2">
-
-                            <label for="name" class="block text-[13px] sm:text-sm font-medium mb-2" style="{{ $labelStyle }}">
-
+                    {{-- Form fields --}}
+                    <div
+                        class="grid min-w-0 grid-cols-1 gap-x-5 gap-y-5 border-t p-5 sm:grid-cols-2 sm:p-6"
+                        style="border-color: var(--admin-border);"
+                    >
+                        {{-- Nama lengkap --}}
+                        <div class="min-w-0 sm:col-span-2">
+                            <label for="name" class="{{ $labelClass }}" style="{{ $labelStyle }}">
                                 Nama Lengkap
-
                             </label>
 
-
-
                             <input
-
                                 id="name"
-
                                 name="name"
-
                                 type="text"
-
                                 value="{{ old('name', $teacher->name) }}"
-
                                 required
-
                                 autofocus
-
-                                class="w-full rounded-xl px-4 py-2.5 text-[13px] sm:text-sm outline-none transition-colors duration-150"
-
-                                style="{{ $inputStyle }}">
-
-
+                                autocomplete="name"
+                                class="{{ $inputClass }}"
+                                style="{{ $inputStyle }}"
+                            >
 
                             @error('name')
-
-                                <p class="mt-1.5 text-[11px] sm:text-xs text-red-500">{{ $message }}</p>
-
+                                <p class="{{ $errorClass }}">{{ $message }}</p>
                             @enderror
-
                         </div>
 
-
-
-                        {{-- NIK / Nomor Identitas --}}
-
-                        <div>
-
-                            <label for="identity_number" class="block text-[13px] sm:text-sm font-medium mb-2" style="{{ $labelStyle }}">
-
+                        {{-- NIK / Nomor identitas --}}
+                        <div class="min-w-0">
+                            <label for="identity_number" class="{{ $labelClass }}" style="{{ $labelStyle }}">
                                 NIK / Nomor Identitas
-
                             </label>
 
-
-
                             <input
-
                                 id="identity_number"
-
                                 name="identity_number"
-
                                 type="text"
-
                                 value="{{ old('identity_number', $teacher->identity_number) }}"
-
                                 required
-
-                                class="w-full rounded-xl px-4 py-2.5 text-[13px] sm:text-sm outline-none transition-colors duration-150"
-
-                                style="{{ $inputStyle }}">
-
-
+                                class="{{ $inputClass }}"
+                                style="{{ $inputStyle }}"
+                            >
 
                             @error('identity_number')
-
-                                <p class="mt-1.5 text-[11px] sm:text-xs text-red-500">{{ $message }}</p>
-
+                                <p class="{{ $errorClass }}">{{ $message }}</p>
                             @enderror
-
                         </div>
 
-
-
-                        {{-- Jenis Kelamin --}}
-
-                        <div>
-
-                            <label for="gender" class="block text-[13px] sm:text-sm font-medium mb-2" style="{{ $labelStyle }}">
-
+                        {{-- Jenis kelamin --}}
+                        <div class="min-w-0">
+                            <label for="gender" class="{{ $labelClass }}" style="{{ $labelStyle }}">
                                 Jenis Kelamin
-
                             </label>
 
+                            <div class="relative">
+                                <select
+                                    id="gender"
+                                    name="gender"
+                                    required
+                                    class="{{ $inputClass }} appearance-none pr-10"
+                                    style="{{ $inputStyle }}"
+                                >
+                                    <option value="">Pilih jenis kelamin</option>
+                                    <option value="male" @selected(old('gender', $teacher->gender) === 'male')>
+                                        Laki-laki
+                                    </option>
+                                    <option value="female" @selected(old('gender', $teacher->gender) === 'female')>
+                                        Perempuan
+                                    </option>
+                                </select>
 
-
-                            <select
-
-                                id="gender"
-
-                                name="gender"
-
-                                required
-
-                                class="w-full rounded-xl px-4 py-2.5 text-[13px] sm:text-sm outline-none transition-colors duration-150"
-
-                                style="{{ $inputStyle }}">
-
-
-
-                                <option value="">Pilih jenis kelamin</option>
-
-
-
-                                <option value="male" @selected(old('gender', $teacher->gender) === 'male')>
-
-                                    Laki-laki
-
-                                </option>
-
-
-
-                                <option value="female" @selected(old('gender', $teacher->gender) === 'female')>
-
-                                    Perempuan
-
-                                </option>
-
-                            </select>
-
-
+                                <svg
+                                    class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2"
+                                    style="color: var(--admin-icon);"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9 6 6 6-6"/>
+                                </svg>
+                            </div>
 
                             @error('gender')
-
-                                <p class="mt-1.5 text-[11px] sm:text-xs text-red-500">{{ $message }}</p>
-
+                                <p class="{{ $errorClass }}">{{ $message }}</p>
                             @enderror
-
                         </div>
-
-
 
                         {{-- Email --}}
-
-                        <div>
-
-                            <label for="email" class="block text-[13px] sm:text-sm font-medium mb-2" style="{{ $labelStyle }}">
-
+                        <div class="min-w-0">
+                            <label for="email" class="{{ $labelClass }}" style="{{ $labelStyle }}">
                                 Email
-
                             </label>
 
-
-
                             <input
-
                                 id="email"
-
                                 name="email"
-
                                 type="email"
-
                                 value="{{ old('email', $teacher->email) }}"
-
-                                placeholder="contoh\@email.com"
-
-                                class="w-full rounded-xl px-4 py-2.5 text-[13px] sm:text-sm outline-none transition-colors duration-150"
-
-                                style="{{ $inputStyle }}">
-
-
+                                placeholder="contoh@email.com"
+                                autocomplete="email"
+                                class="{{ $inputClass }}"
+                                style="{{ $inputStyle }}"
+                            >
 
                             @error('email')
-
-                                <p class="mt-1.5 text-[11px] sm:text-xs text-red-500">{{ $message }}</p>
-
+                                <p class="{{ $errorClass }}">{{ $message }}</p>
                             @enderror
-
                         </div>
 
-
-
-                        {{-- Nomor Telepon --}}
-
-                        <div>
-
-                            <label for="phone" class="block text-[13px] sm:text-sm font-medium mb-2" style="{{ $labelStyle }}">
-
+                        {{-- Nomor telepon --}}
+                        <div class="min-w-0">
+                            <label for="phone" class="{{ $labelClass }}" style="{{ $labelStyle }}">
                                 Nomor Telepon
-
                             </label>
-
-
 
                             <input
-
                                 id="phone"
-
                                 name="phone"
-
                                 type="text"
-
                                 value="{{ old('phone', $teacher->phone) }}"
-
                                 placeholder="08xxxxxxxxxx"
-
-                                class="w-full rounded-xl px-4 py-2.5 text-[13px] sm:text-sm outline-none transition-colors duration-150"
-
-                                style="{{ $inputStyle }}">
-
-
+                                autocomplete="tel"
+                                class="{{ $inputClass }}"
+                                style="{{ $inputStyle }}"
+                            >
 
                             @error('phone')
-
-                                <p class="mt-1.5 text-[11px] sm:text-xs text-red-500">{{ $message }}</p>
-
+                                <p class="{{ $errorClass }}">{{ $message }}</p>
                             @enderror
-
                         </div>
-
-
 
                         {{-- Status --}}
-
-                        <div>
-
-                            <label for="status" class="block text-[13px] sm:text-sm font-medium mb-2" style="{{ $labelStyle }}">
-
+                        <div class="min-w-0">
+                            <label for="status" class="{{ $labelClass }}" style="{{ $labelStyle }}">
                                 Status
-
                             </label>
 
+                            <div class="relative">
+                                <select
+                                    id="status"
+                                    name="status"
+                                    required
+                                    class="{{ $inputClass }} appearance-none pr-10"
+                                    style="{{ $inputStyle }}"
+                                >
+                                    <option value="active" @selected(old('status', $teacher->status) === 'active')>
+                                        Aktif
+                                    </option>
+                                    <option value="inactive" @selected(old('status', $teacher->status) === 'inactive')>
+                                        Nonaktif
+                                    </option>
+                                </select>
 
-
-                            <select
-
-                                id="status"
-
-                                name="status"
-
-                                required
-
-                                class="w-full rounded-xl px-4 py-2.5 text-[13px] sm:text-sm outline-none transition-colors duration-150"
-
-                                style="{{ $inputStyle }}">
-
-
-
-                                <option value="active" @selected(old('status', $teacher->status) === 'active')>
-
-                                    Aktif
-
-                                </option>
-
-
-
-                                <option value="inactive" @selected(old('status', $teacher->status) === 'inactive')>
-
-                                    Nonaktif
-
-                                </option>
-
-                            </select>
-
-
+                                <svg
+                                    class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2"
+                                    style="color: var(--admin-icon);"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9 6 6 6-6"/>
+                                </svg>
+                            </div>
 
                             @error('status')
-
-                                <p class="mt-1.5 text-[11px] sm:text-xs text-red-500">{{ $message }}</p>
-
+                                <p class="{{ $errorClass }}">{{ $message }}</p>
                             @enderror
-
                         </div>
-
-
 
                         {{-- Alamat --}}
-
-                        <div class="md:col-span-2">
-
-                            <label for="address" class="block text-[13px] sm:text-sm font-medium mb-2" style="{{ $labelStyle }}">
-
+                        <div class="min-w-0 sm:col-span-2">
+                            <label for="address" class="{{ $labelClass }}" style="{{ $labelStyle }}">
                                 Alamat
-
                             </label>
 
-
-
                             <textarea
-
                                 id="address"
-
                                 name="address"
-
                                 rows="4"
-
                                 placeholder="Masukkan alamat lengkap"
-
-                                class="w-full resize-none rounded-xl px-4 py-2.5 text-[13px] sm:text-sm outline-none transition-colors duration-150"
-
-                                style="{{ $inputStyle }}">{{ old('address', $teacher->address) }}</textarea>
-
-
+                                class="box-border w-full min-w-0 resize-y rounded-xl px-3.5 py-3 text-xs outline-none transition duration-150 focus:ring-2 focus:ring-blue-500/20 sm:text-sm"
+                                style="{{ $inputStyle }}"
+                            >{{ old('address', $teacher->address) }}</textarea>
 
                             @error('address')
-
-                                <p class="mt-1.5 text-[11px] sm:text-xs text-red-500">{{ $message }}</p>
-
+                                <p class="{{ $errorClass }}">{{ $message }}</p>
                             @enderror
-
                         </div>
-
                     </div>
 
-
-
-                    {{-- Tombol Aksi --}}
-
-                    <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 px-5 sm:px-6 py-5 border-t"
-
-                        style="border-color: var(--admin-border);">
-
-
-
-                        <a href="{{ route('admin.teachers.index') }}"
-
-                            class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-medium transition-colors duration-150"
-
-                            style="background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-muted);"
-
+                    {{-- Tombol aksi --}}
+                    <div
+                        class="flex flex-col-reverse gap-2 border-t p-5 sm:flex-row sm:justify-end sm:gap-3 sm:px-6"
+                        style="border-color: var(--admin-border);"
+                    >
+                        <a
+                            href="{{ route('admin.teachers.index') }}"
+                            class="inline-flex h-9 w-full items-center justify-center rounded-lg border px-4 text-[13px] font-medium transition-colors duration-150 sm:w-auto"
+                            style="background-color: var(--admin-surface-soft); border-color: var(--admin-border); color: var(--admin-text);"
                             onmouseover="this.style.backgroundColor='var(--admin-hover)'"
-
-                            onmouseout="this.style.backgroundColor='var(--admin-surface-soft)'">
-
+                            onmouseout="this.style.backgroundColor='var(--admin-surface-soft)'"
+                        >
                             Batal
-
                         </a>
 
-
-
                         <button
-
                             type="submit"
-
-                            class="inline-flex items-center justify-center px-5 py-2.5 rounded-xl text-[13px] sm:text-sm font-semibold text-white transition-opacity shadow-md hover:brightness-110"
-
-                            style="background-color: #2563EB; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);">
-
+                            class="inline-flex h-9 w-full items-center justify-center rounded-lg px-4 text-[13px] font-semibold text-white transition-opacity hover:brightness-110 sm:w-auto"
+                            style="background-color: #2563EB; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);"
+                        >
                             Simpan Perubahan
-
                         </button>
-
                     </div>
-
                 </form>
-
             </div>
-
         </div>
-
     </div>
-
-
-
 </x-admin-layout>

@@ -36,12 +36,12 @@ class TeacherController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('teachers.index', compact('teachers'));
+        return view('admin.teachers.index', compact('teachers'));
     }
 
     public function create()
     {
-        return view('teachers.create');
+        return view('admin.teachers.create');
     }
 
     public function store(Request $request)
@@ -59,18 +59,18 @@ class TeacherController extends Controller
         Teacher::create($validated);
 
         return redirect()
-            ->route('teachers.index')
+            ->route('admin.teachers.index')
             ->with('success', 'Data guru berhasil ditambahkan.');
     }
 
     public function show(Teacher $teacher)
     {
-        return view('teachers.show', compact('teacher'));
+        return view('admin.teachers.show', compact('teacher'));
     }
 
     public function edit(Teacher $teacher)
     {
-        return view('teachers.edit', compact('teacher'));
+        return view('admin.teachers.edit', compact('teacher'));
     }
 
     public function update(Request $request, Teacher $teacher)
@@ -93,7 +93,7 @@ class TeacherController extends Controller
         $teacher->update($validated);
 
         return redirect()
-            ->route('teachers.index')
+            ->route('admin.teachers.index')
             ->with('success', 'Data guru berhasil diperbarui.');
     }
 
@@ -102,7 +102,7 @@ class TeacherController extends Controller
         $teacher->delete();
 
         return redirect()
-            ->route('teachers.index')
+            ->route('admin.teachers.index')
             ->with('success', 'Data guru berhasil dihapus.');
     }
 }

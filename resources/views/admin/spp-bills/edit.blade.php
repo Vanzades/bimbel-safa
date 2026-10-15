@@ -25,12 +25,10 @@
     @endphp
 
     <div
-        class="-mt-3 min-h-screen pt-0 pb-4 transition-colors duration-150 lg:-mt-4 lg:pb-6"
+        class="-mt-3 min-h-screen pb-4 transition-colors duration-150 lg:-mt-4 lg:pb-6"
         style="background-color: var(--admin-bg); color: var(--admin-text);"
     >
         <div class="mx-auto max-w-90rem px-4 sm:px-6 lg:px-6">
-
-            {{-- Breadcrumb --}}
             <nav
                 aria-label="Breadcrumb"
                 class="mb-3 flex min-w-0 items-center gap-1.5 text-[11px] font-medium sm:text-xs"
@@ -41,7 +39,7 @@
                 </a>
 
                 <svg class="h-2.5 w-2.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7-7"/>
                 </svg>
 
                 <a href="{{ route('admin.spp-bills.index') }}" class="shrink-0 hover:opacity-85">
@@ -49,16 +47,15 @@
                 </a>
 
                 <svg class="h-2.5 w-2.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7-7"/>
                 </svg>
 
                 <span class="truncate font-semibold" style="color: var(--admin-text);">
-                    Edit Tagihan SPP
+                    Edit Tagihan
                 </span>
             </nav>
 
-            {{-- Judul halaman --}}
-            <div class="mb-12 mt-8">
+            <div class="mb-8 mt-7">
                 <h1 class="text-xl font-bold tracking-tight sm:text-2xl">
                     Edit Tagihan SPP
                 </h1>
@@ -67,10 +64,9 @@
                 </p>
             </div>
 
-            {{-- Pesan error --}}
             @if ($errors->any())
                 <div
-                    class="mb-6 rounded-xl border px-4 py-3 text-xs sm:text-sm"
+                    class="mb-5 rounded-xl border px-4 py-3 text-xs sm:text-sm"
                     style="background-color: var(--admin-danger-surface, #fef2f2); border-color: var(--admin-danger-border, #fecaca); color: var(--admin-danger, #dc2626);"
                 >
                     <p class="mb-1 font-semibold">Periksa kembali data yang dimasukkan.</p>
@@ -82,42 +78,41 @@
                 </div>
             @endif
 
-            {{-- Card form --}}
-            <div
+            <section
                 class="overflow-hidden rounded-2xl border shadow-sm"
                 style="border-color: var(--admin-border); background-color: var(--admin-surface); box-shadow: 0 4px 20px var(--admin-shadow);"
             >
+                <div class="border-b px-5 py-5 sm:px-6" style="border-color: var(--admin-border);">
+                    <div class="flex items-start gap-3">
+                        <div
+                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+                            style="background-color: var(--admin-surface-soft); color: #2563eb;"
+                        >
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13ZM8 8h8M8 12h8M8 16h4"/>
+                            </svg>
+                        </div>
+
+                        <div class="min-w-0">
+                            <h2 class="text-sm font-semibold sm:text-base">
+                                Informasi Tagihan
+                            </h2>
+                            <p class="mt-1 text-xs sm:text-sm" style="color: var(--admin-muted);">
+                                Perbarui data utama tagihan SPP.
+                            </p>
+                            <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-muted);">
+                                Tagihan dibuat:
+                                <span style="color: var(--admin-text);">
+                                    {{ $sppBill->created_at?->format('d F Y, H:i') }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <form action="{{ route('admin.spp-bills.update', $sppBill) }}" method="POST">
                     @csrf
                     @method('PUT')
-
-                    <div class="border-b px-5 py-5 sm:px-6" style="border-color: var(--admin-border);">
-                        <div class="flex items-start gap-3">
-                            <div
-                                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                                style="background-color: var(--admin-surface-soft); color: #2563EB;"
-                            >
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13ZM8 8h8M8 12h8M8 16h4"/>
-                                </svg>
-                            </div>
-
-                            <div class="min-w-0">
-                                <h2 class="text-sm font-semibold sm:text-base">
-                                    Informasi Tagihan
-                                </h2>
-                                <p class="mt-1 text-xs sm:text-sm" style="color: var(--admin-muted);">
-                                    Perbarui data utama tagihan SPP.
-                                </p>
-                                <p class="mt-1.5 text-[11px] sm:text-xs" style="color: var(--admin-muted);">
-                                    Tagihan dibuat:
-                                    <span style="color: var(--admin-text);">
-                                        {{ $sppBill->created_at?->format('d F Y, H:i') }}
-                                    </span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
 
                     <div class="p-5 sm:p-6">
                         <div
@@ -127,13 +122,12 @@
                             <p class="text-xs font-semibold sm:text-[13px]">
                                 Perhatian
                             </p>
-                            <p class="mt-1 text-xs leading-5 sm:text-[13px]" style="color: var(--admin-muted);">
-                                Perubahan siswa, bulan, atau tahun akan tetap divalidasi agar tidak terjadi duplikasi tagihan pada periode yang sama.
+                            <p class="mt-1 text-[11px] leading-5 sm:text-xs" style="color: var(--admin-muted);">
+                                Perubahan siswa, bulan, atau tahun tetap divalidasi agar tidak terjadi duplikasi tagihan pada periode yang sama.
                             </p>
                         </div>
 
                         <div class="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2">
-                            {{-- Siswa --}}
                             <div class="min-w-0 sm:col-span-2">
                                 <label for="student_id" class="{{ $labelClass }}">
                                     Siswa <span style="color: var(--admin-danger, #dc2626);">*</span>
@@ -171,7 +165,6 @@
                                 @enderror
                             </div>
 
-                            {{-- Nominal SPP --}}
                             <div class="min-w-0">
                                 <label for="amount" class="{{ $labelClass }}">
                                     Nominal SPP <span style="color: var(--admin-danger, #dc2626);">*</span>
@@ -205,7 +198,6 @@
                                 @enderror
                             </div>
 
-                            {{-- Status --}}
                             <div class="min-w-0">
                                 <label for="status" class="{{ $labelClass }}">
                                     Status <span style="color: var(--admin-danger, #dc2626);">*</span>
@@ -248,7 +240,6 @@
                                 @enderror
                             </div>
 
-                            {{-- Bulan --}}
                             <div class="min-w-0">
                                 <label for="month" class="{{ $labelClass }}">
                                     Bulan <span style="color: var(--admin-danger, #dc2626);">*</span>
@@ -286,7 +277,6 @@
                                 @enderror
                             </div>
 
-                            {{-- Tahun --}}
                             <div class="min-w-0">
                                 <label for="year" class="{{ $labelClass }}">
                                     Tahun <span style="color: var(--admin-danger, #dc2626);">*</span>
@@ -311,7 +301,6 @@
                                 @enderror
                             </div>
 
-                            {{-- Tanggal pembayaran --}}
                             <div class="min-w-0">
                                 <label for="paid_at" class="{{ $labelClass }}">
                                     Tanggal Pembayaran
@@ -337,7 +326,6 @@
                                 @enderror
                             </div>
 
-                            {{-- Referensi pembayaran --}}
                             <div class="min-w-0">
                                 <label for="payment_reference" class="{{ $labelClass }}">
                                     Referensi Pembayaran
@@ -364,7 +352,6 @@
                                 @enderror
                             </div>
 
-                            {{-- Catatan --}}
                             <div class="min-w-0 sm:col-span-2">
                                 <label for="notes" class="{{ $labelClass }}">
                                     Catatan
@@ -388,7 +375,6 @@
                         </div>
                     </div>
 
-                    {{-- Tombol aksi --}}
                     <div
                         class="flex flex-col-reverse gap-3 border-t p-5 sm:flex-row sm:justify-end sm:px-6"
                         style="border-color: var(--admin-border);"
@@ -406,13 +392,13 @@
                         <button
                             type="submit"
                             class="inline-flex h-9 w-full items-center justify-center rounded-lg px-4 text-xs font-semibold text-white transition-opacity hover:brightness-110 sm:w-auto sm:min-w-36 sm:text-[13px]"
-                            style="background-color: #2563EB; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);"
+                            style="background-color: #2563eb; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);"
                         >
                             Simpan Perubahan
                         </button>
                     </div>
                 </form>
-            </div>
+            </section>
         </div>
     </div>
 </x-admin-layout>

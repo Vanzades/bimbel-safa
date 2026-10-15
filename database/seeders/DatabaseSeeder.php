@@ -2,8 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\ClassRoom;
-use App\Models\Student;
+use App\Models\Branch;
 use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -13,52 +12,53 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $admin = User::create([
-            'name' => 'Admin Bimbel',
-            'email' => 'adminbimbel@gmail.com',
-            'password' => Hash::make('adminbimbel'),
+        $branch = Branch::create([
+            'name' => 'Bimbel Safa Depok',
+            'address' => 'Depok, Jawa Barat',
+            'phone' => '081234567890',
+            'is_active' => true,
+        ]);
+
+        User::create([
+            'name' => 'Super Admin Bimbel Safa',
+            'email' => 'superadmin@bimbelsafa.com',
+            'password' => Hash::make('superadmin123'),
+            'role' => 'super_admin',
+            'branch_id' => null,
+        ]);
+
+        User::create([
+            'name' => 'Admin Bimbel Depok',
+            'email' => 'admin.depok@bimbelsafa.com',
+            'password' => Hash::make('admindepok123'),
             'role' => 'admin',
+            'branch_id' => $branch->id,
         ]);
 
         $guruUser = User::create([
-            'name' => 'Guru Bimbel',
-            'email' => 'gurubimbel@gmail.com',
-            'password' => Hash::make('gurubimbel'),
+            'name' => 'Guru Bimbel Depok',
+            'email' => 'guru.depok@bimbelsafa.com',
+            'password' => Hash::make('gurudepok123'),
             'role' => 'guru',
-        ]);
-
-        $siswaUser = User::create([
-            'name' => 'Siswa Bimbel',
-            'email' => 'siswabimbel@gmail.com',
-            'password' => Hash::make('siswabimbel'),
-            'role' => 'siswa',
-        ]);
-
-        $classRoom = ClassRoom::create([
-            'code' => 'KLS001',
-            'name' => 'Kelas Bimbel A',
-            'status' => 'active',
+            'branch_id' => $branch->id,
         ]);
 
         Teacher::create([
             'user_id' => $guruUser->id,
-            'name' => 'Guru Bimbel',
+            'branch_id' => $branch->id,
+            'name' => 'Guru Bimbel Depok',
             'identity_number' => 'G001',
-            'gender' => 'male',
-            'phone' => '081234567890',
-            'address' => 'Jakarta',
+            'gender' => 'female',
+            'phone' => '081234567892',
+            'address' => 'Depok, Jawa Barat',
             'status' => 'active',
         ]);
 
-        Student::create([
-            'user_id' => $siswaUser->id,
-            'class_room_id' => $classRoom->id,
-            'name' => 'Siswa Bimbel',
-            'identity_number' => 'S001',
-            'gender' => 'male',
-            'phone' => '081234567891',
-            'address' => 'Jakarta',
-            'status' => 'active',
+        $this->call([
+            ProgramSeeder::class,
+            ClassRoomSeeder::class,
+            ScheduleSeeder::class,
+            StudentSeeder::class,
         ]);
     }
 }

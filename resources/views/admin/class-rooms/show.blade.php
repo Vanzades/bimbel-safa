@@ -281,7 +281,7 @@
                         </p>
 
                         <a
-                            href="{{ route('students.create') }}"
+                            href="{{ route('admin.students.create') }}"
                             class="mt-4 inline-flex h-9 w-full items-center justify-center rounded-lg px-4 text-[13px] font-semibold text-white transition-opacity hover:brightness-110 sm:w-auto"
                             style="background-color: #2563EB;"
                         >

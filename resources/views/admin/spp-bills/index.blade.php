@@ -4,11 +4,17 @@
     </x-slot>
 
     @php
-        $isFiltering = request()->hasAny(['search', 'status', 'month']);
+        $isFiltering = request()->hasAny([
+            'search',
+            'status',
+            'month',
+            'year',
+            'class_room_id',
+        ]);
 
         $th = 'px-4 py-3.5 text-left text-xs sm:text-sm font-semibold uppercase tracking-wider';
         $td = 'px-4 py-4 text-xs sm:text-sm';
-        $iconBtn = 'w-8 h-8 inline-flex items-center justify-center rounded-lg transition-colors duration-150';
+        $iconBtn = 'inline-flex h-8 w-8 items-center justify-center rounded-lg transition-colors duration-150';
 
         $months = [
             1 => 'Januari',
@@ -40,50 +46,71 @@
             'failed' => 'bg-red-100/80 dark:bg-red-500/20',
             'expired' => 'bg-slate-100/80 dark:bg-slate-500/20',
         ];
+
+        $currentYear = now()->year;
+        $years = range($currentYear + 1, $currentYear - 5);
     @endphp
 
-    <div class="-mt-3 pt-0 pb-4 lg:-mt-4 lg:pb-6 min-h-screen transition-colors duration-150"
+    <div
+        class="-mt-3 min-h-screen pb-4 pt-0 transition-colors duration-150 lg:-mt-4 lg:pb-6"
         style="background-color: var(--admin-bg); color: var(--admin-text);">
 
-        <div class="max-w-90rem mx-auto min-w-0 px-4 sm:px-6 lg:px-6">
+        <div class="mx-auto min-w-0 max-w-[90rem] px-4 sm:px-6 lg:px-6">
 
-            <nav class="flex items-center gap-1.5 text-[11px] sm:text-xs font-medium mb-3"
+            <nav
+                class="mb-3 flex items-center gap-1.5 text-[11px] font-medium sm:text-xs"
                 style="color: var(--admin-muted);">
 
-                <a href="{{ route('admin.dashboard') }}" class="hover:opacity-85">
+                <a
+                    href="{{ route('admin.dashboard') }}"
+                    class="transition-opacity hover:opacity-85">
                     Dashboard
                 </a>
 
-                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                <svg
+                    class="h-2.5 w-2.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true">
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 5l7 7-7 7"/>
                 </svg>
 
-                <span class="font-semibold" style="color: var(--admin-text);">
+                <span
+                    class="font-semibold"
+                    style="color: var(--admin-text);">
                     SPP
                 </span>
             </nav>
 
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-8 mb-12">
+            <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight">
+                    <h1 class="text-xl font-bold tracking-tight sm:text-2xl">
                         Tagihan SPP
                     </h1>
 
-                    <p class="mt-1.5 text-xs sm:text-sm" style="color: var(--admin-muted);">
+                    <p
+                        class="mt-1.5 text-xs sm:text-sm"
+                        style="color: var(--admin-muted);">
                         Kelola tagihan dan riwayat pembayaran SPP siswa.
                     </p>
                 </div>
             </div>
 
             @if ($errors->any())
-                <div class="mb-6 rounded-xl border px-4 py-3 text-xs sm:text-sm"
+                <div
+                    class="mb-6 rounded-xl border px-4 py-3 text-xs sm:text-sm"
                     style="background-color: var(--admin-danger-surface, #fef2f2); border-color: var(--admin-danger-border, #fecaca); color: var(--admin-danger, #dc2626);">
 
-                    <div class="font-semibold mb-1">
+                    <div class="mb-1 font-semibold">
                         Terjadi kesalahan.
                     </div>
 
-                    <ul class="list-disc list-inside space-y-0.5">
+                    <ul class="list-inside list-disc space-y-0.5">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -91,19 +118,30 @@
                 </div>
             @endif
 
-            <div class="min-w-0 rounded-2xl p-4 sm:p-6 shadow-sm"
+            <div
+                class="min-w-0 rounded-2xl p-4 shadow-sm sm:p-6"
                 style="border: 1px solid var(--admin-border); background-color: var(--admin-surface); box-shadow: 0 4px 20px var(--admin-shadow);">
 
-                <form method="GET" action="{{ route('admin.spp-bills.index') }}" class="mb-6">
+                <form
+                    method="GET"
+                    action="{{ route('admin.spp-bills.index') }}"
+                    class="mb-6">
 
-                    {{-- Search dan tombol --}}
-                    <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <div class="relative w-full min-w-0 sm:w-80 sm:shrink-0">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none"
+                    <div class="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+
+                        <div class="relative w-full min-w-0 lg:w-80 lg:shrink-0">
+                            <span
+                                class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5"
                                 style="color: var(--admin-icon);">
 
-                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2">
+                                <svg
+                                    class="h-4 w-4"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    aria-hidden="true">
                                     <circle cx="11" cy="11" r="8"/>
                                     <path d="m21 21-4.3-4.3"/>
                                 </svg>
@@ -114,14 +152,15 @@
                                 name="search"
                                 value="{{ request('search') }}"
                                 placeholder="Nama atau NIS/NISN..."
-                                class="box-border h-9 w-full min-w-0 rounded-lg py-2 pl-10 pr-3 text-xs sm:text-[13px] outline-none transition-colors duration-150"
+                                class="box-border h-9 w-full min-w-0 rounded-lg py-2 pl-10 pr-3 text-xs outline-none transition-colors duration-150 sm:text-[13px]"
                                 style="background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-text);">
                         </div>
 
-                        <div class="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:items-center">
+                        <div class="grid grid-cols-1 gap-2 sm:grid-cols-3 lg:flex lg:flex-wrap lg:items-center">
+
                             <button
                                 type="submit"
-                                class="inline-flex h-9 w-full items-center justify-center rounded-lg px-3 text-xs sm:w-auto sm:text-[13px] font-medium transition-colors duration-150"
+                                class="inline-flex h-9 w-full items-center justify-center rounded-lg px-3 text-xs font-medium transition-colors duration-150 sm:text-[13px] lg:w-auto"
                                 style="background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-text);"
                                 onmouseover="this.style.backgroundColor='var(--admin-hover)'"
                                 onmouseout="this.style.backgroundColor='var(--admin-surface-soft)'">
@@ -129,8 +168,9 @@
                             </button>
 
                             @if ($isFiltering)
-                                <a href="{{ route('admin.spp-bills.index') }}"
-                                    class="inline-flex h-9 w-full items-center justify-center rounded-lg px-3 text-xs sm:w-auto sm:text-[13px] font-medium transition-colors duration-150"
+                                <a
+                                    href="{{ route('admin.spp-bills.index') }}"
+                                    class="inline-flex h-9 w-full items-center justify-center rounded-lg px-3 text-xs font-medium transition-colors duration-150 sm:text-[13px] lg:w-auto"
                                     style="background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-muted);"
                                     onmouseover="this.style.backgroundColor='var(--admin-hover)'"
                                     onmouseout="this.style.backgroundColor='var(--admin-surface-soft)'">
@@ -138,13 +178,21 @@
                                 </a>
                             @endif
 
-                            <a href="{{ route('admin.spp-bills.create') }}"
-                                class="inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-lg px-3 text-xs sm:w-36 sm:shrink-0 sm:text-[13px] font-semibold text-white transition-opacity hover:brightness-110"
+                            <a
+                                href="{{ route('admin.spp-bills.create') }}"
+                                class="inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-lg px-3 text-xs font-semibold text-white transition-opacity hover:brightness-110 sm:text-[13px] lg:w-36"
                                 style="background-color: #2563EB; box-shadow: 0 3px 8px rgba(37, 99, 235, 0.25);">
 
-                                <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
+                                <svg
+                                    class="h-3.5 w-3.5"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true">
                                     <path d="M5 12h14"/>
                                     <path d="M12 5v14"/>
                                 </svg>
@@ -154,13 +202,14 @@
                         </div>
                     </div>
 
-                    {{-- Filter Status dan Bulan --}}
-                    <div class="grid grid-cols-1 gap-3 border-t pt-4 sm:grid-cols-2"
+                    <div
+                        class="grid grid-cols-1 gap-3 border-t pt-4 sm:grid-cols-2 xl:grid-cols-4"
                         style="border-color: var(--admin-border);">
 
                         <div class="min-w-0">
-                            <label for="status"
-                                class="mb-1.5 block text-xs sm:text-[13px] font-medium"
+                            <label
+                                for="status"
+                                class="mb-1.5 block text-xs font-medium sm:text-[13px]"
                                 style="color: var(--admin-muted);">
                                 Status
                             </label>
@@ -168,21 +217,32 @@
                             <select
                                 id="status"
                                 name="status"
-                                class="box-border h-9 w-full min-w-0 rounded-lg px-3 text-xs sm:text-[13px] font-medium outline-none transition-colors duration-150"
+                                class="box-border h-9 w-full min-w-0 rounded-lg px-3 text-xs font-medium outline-none transition-colors duration-150 sm:text-[13px]"
                                 style="background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-text);">
 
                                 <option value="">Semua Status</option>
-                                <option value="paid" {{ request('status') === 'paid' ? 'selected' : '' }}>Lunas</option>
-                                <option value="unpaid" {{ request('status') === 'unpaid' ? 'selected' : '' }}>Belum Lunas</option>
-                                <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Menunggu Pembayaran</option>
-                                <option value="failed" {{ request('status') === 'failed' ? 'selected' : '' }}>Gagal</option>
-                                <option value="expired" {{ request('status') === 'expired' ? 'selected' : '' }}>Expired</option>
+                                <option value="paid" {{ request('status') === 'paid' ? 'selected' : '' }}>
+                                    Lunas
+                                </option>
+                                <option value="unpaid" {{ request('status') === 'unpaid' ? 'selected' : '' }}>
+                                    Belum Lunas
+                                </option>
+                                <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>
+                                    Menunggu Pembayaran
+                                </option>
+                                <option value="failed" {{ request('status') === 'failed' ? 'selected' : '' }}>
+                                    Gagal
+                                </option>
+                                <option value="expired" {{ request('status') === 'expired' ? 'selected' : '' }}>
+                                    Expired
+                                </option>
                             </select>
                         </div>
 
                         <div class="min-w-0">
-                            <label for="month"
-                                class="mb-1.5 block text-xs sm:text-[13px] font-medium"
+                            <label
+                                for="month"
+                                class="mb-1.5 block text-xs font-medium sm:text-[13px]"
                                 style="color: var(--admin-muted);">
                                 Bulan
                             </label>
@@ -190,7 +250,7 @@
                             <select
                                 id="month"
                                 name="month"
-                                class="box-border h-9 w-full min-w-0 rounded-lg px-3 text-xs sm:text-[13px] font-medium outline-none transition-colors duration-150"
+                                class="box-border h-9 w-full min-w-0 rounded-lg px-3 text-xs font-medium outline-none transition-colors duration-150 sm:text-[13px]"
                                 style="background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-text);">
 
                                 <option value="">Semua Bulan</option>
@@ -204,31 +264,93 @@
                                 @endforeach
                             </select>
                         </div>
+
+                        <div class="min-w-0">
+                            <label
+                                for="year"
+                                class="mb-1.5 block text-xs font-medium sm:text-[13px]"
+                                style="color: var(--admin-muted);">
+                                Tahun
+                            </label>
+
+                            <select
+                                id="year"
+                                name="year"
+                                class="box-border h-9 w-full min-w-0 rounded-lg px-3 text-xs font-medium outline-none transition-colors duration-150 sm:text-[13px]"
+                                style="background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-text);">
+
+                                <option value="">Semua Tahun</option>
+
+                                @foreach ($years as $year)
+                                    <option
+                                        value="{{ $year }}"
+                                        {{ (string) request('year') === (string) $year ? 'selected' : '' }}>
+                                        {{ $year }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="min-w-0">
+                            <label
+                                for="class_room_id"
+                                class="mb-1.5 block text-xs font-medium sm:text-[13px]"
+                                style="color: var(--admin-muted);">
+                                Kelas
+                            </label>
+
+                            <select
+                                id="class_room_id"
+                                name="class_room_id"
+                                class="box-border h-9 w-full min-w-0 rounded-lg px-3 text-xs font-medium outline-none transition-colors duration-150 sm:text-[13px]"
+                                style="background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-text);">
+
+                                <option value="">Semua Kelas</option>
+
+                                @foreach ($classRooms as $classRoom)
+                                    <option
+                                        value="{{ $classRoom->id }}"
+                                        {{ (string) request('class_room_id') === (string) $classRoom->id ? 'selected' : '' }}>
+                                        {{ $classRoom->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </form>
 
-                @if (method_exists($sppBills, 'firstItem') && $sppBills->total() > 0)
-                    <p class="text-xs sm:text-sm mb-4 pt-2" style="color: var(--admin-muted);">
-                        Showing
-                        <span class="font-semibold" style="color: var(--admin-text);">
-                            {{ $sppBills->firstItem() ?? 0 }}
-                        </span>
-                        –
-                        <span class="font-semibold" style="color: var(--admin-text);">
-                            {{ $sppBills->lastItem() ?? 0 }}
-                        </span>
-                        of
-                        <span class="font-semibold" style="color: var(--admin-text);">
-                            {{ $sppBills->total() }}
-                        </span>
-                        records
-                    </p>
+                @if ($sppBills->total() > 0)
+                    <div class="mb-4 flex items-center justify-between gap-3">
+                        <p
+                            class="text-xs sm:text-sm"
+                            style="color: var(--admin-muted);">
+                            Menampilkan
+                            <span
+                                class="font-semibold"
+                                style="color: var(--admin-text);">
+                                {{ $sppBills->firstItem() }}
+                            </span>
+                            –
+                            <span
+                                class="font-semibold"
+                                style="color: var(--admin-text);">
+                                {{ $sppBills->lastItem() }}
+                            </span>
+                            dari
+                            <span
+                                class="font-semibold"
+                                style="color: var(--admin-text);">
+                                {{ $sppBills->total() }}
+                            </span>
+                            tagihan
+                        </p>
+                    </div>
                 @endif
 
                 @if ($sppBills->count() > 0)
 
-                    {{-- Tabel untuk layar lebar --}}
-                    <div class="hidden overflow-hidden rounded-xl border xl:block"
+                    <div
+                        class="hidden overflow-hidden rounded-xl border xl:block"
                         style="border-color: var(--admin-border);">
 
                         <table class="w-full table-fixed border-collapse text-left">
@@ -241,14 +363,44 @@
                                 <col style="width: 17%;">
                             </colgroup>
 
-                            <thead style="border-bottom: 1px solid var(--admin-border); background-color: var(--admin-surface-soft);">
+                            <thead
+                                style="border-bottom: 1px solid var(--admin-border); background-color: var(--admin-surface-soft);">
                                 <tr>
-                                    <th class="{{ $th }}" style="color: var(--admin-muted);">Siswa</th>
-                                    <th class="{{ $th }}" style="color: var(--admin-muted);">Kelas</th>
-                                    <th class="{{ $th }}" style="color: var(--admin-muted);">Periode</th>
-                                    <th class="{{ $th }}" style="color: var(--admin-muted);">Nominal</th>
-                                    <th class="{{ $th }}" style="color: var(--admin-muted);">Status</th>
-                                    <th class="{{ $th }} text-right" style="color: var(--admin-muted);">Aksi</th>
+                                    <th
+                                        class="{{ $th }}"
+                                        style="color: var(--admin-muted);">
+                                        Siswa
+                                    </th>
+
+                                    <th
+                                        class="{{ $th }}"
+                                        style="color: var(--admin-muted);">
+                                        Kelas
+                                    </th>
+
+                                    <th
+                                        class="{{ $th }}"
+                                        style="color: var(--admin-muted);">
+                                        Periode
+                                    </th>
+
+                                    <th
+                                        class="{{ $th }}"
+                                        style="color: var(--admin-muted);">
+                                        Nominal
+                                    </th>
+
+                                    <th
+                                        class="{{ $th }}"
+                                        style="color: var(--admin-muted);">
+                                        Status
+                                    </th>
+
+                                    <th
+                                        class="{{ $th }} text-right"
+                                        style="color: var(--admin-muted);">
+                                        Aksi
+                                    </th>
                                 </tr>
                             </thead>
 
@@ -273,31 +425,41 @@
                                         onmouseover="this.style.backgroundColor='var(--admin-hover)'"
                                         onmouseout="this.style.backgroundColor='transparent'">
 
-                                        <td class="{{ $td }} wrap-break-word">
-                                            <div class="font-medium" style="color: var(--admin-text);">
+                                        <td class="{{ $td }} break-words">
+                                            <div
+                                                class="font-medium"
+                                                style="color: var(--admin-text);">
                                                 {{ $sppBill->student->name }}
                                             </div>
 
-                                            <div class="mt-0.5 text-[11px] sm:text-xs" style="color: var(--admin-muted);">
+                                            <div
+                                                class="mt-0.5 text-[11px] sm:text-xs"
+                                                style="color: var(--admin-muted);">
                                                 {{ $sppBill->student->identity_number }}
                                             </div>
                                         </td>
 
-                                        <td class="{{ $td }} wrap-break-word" style="color: var(--admin-text);">
+                                        <td
+                                            class="{{ $td }} break-words"
+                                            style="color: var(--admin-text);">
                                             {{ $sppBill->student->classRoom->name ?? '—' }}
                                         </td>
 
-                                        <td class="{{ $td }} wrap-break-word font-medium" style="color: var(--admin-text);">
+                                        <td
+                                            class="{{ $td }} break-words font-medium"
+                                            style="color: var(--admin-text);">
                                             {{ $sppBill->period }}
                                         </td>
 
-                                        <td class="{{ $td }} wrap-break-word font-medium" style="color: var(--admin-text);">
+                                        <td
+                                            class="{{ $td }} break-words font-medium"
+                                            style="color: var(--admin-text);">
                                             Rp {{ number_format($sppBill->amount, 0, ',', '.') }}
                                         </td>
 
                                         <td class="{{ $td }}">
                                             <span
-                                                class="inline-flex max-w-full wrap-break-word rounded-md px-2.5 py-1 text-xs sm:text-sm font-semibold {{ $statusBadge }}"
+                                                class="inline-flex max-w-full break-words rounded-md px-2.5 py-1 text-xs font-semibold sm:text-sm {{ $statusBadge }}"
                                                 style="color: var(--admin-text);">
                                                 {{ $statusLabel }}
                                             </span>
@@ -305,17 +467,24 @@
 
                                         <td class="{{ $td }}">
                                             <div class="flex items-center justify-end gap-1">
-                                                {{-- Detail --}}
-                                                <a href="{{ route('admin.spp-bills.show', $sppBill) }}"
+
+                                                <a
+                                                    href="{{ route('admin.spp-bills.show', $sppBill) }}"
                                                     title="Detail"
                                                     aria-label="Detail tagihan {{ $sppBill->student->name }}"
                                                     class="{{ $iconBtn }}"
                                                     style="color: var(--admin-icon);"
                                                     onmouseover="this.style.backgroundColor='var(--admin-hover)'"
                                                     onmouseout="this.style.backgroundColor='transparent'">
-                                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"
-                                                        stroke="currentColor" stroke-width="2"
-                                                        stroke-linecap="round" stroke-linejoin="round"
+
+                                                    <svg
+                                                        class="h-4 w-4"
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        stroke-width="2"
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
                                                         aria-hidden="true">
                                                         <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
                                                         <circle cx="12" cy="12" r="3"/>
@@ -323,24 +492,29 @@
                                                 </a>
 
                                                 @if ($canManageBill)
-                                                    {{-- Edit --}}
-                                                    <a href="{{ route('admin.spp-bills.edit', $sppBill) }}"
+                                                    <a
+                                                        href="{{ route('admin.spp-bills.edit', $sppBill) }}"
                                                         title="Edit"
                                                         aria-label="Edit tagihan {{ $sppBill->student->name }}"
                                                         class="{{ $iconBtn }}"
                                                         style="color: var(--admin-icon);"
                                                         onmouseover="this.style.backgroundColor='var(--admin-hover)'"
                                                         onmouseout="this.style.backgroundColor='transparent'">
-                                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"
-                                                            stroke="currentColor" stroke-width="2"
-                                                            stroke-linecap="round" stroke-linejoin="round"
+
+                                                        <svg
+                                                            class="h-4 w-4"
+                                                            viewBox="0 0 24 24"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            stroke-width="2"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
                                                             aria-hidden="true">
                                                             <path d="M12 20h9"/>
                                                             <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
                                                         </svg>
                                                     </a>
 
-                                                    {{-- Hapus --}}
                                                     <form
                                                         action="{{ route('admin.spp-bills.destroy', $sppBill) }}"
                                                         method="POST"
@@ -357,9 +531,15 @@
                                                             style="color: #dc2626;"
                                                             onmouseover="this.style.backgroundColor='rgba(220, 38, 38, 0.1)'"
                                                             onmouseout="this.style.backgroundColor='transparent'">
-                                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"
-                                                                stroke="currentColor" stroke-width="2"
-                                                                stroke-linecap="round" stroke-linejoin="round"
+
+                                                            <svg
+                                                                class="h-4 w-4"
+                                                                viewBox="0 0 24 24"
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                stroke-width="2"
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
                                                                 aria-hidden="true">
                                                                 <path d="M3 6h18"/>
                                                                 <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
@@ -369,9 +549,13 @@
                                                         </button>
                                                     </form>
                                                 @else
-                                                    {{-- Slot kosong agar posisi icon Detail tetap sejajar --}}
-                                                    <span class="w-8 h-8 shrink-0" aria-hidden="true"></span>
-                                                    <span class="w-8 h-8 shrink-0" aria-hidden="true"></span>
+                                                    <span
+                                                        class="h-8 w-8 shrink-0"
+                                                        aria-hidden="true"></span>
+
+                                                    <span
+                                                        class="h-8 w-8 shrink-0"
+                                                        aria-hidden="true"></span>
                                                 @endif
                                             </div>
                                         </td>
@@ -381,7 +565,6 @@
                         </table>
                     </div>
 
-                    {{-- Tampilan kartu untuk layar kecil --}}
                     <div class="grid grid-cols-1 gap-3 xl:hidden">
                         @foreach ($sppBills as $sppBill)
                             @php
@@ -398,32 +581,43 @@
                                     ?? ucfirst($sppBill->status);
                             @endphp
 
-                            <article class="min-w-0 rounded-xl border p-4"
+                            <article
+                                class="min-w-0 rounded-xl border p-4"
                                 style="border-color: var(--admin-border); background-color: var(--admin-surface);">
 
                                 <div class="flex min-w-0 items-start justify-between gap-3">
                                     <div class="min-w-0">
-                                        <div class="wrap-break-word text-sm font-semibold" style="color: var(--admin-text);">
+                                        <div
+                                            class="break-words text-sm font-semibold"
+                                            style="color: var(--admin-text);">
                                             {{ $sppBill->student->name }}
                                         </div>
 
-                                        <div class="mt-0.5 wrap-break-word text-[11px] sm:text-xs" style="color: var(--admin-muted);">
+                                        <div
+                                            class="mt-0.5 break-words text-[11px] sm:text-xs"
+                                            style="color: var(--admin-muted);">
                                             {{ $sppBill->student->identity_number }}
                                         </div>
                                     </div>
 
                                     <div class="flex shrink-0 items-center gap-1">
-                                        {{-- Detail --}}
-                                        <a href="{{ route('admin.spp-bills.show', $sppBill) }}"
+                                        <a
+                                            href="{{ route('admin.spp-bills.show', $sppBill) }}"
                                             title="Detail"
                                             aria-label="Detail tagihan {{ $sppBill->student->name }}"
                                             class="{{ $iconBtn }}"
                                             style="color: var(--admin-icon);"
                                             onmouseover="this.style.backgroundColor='var(--admin-hover)'"
                                             onmouseout="this.style.backgroundColor='transparent'">
-                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round"
+
+                                            <svg
+                                                class="h-4 w-4"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="2"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
                                                 aria-hidden="true">
                                                 <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
                                                 <circle cx="12" cy="12" r="3"/>
@@ -431,24 +625,29 @@
                                         </a>
 
                                         @if ($canManageBill)
-                                            {{-- Edit --}}
-                                            <a href="{{ route('admin.spp-bills.edit', $sppBill) }}"
+                                            <a
+                                                href="{{ route('admin.spp-bills.edit', $sppBill) }}"
                                                 title="Edit"
                                                 aria-label="Edit tagihan {{ $sppBill->student->name }}"
                                                 class="{{ $iconBtn }}"
                                                 style="color: var(--admin-icon);"
                                                 onmouseover="this.style.backgroundColor='var(--admin-hover)'"
                                                 onmouseout="this.style.backgroundColor='transparent'">
-                                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"
-                                                    stroke="currentColor" stroke-width="2"
-                                                    stroke-linecap="round" stroke-linejoin="round"
+
+                                                <svg
+                                                    class="h-4 w-4"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    stroke-width="2"
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
                                                     aria-hidden="true">
                                                     <path d="M12 20h9"/>
                                                     <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
                                                 </svg>
                                             </a>
 
-                                            {{-- Hapus --}}
                                             <form
                                                 action="{{ route('admin.spp-bills.destroy', $sppBill) }}"
                                                 method="POST"
@@ -465,9 +664,15 @@
                                                     style="color: #dc2626;"
                                                     onmouseover="this.style.backgroundColor='rgba(220, 38, 38, 0.1)'"
                                                     onmouseout="this.style.backgroundColor='transparent'">
-                                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"
-                                                        stroke="currentColor" stroke-width="2"
-                                                        stroke-linecap="round" stroke-linejoin="round"
+
+                                                    <svg
+                                                        class="h-4 w-4"
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        stroke-width="2"
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
                                                         aria-hidden="true">
                                                         <path d="M3 6h18"/>
                                                         <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
@@ -482,38 +687,56 @@
 
                                 <div class="mt-4 grid min-w-0 grid-cols-2 gap-x-4 gap-y-3">
                                     <div class="min-w-0">
-                                        <div class="text-[11px] sm:text-xs" style="color: var(--admin-muted);">
+                                        <div
+                                            class="text-[11px] sm:text-xs"
+                                            style="color: var(--admin-muted);">
                                             Kelas
                                         </div>
-                                        <div class="mt-0.5 wrap-break-word text-xs sm:text-sm" style="color: var(--admin-text);">
+
+                                        <div
+                                            class="mt-0.5 break-words text-xs sm:text-sm"
+                                            style="color: var(--admin-text);">
                                             {{ $sppBill->student->classRoom->name ?? '—' }}
                                         </div>
                                     </div>
 
                                     <div class="min-w-0">
-                                        <div class="text-[11px] sm:text-xs" style="color: var(--admin-muted);">
+                                        <div
+                                            class="text-[11px] sm:text-xs"
+                                            style="color: var(--admin-muted);">
                                             Periode
                                         </div>
-                                        <div class="mt-0.5 wrap-break-word text-xs sm:text-sm font-medium" style="color: var(--admin-text);">
+
+                                        <div
+                                            class="mt-0.5 break-words text-xs font-medium sm:text-sm"
+                                            style="color: var(--admin-text);">
                                             {{ $sppBill->period }}
                                         </div>
                                     </div>
 
                                     <div class="min-w-0">
-                                        <div class="text-[11px] sm:text-xs" style="color: var(--admin-muted);">
+                                        <div
+                                            class="text-[11px] sm:text-xs"
+                                            style="color: var(--admin-muted);">
                                             Nominal
                                         </div>
-                                        <div class="mt-0.5 wrap-break-word text-xs sm:text-sm font-medium" style="color: var(--admin-text);">
+
+                                        <div
+                                            class="mt-0.5 break-words text-xs font-medium sm:text-sm"
+                                            style="color: var(--admin-text);">
                                             Rp {{ number_format($sppBill->amount, 0, ',', '.') }}
                                         </div>
                                     </div>
 
                                     <div class="min-w-0">
-                                        <div class="text-[11px] sm:text-xs" style="color: var(--admin-muted);">
+                                        <div
+                                            class="text-[11px] sm:text-xs"
+                                            style="color: var(--admin-muted);">
                                             Status
                                         </div>
+
                                         <span
-                                            class="mt-1 inline-flex max-w-full wrap-break-word rounded-md px-2.5 py-1 text-xs font-semibold {{ $statusBadge }}"
+                                            class="mt-1 inline-flex max-w-full break-words rounded-md px-2.5 py-1 text-xs font-semibold {{ $statusBadge }}"
                                             style="color: var(--admin-text);">
                                             {{ $statusLabel }}
                                         </span>
@@ -524,14 +747,21 @@
                     </div>
 
                 @else
-                    <div class="rounded-xl border px-4 py-12 text-center"
+                    <div
+                        class="rounded-xl border px-4 py-12 text-center"
                         style="border-color: var(--admin-border);">
 
-                        <div class="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full"
+                        <div
+                            class="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full"
                             style="background-color: var(--admin-surface-soft); border: 1px solid var(--admin-border); color: var(--admin-muted);">
 
-                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2">
+                            <svg
+                                class="h-5 w-5"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                aria-hidden="true">
                                 <path d="M3 4h18v16H3z"/>
                                 <path d="M7 8h10"/>
                                 <path d="M7 12h6"/>
@@ -539,56 +769,72 @@
                             </svg>
                         </div>
 
-                        <p class="text-xs sm:text-sm font-medium" style="color: var(--admin-text);">
+                        <p
+                            class="text-xs font-medium sm:text-sm"
+                            style="color: var(--admin-text);">
                             Belum ada tagihan SPP
                         </p>
+
+                        @if ($isFiltering)
+                            <p
+                                class="mt-1 text-xs"
+                                style="color: var(--admin-muted);">
+                                Coba ubah atau reset filter pencarian.
+                            </p>
+                        @endif
                     </div>
                 @endif
             </div>
 
-            {{-- Pagination --}}
-            @if (method_exists($sppBills, 'hasPages') && $sppBills->hasPages())
+            @if ($sppBills->hasPages())
                 <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <p class="text-xs sm:text-sm" style="color: var(--admin-muted);">
-                        Menampilkan
-                        <span class="font-semibold" style="color: var(--admin-text);">
-                            {{ $sppBills->firstItem() ?? 0 }}–{{ $sppBills->lastItem() ?? 0 }}
+                    <p
+                        class="text-xs sm:text-sm"
+                        style="color: var(--admin-muted);">
+                        Halaman
+                        <span
+                            class="font-semibold"
+                            style="color: var(--admin-text);">
+                            {{ $sppBills->currentPage() }}
                         </span>
                         dari
-                        <span class="font-semibold" style="color: var(--admin-text);">
-                            {{ $sppBills->total() }}
+                        <span
+                            class="font-semibold"
+                            style="color: var(--admin-text);">
+                            {{ $sppBills->lastPage() }}
                         </span>
-                        tagihan
                     </p>
 
                     <div class="flex flex-wrap items-center gap-2">
                         @if ($sppBills->onFirstPage())
                             <span
-                                class="inline-flex h-9 items-center rounded-lg border px-3 text-xs sm:text-sm font-medium opacity-50 cursor-not-allowed"
+                                class="inline-flex h-9 cursor-not-allowed items-center rounded-lg border px-3 text-xs font-medium opacity-50 sm:text-sm"
                                 style="background-color: var(--admin-surface); border-color: var(--admin-border); color: var(--admin-text);">
                                 Sebelumnya
                             </span>
                         @else
-                            <a href="{{ $sppBills->appends(request()->query())->previousPageUrl() }}"
-                                class="inline-flex h-9 items-center rounded-lg border px-3 text-xs sm:text-sm font-medium transition-colors"
-                                style="background-color: var(--admin-surface); border-color: var(--admin-border); color: var(--admin-text);">
+                            <a
+                                href="{{ $sppBills->appends(request()->query())->previousPageUrl() }}"
+                                class="inline-flex h-9 items-center rounded-lg border px-3 text-xs font-medium transition-colors sm:text-sm"
+                                style="background-color: var(--admin-surface); border-color: var(--admin-border); color: var(--admin-text);"
+                                onmouseover="this.style.backgroundColor='var(--admin-hover)'"
+                                onmouseout="this.style.backgroundColor='var(--admin-surface)'">
                                 Sebelumnya
                             </a>
                         @endif
 
-                        <span class="text-xs sm:text-sm" style="color: var(--admin-muted);">
-                            Halaman {{ $sppBills->currentPage() }} dari {{ $sppBills->lastPage() }}
-                        </span>
-
                         @if ($sppBills->hasMorePages())
-                            <a href="{{ $sppBills->appends(request()->query())->nextPageUrl() }}"
-                                class="inline-flex h-9 items-center rounded-lg border px-3 text-xs sm:text-sm font-medium transition-colors"
-                                style="background-color: var(--admin-surface); border-color: var(--admin-border); color: var(--admin-text);">
+                            <a
+                                href="{{ $sppBills->appends(request()->query())->nextPageUrl() }}"
+                                class="inline-flex h-9 items-center rounded-lg border px-3 text-xs font-medium transition-colors sm:text-sm"
+                                style="background-color: var(--admin-surface); border-color: var(--admin-border); color: var(--admin-text);"
+                                onmouseover="this.style.backgroundColor='var(--admin-hover)'"
+                                onmouseout="this.style.backgroundColor='var(--admin-surface)'">
                                 Berikutnya
                             </a>
                         @else
                             <span
-                                class="inline-flex h-9 items-center rounded-lg border px-3 text-xs sm:text-sm font-medium opacity-50 cursor-not-allowed"
+                                class="inline-flex h-9 cursor-not-allowed items-center rounded-lg border px-3 text-xs font-medium opacity-50 sm:text-sm"
                                 style="background-color: var(--admin-surface); border-color: var(--admin-border); color: var(--admin-text);">
                                 Berikutnya
                             </span>
@@ -600,7 +846,6 @@
         </div>
     </div>
 
-    {{-- Popup konfirmasi hapus --}}
     <div
         id="delete-confirm-modal"
         class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4"
@@ -609,14 +854,19 @@
         aria-labelledby="delete-modal-title"
         aria-hidden="true">
 
-        <div class="w-full max-w-sm rounded-2xl border p-5 shadow-xl"
+        <div
+            class="w-full max-w-sm rounded-2xl border p-5 shadow-xl"
             style="background-color: var(--admin-surface); border-color: var(--admin-border); color: var(--admin-text);">
 
-            <h2 id="delete-modal-title" class="text-base font-semibold">
+            <h2
+                id="delete-modal-title"
+                class="text-base font-semibold">
                 Hapus tagihan ini?
             </h2>
 
-            <p class="mt-2 text-sm" style="color: var(--admin-muted);">
+            <p
+                class="mt-2 text-sm"
+                style="color: var(--admin-muted);">
                 Tagihan yang sudah dihapus tidak dapat dikembalikan.
             </p>
 
@@ -624,7 +874,7 @@
                 <button
                     id="cancel-delete-button"
                     type="button"
-                    class="h-9 rounded-lg border px-3 text-xs sm:text-sm font-medium"
+                    class="h-9 rounded-lg border px-3 text-xs font-medium sm:text-sm"
                     style="background-color: var(--admin-surface-soft); border-color: var(--admin-border); color: var(--admin-text);">
                     Batal
                 </button>
@@ -632,7 +882,7 @@
                 <button
                     id="confirm-delete-button"
                     type="button"
-                    class="h-9 rounded-lg px-3 text-xs sm:text-sm font-semibold text-white"
+                    class="h-9 rounded-lg px-3 text-xs font-semibold text-white sm:text-sm"
                     style="background-color: #dc2626;">
                     Hapus Tagihan
                 </button>
@@ -642,7 +892,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Popup konfirmasi hapus
             const deleteModal = document.getElementById('delete-confirm-modal');
             const cancelDeleteButton = document.getElementById('cancel-delete-button');
             const confirmDeleteButton = document.getElementById('confirm-delete-button');
@@ -684,7 +933,7 @@
             });
 
             document.addEventListener('keydown', function (event) {
-                if (event.key === 'Escape') {
+                if (event.key === 'Escape' && !deleteModal.classList.contains('hidden')) {
                     closeDeleteModal();
                 }
             });

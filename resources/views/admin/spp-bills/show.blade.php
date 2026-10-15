@@ -12,12 +12,12 @@
             'expired' => 'Expired',
         ];
 
-        $statusBadges = [
-            'paid' => 'bg-emerald-100/80 dark:bg-emerald-500/20',
-            'unpaid' => 'bg-red-100/80 dark:bg-red-500/20',
-            'pending' => 'bg-blue-100/80 dark:bg-blue-500/20',
-            'failed' => 'bg-red-100/80 dark:bg-red-500/20',
-            'expired' => 'bg-slate-100 dark:bg-slate-800',
+        $statusStyles = [
+            'paid' => 'background-color: rgba(16, 185, 129, 0.1); color: #059669;',
+            'unpaid' => 'background-color: rgba(239, 68, 68, 0.1); color: #dc2626;',
+            'pending' => 'background-color: rgba(59, 130, 246, 0.1); color: #2563eb;',
+            'failed' => 'background-color: rgba(239, 68, 68, 0.1); color: #dc2626;',
+            'expired' => 'background-color: var(--admin-surface-soft); color: var(--admin-muted);',
         ];
 
         $statusNotices = [
@@ -26,22 +26,22 @@
                 'description' => $sppBill->paid_at
                     ? 'Tagihan ini telah tercatat sebagai lunas pada ' . $sppBill->paid_at->format('d M Y, H:i') . '.'
                     : 'Tagihan ini telah tercatat sebagai lunas.',
-                'style' => 'background-color: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3);',
+                'style' => 'background-color: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.25);',
             ],
             'unpaid' => [
                 'title' => 'Belum Lunas',
                 'description' => 'Tagihan ini masih memiliki status belum lunas.',
-                'style' => 'background-color: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3);',
+                'style' => 'background-color: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.25);',
             ],
             'pending' => [
                 'title' => 'Menunggu Pembayaran',
                 'description' => 'Pembayaran tagihan masih menunggu proses.',
-                'style' => 'background-color: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3);',
+                'style' => 'background-color: rgba(59, 130, 246, 0.08); border-color: rgba(59, 130, 246, 0.25);',
             ],
             'failed' => [
                 'title' => 'Pembayaran Gagal',
                 'description' => 'Pembayaran untuk tagihan ini gagal diproses.',
-                'style' => 'background-color: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3);',
+                'style' => 'background-color: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.25);',
             ],
             'expired' => [
                 'title' => 'Tagihan Expired',
@@ -51,7 +51,7 @@
         ];
 
         $currentStatusLabel = $statusLabels[$sppBill->status] ?? ucfirst($sppBill->status);
-        $currentStatusBadge = $statusBadges[$sppBill->status] ?? 'bg-slate-100 dark:bg-slate-800';
+        $currentStatusStyle = $statusStyles[$sppBill->status] ?? 'background-color: var(--admin-surface-soft); color: var(--admin-muted);';
         $currentStatusNotice = $statusNotices[$sppBill->status] ?? [
             'title' => 'Status Tagihan',
             'description' => 'Informasi status tagihan tidak tersedia.',
@@ -64,60 +64,51 @@
         $value = 'wrap-break-word text-xs font-medium leading-relaxed sm:text-sm';
     @endphp
 
-    {{-- Wrapper mengikuti halaman Akun --}}
     <div
-        class="-mt-3 min-h-screen pt-0 pb-4 transition-colors duration-150 lg:-mt-4 lg:pb-6"
+        class="-mt-3 min-h-screen pb-4 transition-colors duration-150 lg:-mt-4 lg:pb-6"
         style="background-color: var(--admin-bg); color: var(--admin-text);"
     >
         <div class="mx-auto max-w-90rem px-4 sm:px-6 lg:px-6">
-
-            {{-- Breadcrumb --}}
             <nav
-                class="mb-3 flex items-center gap-1.5 text-[11px] font-medium sm:text-xs"
+                class="mb-3 flex min-w-0 items-center gap-1.5 text-[11px] font-medium sm:text-xs"
                 style="color: var(--admin-muted);"
                 aria-label="Breadcrumb"
             >
-                <a href="{{ route('admin.dashboard') }}" class="hover:opacity-85">
+                <a href="{{ route('admin.dashboard') }}" class="shrink-0 hover:opacity-85">
                     Dashboard
                 </a>
 
                 <svg class="h-2.5 w-2.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7-7"/>
                 </svg>
 
-                <a href="{{ route('admin.spp-bills.index') }}" class="hover:opacity-85">
+                <a href="{{ route('admin.spp-bills.index') }}" class="shrink-0 hover:opacity-85">
                     SPP
                 </a>
 
                 <svg class="h-2.5 w-2.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7-7"/>
                 </svg>
 
-                <span class="font-semibold" style="color: var(--admin-text);">
-                    Detail Tagihan SPP
+                <span class="truncate font-semibold" style="color: var(--admin-text);">
+                    Detail Tagihan
                 </span>
             </nav>
 
-            {{-- Judul halaman --}}
-            <div class="mt-8 mb-12">
+            <div class="mb-8 mt-7">
                 <h1 class="text-xl font-bold tracking-tight sm:text-2xl">
                     Detail Tagihan SPP
                 </h1>
-
                 <p class="mt-1.5 text-xs sm:text-sm" style="color: var(--admin-muted);">
                     Informasi lengkap tagihan SPP siswa.
                 </p>
             </div>
 
-            {{-- Konten utama --}}
-            <div class="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-
-                {{-- Informasi tagihan --}}
+            <div class="grid min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
                 <section
-                    class="min-w-0 rounded-2xl p-5 shadow-sm sm:p-6"
-                    style="border: 1px solid var(--admin-border); background-color: var(--admin-surface); box-shadow: 0 4px 20px var(--admin-shadow);"
+                    class="min-w-0 rounded-2xl border p-5 shadow-sm sm:p-6"
+                    style="border-color: var(--admin-border); background-color: var(--admin-surface); box-shadow: 0 4px 20px var(--admin-shadow);"
                 >
-                    {{-- Header tagihan --}}
                     <div
                         class="flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-center"
                         style="border-color: var(--admin-border);"
@@ -135,7 +126,7 @@
                                 </span>
 
                                 <div class="min-w-0">
-                                    <h2 class="text-sm font-bold sm:text-base" style="color: var(--admin-text);">
+                                    <h2 class="text-sm font-bold sm:text-base">
                                         Informasi Tagihan
                                     </h2>
 
@@ -147,15 +138,14 @@
                         </div>
 
                         <span
-                            class="inline-flex w-fit shrink-0 items-center rounded-lg px-3 py-1.5 text-xs font-semibold {{ $currentStatusBadge }} sm:text-[13px]"
-                            style="color: var(--admin-text);"
+                            class="inline-flex w-fit shrink-0 items-center rounded-lg px-3 py-1.5 text-xs font-semibold sm:text-[13px]"
+                            style="{{ $currentStatusStyle }}"
                         >
                             {{ $currentStatusLabel }}
                         </span>
                     </div>
 
-                    {{-- Detail tagihan --}}
-                    <div class="grid min-w-0 gap-3 py-6 sm:grid-cols-2 sm:gap-4">
+                    <div class="grid min-w-0 gap-3 py-5 sm:grid-cols-2 sm:gap-4">
                         <div class="{{ $infoBox }}" style="{{ $infoBoxStyle }}">
                             <span class="{{ $label }}" style="color: var(--admin-muted);">Siswa</span>
                             <p class="{{ $value }}" style="color: var(--admin-text);">
@@ -220,7 +210,6 @@
                         </div>
                     </div>
 
-                    {{-- Informasi sistem --}}
                     <div class="border-t pt-5" style="border-color: var(--admin-border);">
                         <div class="mb-4 flex items-center gap-3">
                             <span
@@ -233,7 +222,7 @@
                                 </svg>
                             </span>
 
-                            <h3 class="text-sm font-bold sm:text-base" style="color: var(--admin-text);">
+                            <h3 class="text-sm font-bold sm:text-base">
                                 Informasi Sistem
                             </h3>
                         </div>
@@ -263,13 +252,12 @@
                     </div>
                 </section>
 
-                {{-- Ringkasan dan aksi --}}
-                <aside class="min-w-0 space-y-6">
+                <aside class="min-w-0 space-y-5">
                     <section
-                        class="rounded-2xl p-5 shadow-sm sm:p-6"
-                        style="border: 1px solid var(--admin-border); background-color: var(--admin-surface); box-shadow: 0 4px 20px var(--admin-shadow);"
+                        class="rounded-2xl border p-5 shadow-sm sm:p-6"
+                        style="border-color: var(--admin-border); background-color: var(--admin-surface); box-shadow: 0 4px 20px var(--admin-shadow);"
                     >
-                        <h2 class="text-sm font-bold sm:text-base" style="color: var(--admin-text);">
+                        <h2 class="text-sm font-bold sm:text-base">
                             Ringkasan Tagihan
                         </h2>
 
@@ -278,7 +266,7 @@
                                 <p class="text-[11px] font-semibold uppercase tracking-wider sm:text-xs" style="color: var(--admin-muted);">
                                     Siswa
                                 </p>
-                                <p class="mt-1 wrap-break-word text-xs font-semibold sm:text-sm" style="color: var(--admin-text);">
+                                <p class="mt-1 wrap-break-word text-xs font-semibold sm:text-sm">
                                     {{ $sppBill->student->name }}
                                 </p>
                             </div>
@@ -287,7 +275,7 @@
                                 <p class="text-[11px] font-semibold uppercase tracking-wider sm:text-xs" style="color: var(--admin-muted);">
                                     Kelas
                                 </p>
-                                <p class="mt-1 text-xs sm:text-sm" style="color: var(--admin-text);">
+                                <p class="mt-1 text-xs sm:text-sm">
                                     {{ $sppBill->student->classRoom?->name ?? '-' }}
                                 </p>
                             </div>
@@ -296,7 +284,7 @@
                                 <p class="text-[11px] font-semibold uppercase tracking-wider sm:text-xs" style="color: var(--admin-muted);">
                                     Periode
                                 </p>
-                                <p class="mt-1 text-xs sm:text-sm" style="color: var(--admin-text);">
+                                <p class="mt-1 text-xs sm:text-sm">
                                     {{ $sppBill->period }}
                                 </p>
                             </div>
@@ -305,18 +293,26 @@
                                 <p class="text-[11px] font-semibold uppercase tracking-wider sm:text-xs" style="color: var(--admin-muted);">
                                     Total Tagihan
                                 </p>
-                                <p class="mt-1 text-base font-bold tracking-tight sm:text-lg" style="color: var(--admin-text);">
+                                <p class="mt-1 text-base font-bold tracking-tight sm:text-lg">
                                     Rp {{ number_format($sppBill->amount, 0, ',', '.') }}
                                 </p>
                             </div>
                         </div>
 
-                        {{-- Aksi hapus --}}
                         <div class="mt-5 border-t pt-5" style="border-color: var(--admin-border);">
+                            <a
+                                href="{{ route('admin.spp-bills.edit', $sppBill) }}"
+                                class="inline-flex h-9 w-full items-center justify-center rounded-lg px-4 text-[13px] font-semibold text-white transition-opacity hover:brightness-110"
+                                style="background-color: #2563eb; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);"
+                            >
+                                Edit Tagihan
+                            </a>
+
                             <form
                                 id="delete-spp-bill-form"
                                 action="{{ route('admin.spp-bills.destroy', $sppBill) }}"
                                 method="POST"
+                                class="mt-2"
                             >
                                 @csrf
                                 @method('DELETE')
@@ -324,8 +320,8 @@
                                 <button
                                     type="button"
                                     id="delete-spp-bill-trigger"
-                                    class="inline-flex h-9 w-full items-center justify-center rounded-lg border border-red-200 px-4 text-[13px] font-semibold text-red-600 transition-colors duration-150 hover:bg-red-50 dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10"
-                                    style="background-color: rgba(239, 68, 68, 0.08);"
+                                    class="inline-flex h-9 w-full items-center justify-center rounded-lg border px-4 text-[13px] font-semibold transition-colors duration-150"
+                                    style="background-color: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.25); color: #dc2626;"
                                 >
                                     Hapus Tagihan
                                 </button>
@@ -333,16 +329,15 @@
                         </div>
                     </section>
 
-                    {{-- Keterangan status --}}
                     <section
                         class="rounded-2xl border p-5"
                         style="{{ $currentStatusNotice['style'] }}"
                     >
-                        <h2 class="text-sm font-semibold sm:text-base" style="color: var(--admin-text);">
+                        <h2 class="text-sm font-semibold sm:text-base">
                             {{ $currentStatusNotice['title'] }}
                         </h2>
 
-                        <p class="mt-1.5 text-xs leading-relaxed sm:text-sm" style="color: var(--admin-text);">
+                        <p class="mt-1.5 text-xs leading-relaxed sm:text-sm">
                             {{ $currentStatusNotice['description'] }}
                         </p>
                     </section>
@@ -351,7 +346,6 @@
         </div>
     </div>
 
-    {{-- Popup konfirmasi hapus --}}
     <div
         id="delete-confirm-modal"
         class="fixed inset-0 z-100 hidden items-center justify-center bg-black/50 p-4"
@@ -375,7 +369,7 @@
                 </span>
 
                 <div class="min-w-0">
-                    <h2 id="delete-modal-title" class="text-sm font-bold sm:text-base" style="color: var(--admin-text);">
+                    <h2 id="delete-modal-title" class="text-sm font-bold sm:text-base">
                         Hapus Tagihan SPP?
                     </h2>
                     <p class="mt-1 text-xs leading-relaxed sm:text-sm" style="color: var(--admin-muted);">

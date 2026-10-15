@@ -1,6 +1,10 @@
 @props(['teacher'])
 
 @php
+    $logoUrl = asset('image/logo.png');
+@endphp
+
+@php
     $navigation = [
         [
             'label' => 'Overview',
@@ -33,19 +37,27 @@
                 ],
             ],
         ],
+        [
+            'label' => 'Keuangan',
+            'items' => [
+                [
+                    'label' => 'Penggajian',
+                    'route' => 'teacher.salary-slips',
+                    'fallback' => '/teacher/salary-slips',
+                    'active' => ['teacher.salary-slips', 'teacher.salary-slips.*'],
+                    'icon' => 'salary',
+                ],
+            ],
+        ],
     ];
 
     $icons = [
         'dashboard'  => '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
         'schedule'   => '<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h3M8 17h6"/>',
         'attendance' => '<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/>',
+        'salary'     => '<path d="M12 2.5v19M17 6.5h-7a3 3 0 100 6h4a3 3 0 110 6H7"/>',
         'profile'    => '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
     ];
-
-    $logoPath = public_path('image/logo.png');
-    $logoUrl = is_file($logoPath) && is_readable($logoPath)
-        ? asset('image/logo.png')
-        : null;
 @endphp
 
 <style>
